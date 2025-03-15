@@ -3,12 +3,16 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./composante/Navbar";
 import Signin from './composante/signin';
+import Home from "./Home";
 function App() {
   return (
     <Router>
     <Navbar />
     <div>
+      <Home/>
       <Signin />
+  
+      
     </div>
   </Router>
   );
