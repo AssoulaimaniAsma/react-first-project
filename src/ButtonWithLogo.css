@@ -1,0 +1,65 @@
+/* Button container to align buttons horizontally */
+.buttonContainer {
+    display: flex;               /* Use flexbox to align buttons horizontally */
+    gap: 20px;                   /* Add space between buttons */
+    justify-content: center;     /* Center the buttons horizontally */
+    align-items: center;         /* Center the buttons vertically */
+}
+
+/* McDonald's Button Styles */
+.mcdoButton {
+    width: 150px;                /* Set width of button */
+    height: 150px;               /* Set height of button */
+    display: flex;               /* Use flexbox for layout */
+    align-items: center;         /* Vertically center content */
+    justify-content: center;     /* Horizontally center content */
+    border: none;                /* Remove default border */
+    border-radius: 8px;          /* Rounded corners */
+    background-color: #e50001;   /* McDonald's red background */
+    cursor: pointer;            /* Make it clickable */
+}
+
+/* Burger King Button Styles */
+.bkButton {
+    width: 150px;                /* Set width of button */
+    height: 150px;               /* Set height of button */
+    display: flex;               /* Use flexbox for layout */
+    align-items: center;         /* Vertically center content */
+    justify-content: center;     /* Horizontally center content */
+    border: none;                /* Remove default border */
+    border-radius: 8px;          /* Rounded corners */
+    background-color: #f9ad40;   /* Burger King yellow background */
+    cursor: pointer;            /* Make it clickable */
+}
+
+/* KFC Button Styles */
+.kfcButton {
+    width: 150px;                /* Set width of button */
+    height: 150px;               /* Set height of button */
+    display: flex;               /* Use flexbox for layout */
+    align-items: center;         /* Vertically center content */
+    justify-content: center;     /* Horizontally center content */
+    border: none;                /* Remove default border */
+    border-radius: 8px;          /* Rounded corners */
+    background-color: #a3070b;   /* KFC white background */
+    cursor: pointer;            /* Make it clickable */
+}
+
+.phutButton {
+    width: 150px;                /* Set width of button */
+    height: 150px;               /* Set height of button */
+    display: flex;               /* Use flexbox for layout */
+    align-items: center;         /* Vertically center content */
+    justify-content: center;     /* Horizontally center content */
+    border: none;                /* Remove default border */
+    border-radius: 8px;          /* Rounded corners */
+    background-color: #545350;   /* KFC white background */
+    cursor: pointer;            /* Make it clickable */
+}
+
+/* Image inside buttons */
+.mcdoButton img, .bkButton img, .kfcButton img, .phutButton img {
+    width: 150px;                 /* Adjust image size to fit inside button */
+    height: 150px;
+    object-fit: contain;         /* Ensure the image fits within the button */
+}
