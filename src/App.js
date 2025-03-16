@@ -7,10 +7,12 @@ import Home from "./Home";
 function App() {
   return (
     <Router>
-      <Home/>
     <Navbar />
     <div>
-      <Signin />
+      <Routes>
+          <Route path="/" element={<Home />} />   {/* Affiche Home uniquement sur "/" */}
+          <Route path="/signin" element={<Signin />} />  {/* Page de connexion */}
+        </Routes>
   
       
     </div>
