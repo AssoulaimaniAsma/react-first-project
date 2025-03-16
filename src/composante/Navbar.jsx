@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import Home from "../src/Home";
+import Home from "../Home";
 //import "./Navbar.css"
 
 const Navbar = () => {
@@ -17,7 +17,7 @@ const Navbar = () => {
       {/* Menu */}
       <ul className="flex space-x-6 text-gray-700">
         <li>
-          <Link to="../Home" className="relative px-4 py-2 text-black transition duration-300 ease-in-out 
+          <Link to="Home" className="relative px-4 py-2 text-black transition duration-300 ease-in-out 
                hover:text-white before:absolute before:inset-0 before:w-0 
                before:h-full before:bg-[#FD4C2A] before:rounded-full before:transition-all 
                before:duration-300 hover:before:w-full before:z-[-1] z-[1]">Home</Link>
