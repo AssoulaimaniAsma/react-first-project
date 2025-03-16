@@ -9,10 +9,8 @@ function App() {
     <Router>
     <Navbar />
     <div>
-      <Routes>
-          <Route path="/" element={<Home />} />   {/* Affiche Home uniquement sur "/" */}
-          <Route path="/signin" element={<Signin />} />  {/* Page de connexion */}
-        </Routes>
+          <Home/>
+          <signin />
   
       
     </div>
