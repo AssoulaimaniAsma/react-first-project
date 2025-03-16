@@ -7,9 +7,9 @@ import Home from "./Home";
 function App() {
   return (
     <Router>
+      <Home/>
     <Navbar />
     <div>
-      <Home/>
       <Signin />
   
       
