@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import Home from "../Home";
-//import "./Navbar.css"
+import Home from "./Home";
+import logo from "../image/favicon.png";
+//import "../css/Navbar.css"
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -10,8 +11,10 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
       {/* Logo */}
-      <div className="text-[#FD4C2A] text-2xl font-bold"> 
-        <Link to="/">LOGO</Link>
+      <div className="text-[#FD4C2A]  font-bold"> 
+      <img src={logo}
+      className="w-15 h-10"/>
+      <Link to="Home" className="relative px-4 py-2 text-black"><span className="text-[#FD4C2A]">Savory</span>Bites</Link>
       </div>
 
       {/* Menu */}

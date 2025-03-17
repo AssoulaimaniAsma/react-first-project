@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import "./signup.css";
+import "../css/signup.css";
 
 function Signup() {
   const [loading, setLoading] = useState(true);

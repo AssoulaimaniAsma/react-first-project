@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import "./signin.css";
+import { Link, useNavigate } from "react-router-dom"; 
+import "../css/signin.css";
 
 function Signin() {
   const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [reverseLayout, setReverseLayout] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -14,6 +15,13 @@ function Signin() {
     }, 2000);
   }, []);
 
+  const handleLogin = () => {
+    // Ici, vous pouvez ajouter la logique de connexion (ex: vérification d'identifiants)
+    console.log("User logged in");
+    
+    // Rediriger vers la page Home
+    navigate("/home");
+  };
   return (
     <div>
       {loading ? (
@@ -63,7 +71,8 @@ function Signin() {
               </div>
 
               {/* Bouton Login */}
-              <button className="w-full mt-6 bg-[#FD4C2A] text-white py-3 rounded-full font-bold text-lg hover:bg-orange-600 transition">
+              <button onClick={handleLogin} 
+              className="w-full mt-6 bg-[#FD4C2A] text-white py-3 rounded-full font-bold text-lg hover:bg-orange-600 transition">
                 Login
               </button>
 
