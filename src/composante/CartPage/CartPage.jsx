@@ -89,6 +89,7 @@ function CartPage(){
                     </tr>
                 </tbody>
             </table>
+            <div className="SecondPart">
             <h2>You May Also Like</h2>
             <div className="imageContent">
                 {recommendation.map(item=>(
@@ -103,7 +104,7 @@ function CartPage(){
                     </div>
                 ))}
             </div>
-            hh
+            </div>
         </div>
     );
 }
