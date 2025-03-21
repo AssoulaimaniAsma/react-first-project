@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Signin from "./composante/signin";
 import Signup from "./composante/signup";
 import Navbar from "./composante/Navbar";
+import CartPage from "./composante/CartePage";
 import ContactForm from "./composante/feed_back";
 import Home from "./composante/Home";
 import "./App.css";
@@ -34,6 +35,7 @@ function AnimatedRoutes() {
             <Route path="/" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/contact" element={<ContactForm />} />
+            <Route path="/CartPage" element={<CartPage/>} />
             <Route path="/home" element={<Home />} />
           </Routes>
         </div>
