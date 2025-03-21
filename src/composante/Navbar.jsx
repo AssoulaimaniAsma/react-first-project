@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
 import Home from "./Home";
+import CartPage from "./CartPage";
 import logo from "../image/favicon.png";
 //import "../css/Navbar.css"
 
