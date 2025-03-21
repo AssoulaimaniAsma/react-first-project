@@ -66,9 +66,9 @@ const Navbar = () => {
       {/* Icons */}
       <div className="flex items-center space-x-4 text-[#FD4C2A]">
         <FaUser className="text-xl cursor-pointer" />
-        <link to="/CartPage">
+        <Link to="/CartPage">
           <FaShoppingBag className="text-xl cursor-pointer" />
-        </link>
+        </Link>
       </div>
     </nav>
   );
