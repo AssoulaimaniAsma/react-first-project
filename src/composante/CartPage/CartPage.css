@@ -1,13 +1,13 @@
 .cartContainer{
     width:100%;
-    padding-top:120px;
+    padding-top:80px;
 }
 .Product{
     width:50%;
     height:auto;
     border-radius:50px;
     border-collapse: collapse;
-   
+    position:absolute;
     margin-left:50px;
 }
 .headTable{
@@ -67,6 +67,7 @@ button {
     border-radius:5px;
 }
 h2{
+    padding-top:20px;
     color:#FD4C2A;
 }
 .SecondPart{
