@@ -8,11 +8,11 @@ function CartPage(){
         {id: 3 , image: "URL1", name: "item3" , price: 80, quantity : 1 }
     ];
     const recommendation=[
-        {id:"x", image: require("../../images/pizza.png"), name: "item x", oldPrice:200, newPrice: 140},
-        {id:"y", image: require("../../images/pizza.png"), name: "item y", oldPrice:230, newPrice: 200},
-        {id:"z", image: require("../../images/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
-        {id:"z", image: require("../../images/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
-        {id:"z", image: require("../../images/pizza.png"), name: "item z", oldPrice:200, newPrice: 140}
+        {id:"x", image: require("../../image/pizza.png"), name: "item x", oldPrice:200, newPrice: 140},
+        {id:"y", image: require("../../image/pizza.png"), name: "item y", oldPrice:230, newPrice: 200},
+        {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
+        {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
+        {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140}
     ];
     //initialiser l etat cart avec la valeur de products
     //cart stocke la liste actuelle des produits ajoutes au panier
