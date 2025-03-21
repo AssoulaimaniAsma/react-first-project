@@ -1,0 +1,39 @@
+table{
+    width:500px;
+    height:auto;
+    border-radius:25%;
+}
+thead{
+    background-color:#FD4C2A;
+    color :white ;
+}
+th{
+    text-align:center;
+}
+td{
+    text-align:center;
+}
+tr{
+    border:1px solid black;
+    height:50px;
+}
+button {
+    border:none;
+    background-color:transparent;
+}
+.quantity-container {
+    display: flex; /* Disposition en ligne */
+    align-items: center; /* Aligne les éléments verticalement */
+    border: 1px solid #ccc; /* Bordure autour du conteneur */
+    padding: 5px; /* Espacement à l'intérieur de la bordure */
+    border-radius: 5px; /* Bords arrondis pour le conteneur */
+}
+
+.quantity-container button {
+    background-color: #f0f0f0; /* Couleur de fond des boutons */
+    border: 1px solid #ccc; /* Bordure autour des boutons */
+    padding: 5px 10px; /* Espacement à l'intérieur des boutons */
+    margin: 0 5px; /* Espace entre les boutons */
+    cursor: pointer; /* Curseur de souris pointer */
+    border-radius: 3px; /* Bords arrondis pour les boutons */
+}
