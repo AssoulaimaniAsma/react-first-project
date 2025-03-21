@@ -14,23 +14,16 @@ function CartPage(){
         {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
         {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140}
     ];
-    //initialiser l etat cart avec la valeur de products
-    //cart stocke la liste actuelle des produits ajoutes au panier
-    //setCart est fct qui permet de mettre a jour l etat cart
     const [cart, setCart]=useState(Products);
     const UpdateQuantity = (id,amount) => {
         setCart(cart.map(item =>
-            //...item copie toutes les proprietes de item
-            //Math.max(1, ...) ➝ Empêche la quantité de descendre sous 1.
             item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
         ));
     };
     const RemoveItem =(id) =>{
-        //cart.filter(...) Crée un nouveau tableau contenant seulement les produits dont l'id est différent de id.
         setCart(cart.filter(item => item.id !== id));
     };
     
-    //acc garde la somme totale au fil du parcours.
     const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const discount=subtotal*0.2;
     const total = subtotal - discount;
