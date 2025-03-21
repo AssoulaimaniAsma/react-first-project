@@ -5,5 +5,12 @@ export default {
     extend: {},
   },
   plugins: [],
+  theme: {
+    extend: {
+      colors: {
+        '[#FD4C2A]': '#FD4C2A',
+      },
+    },
+  },
 }
 

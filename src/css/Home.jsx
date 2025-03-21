@@ -215,7 +215,7 @@ function Home() {
       <h2 className="text-2xl font-bold text-red-600 mb-6">Most Popular Products</h2>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {products.map((product, index) => (
-          <div key={index} className="relative  rounded-lg p-4">
+          <div key={index} className="relative border border-[#FD4C2A] rounded-lg p-4">
             <span className="absolute top-2 left-2 bg-[#FD4C2A] text-white px-2 py-1 text-xs font-bold rounded">{product.discount}</span>
             <img className="w-full h-64 rounded-lg" src={product.image} alt="Food item" />
             <div className="mt-2 text-center">
