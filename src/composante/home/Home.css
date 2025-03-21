@@ -9,6 +9,9 @@
     color :#FD4C2A;
     
 }
+.absolute {
+  z-index: 50; /* Assure que le menu est visible */
+}
 h1{
     padding-top: 130px;
     padding-left:160px;
