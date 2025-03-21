@@ -1,3 +1,7 @@
+.cartContainer{
+    width:100%;
+    padding-top:80px;
+}
 .Product{
     width:50%;
     height:auto;
