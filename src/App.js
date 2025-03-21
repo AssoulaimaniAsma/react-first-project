@@ -7,7 +7,7 @@ import Navbar from "./composante/Navbar/Navbar";
 import ContactForm from "./composante/feed_back/feed_back";
 import Home from "./composante/home/Home";
 import AccountSettings from "./composante/Account_Setting/Account_Setting";
-import CartPage from "./composante/CartePage";  // Garder cette ligne si elle est nécessaire
+import CartPage from "./composante/CartePage/CartPage";  // Garder cette ligne si elle est nécessaire
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -17,6 +17,7 @@ function AnimatedRoutes() {
   const contactRef = useRef(null);
   const homeRef = useRef(null);
   const accountRef = useRef(null);
+  const cartePageRef= useRef(null);
 
   return (
     <TransitionGroup>
@@ -28,7 +29,8 @@ function AnimatedRoutes() {
           location.pathname === "/signup" ? signupRef :  
           location.pathname === "/contact" ? contactRef : 
           location.pathname === "/home" ? homeRef :
-          location.pathname === "/account" ? accountRef : 
+          location.pathname === "/account" ? accountRef :
+          location.pathname === "/CartPage" ? cartePageRef : 
           signinRef
         }
       >
@@ -37,6 +39,7 @@ function AnimatedRoutes() {
           location.pathname === "/contact" ? contactRef : 
           location.pathname === "/home" ? homeRef :
           location.pathname === "/account" ? accountRef : 
+          location.pathname === "/CartPage" ? cartePageRef :
           signinRef
         }>
           <Routes location={location}>
@@ -46,6 +49,7 @@ function AnimatedRoutes() {
             <Route path="/CartPage" element={<CartPage />} />
             <Route path="/home" element={<Home />} />
             <Route path="/account" element={<AccountSettings />} />
+            <Route path="/CartPage" element={<CartPage />} />
           </Routes>
         </div>
       </CSSTransition>
