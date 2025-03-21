@@ -7,7 +7,7 @@ import Navbar from "./composante/Navbar/Navbar";
 import ContactForm from "./composante/feed_back/feed_back";
 import Home from "./composante/home/Home";
 import AccountSettings from "./composante/Account_Setting/Account_Setting";
-import CartPage from "./composante/CartePage/CartPage";  // Garder cette ligne si elle est nécessaire
+import CartPage from "./composante/CartPage/CartPage";  // Garder cette ligne si elle est nécessaire
 import "./App.css";
 
 function AnimatedRoutes() {
