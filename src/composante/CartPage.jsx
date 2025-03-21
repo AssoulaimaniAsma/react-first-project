@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "./CartPage.css";
-
+import "../css/CartPage.css";
 function CartPage(){
     const Products =[
         {id: 1 , image: "URL1", name: "item1" , price: 180, quantity : 1 },
