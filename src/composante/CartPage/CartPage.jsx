@@ -30,6 +30,7 @@ function CartPage(){
 
     return(
         <div className="cartContainer">
+            <div className="tableContainer">
             <table className="Product">
                 <thead>
                     <tr className="headTable">
@@ -84,6 +85,7 @@ function CartPage(){
                     </tr>
                 </tbody>
             </table>
+            </div>
             <div className="SecondPart">
                 <h2>You May Also Like</h2>
                 <div className="imageContent">
