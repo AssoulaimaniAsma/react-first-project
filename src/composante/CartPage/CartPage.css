@@ -1,7 +1,7 @@
 .cartContainer{
     width:100%;
     display:flex;
-    align-items:center;
+    gap:20px;
 }
 table{
     border-collapse:collapse;
