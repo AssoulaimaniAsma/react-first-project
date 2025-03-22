@@ -5,6 +5,9 @@ function CartPage(){
     const Products =[
         {id: 1 , image: require("../../image/pizza.png"), name: "item1" , price: 180, quantity : 1 },
         {id: 2 , image: require("../../image/pizza.png"), name: "item2" , price: 40, quantity : 1 },
+        {id: 3 , image: require("../../image/pizza.png"), name: "item3" , price: 80, quantity : 1 },
+        {id: 1 , image: require("../../image/pizza.png"), name: "item1" , price: 180, quantity : 1 },
+        {id: 2 , image: require("../../image/pizza.png"), name: "item2" , price: 40, quantity : 1 },
         {id: 3 , image: require("../../image/pizza.png"), name: "item3" , price: 80, quantity : 1 }
     ];
     const recommendation=[
@@ -71,7 +74,7 @@ function CartPage(){
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bodyTab">
                     <tr>
                             <th>SUBTOTAL</th>
                             <td className="tdContent">{subtotal.toFixed(2)} DH</td>
@@ -83,6 +86,10 @@ function CartPage(){
                     <tr>
                             <th>TOTAL</th>
                             <td className="tdContent">{total.toFixed(2)} DH</td>
+                    </tr>
+                    <tr className="fotter">
+                            <th ><button>Proceed To Checkout</button></th>
+                            <td></td>
                     </tr>
                 </tbody>
             </table>
