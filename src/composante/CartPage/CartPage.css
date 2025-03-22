@@ -4,12 +4,16 @@
     display:flex;
     align-items:center;
 }
+table{
+    border-collapse:collapse;
+}
 .tableContainer{
     display:flex;
-    width:90%;
+    width:80%;
+    margin:auto;
 }
 .Product{
-    width:60%;
+    width:55%;
     height:auto;
     border-radius:50px;
     border-collapse: collapse;
@@ -37,7 +41,7 @@ button {
 }
 
 .TotalPrice{
-    width:35%;
+    width:40%;
     height:auto;
     margin-left:850px;
     border-collapse:collapse;
