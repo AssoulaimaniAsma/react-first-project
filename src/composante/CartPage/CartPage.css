@@ -1,9 +1,15 @@
 .cartContainer{
     width:100%;
     padding-top:80px;
+    display:flex;
+    align-items:center;
+}
+.tableContainer{
+    display:flex;
+    width:90%;
 }
 .Product{
-    width:50%;
+    width:60%;
     height:auto;
     border-radius:50px;
     border-collapse: collapse;
@@ -31,7 +37,7 @@ button {
 }
 
 .TotalPrice{
-    width:40%;
+    width:35%;
     height:auto;
     margin-left:850px;
     border-collapse:collapse;
