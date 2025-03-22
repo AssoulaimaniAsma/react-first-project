@@ -13,7 +13,7 @@
     border-collapse: collapse;
     margin-left:50px;
 }
-.headTable , .headTable2 th{
+.headTable , .headTable2 th, .fotter{
     background-color:#FD4C2A;
     color :white ;
     height:50px;
@@ -25,7 +25,11 @@
     text-align :center;
     justify-content:center;
 }
-tr{
+.bodyTab2 tr{
+    border:1px solid rgb(214, 211, 211);
+    height:auto;
+}
+.TotalPrice .bodyTab tr{
     border:1px solid rgb(214, 211, 211);
     height:50px;
 }
@@ -39,6 +43,8 @@ button {
     height:auto;
     margin-left:20px;
     border-collapse:collapse;
+    flex-shrink: 0;
+    align-self: flex-start;
 }
 
 .tdContent{
@@ -70,9 +76,11 @@ button {
 h2{
     padding-top:20px;
     color:#FD4C2A;
+    font-weight: normal !important;
 }
 .SecondPart{
     padding-left:40px;
+    padding-top:150px;
     position:relative;
     display:block;
     clear: both;
@@ -90,5 +98,8 @@ h2{
 }
 .picProd{
     display:flex;
+    align-items:center;
+}
+.fotter{
     align-items:center;
 }
