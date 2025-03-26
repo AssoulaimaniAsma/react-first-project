@@ -50,41 +50,77 @@ button {
 .tdContent{
     padding-left:250px;
 }
-.PriceContainer{
-    padding-left:60px;
-    display:flex;
+
+#SecondPart{
+    margin-top:250px;
 }
-.oldPrice{
-    text-decoration: line-through;
+#h2content5{
+    padding-left:600px;
+    font-weight:bold !important;
+    font-size:2rem;
     color:#FD4C2A;
 }
-.imageContent{
-    display:flex;
-    gap: 60px;
-}
-.imageItem{
-    text-align:center;
-    position:relative;
-}
-.discountBadge{
+#discountBadge2{
     padding:3px;
-    margin-left:110px;
+    margin-left:170px;
     position:absolute;
     background-color:#FD4C2A;
     border-radius:5px;
-}
-h2{
-    padding-top:20px;
-    color:#FD4C2A;
-    font-weight: normal !important;
-}
-.SecondPart{
-    padding-left:40px;
-    padding-top:150px;
+} 
+#imageContent2 {
+    display: flex;
+    flex-wrap: wrap; 
+    width: 100%;
+    max-width: 1400px;
+    height:350px;
     position:relative;
-    display:block;
-    clear: both;
-    width:100%;
+    z-index:1; 
+    gap : 50px;
+    margin-top:50px;
+    margin-left:150px;
+}
+
+#imageItem2 {
+    width: 200px;
+    height:200px;
+    flex-direction: column;
+}
+
+#imageItem2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 25px;
+}
+#nameImg2 {
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+
+#PriceContainer2 {
+    display: flex;
+}
+#oldPrice2{
+    padding-left:0;
+    color:#6B7280;
+    text-decoration:line-through;
+}
+.PriceContainer2{
+    margin-left:-30px;
+    display:flex;
+    position:absolute;
+}
+#Add2{
+    border:2px solid #FD4C2A;
+    color:#FD4C2A;
+    width:30px;
+    border-radius:50%;
+    font-weight:bold;
+    
+}
+#AddToCart2{
+    padding-left:170px;
 }
 .quantityContent{
     width:40px;
