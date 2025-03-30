@@ -1,22 +1,29 @@
+.cartContainer{
+    display:block;
+    align-items:center;
+    border-collapse:collapse;
+}
+.tableContainer{
+    display:flex;
+}
 .Product{
-    width:50%;
+    width:700px;
     height:auto;
     border-radius:50px;
     border-collapse: collapse;
-    position:absolute;
     margin-left:50px;
 }
-.headTable{
+.headTable , .headTable2 th{
     background-color:#FD4C2A;
     color :white ;
-    border:1px solid transparent;
     height:50px;
 }
-th{
+.headTable th{
     text-align:center;
 }
-td{
-    text-align:center;
+.bodyTab2 td{
+    text-align :center;
+    justify-content:center;
 }
 tr{
     border:1px solid rgb(214, 211, 211);
@@ -30,14 +37,12 @@ button {
 .TotalPrice{
     width:40%;
     height:auto;
-    margin-left:850px;
+    margin-left:20px;
     border-collapse:collapse;
 }
+
 .tdContent{
-    padding-left:400px;
-}
-.tdContent1{
-    padding-left:430px;
+    padding-left:250px;
 }
 .PriceContainer{
     padding-left:60px;
@@ -57,7 +62,7 @@ button {
 }
 .discountBadge{
     padding:3px;
-    margin-left:160px;
+    margin-left:110px;
     position:absolute;
     background-color:#FD4C2A;
     border-radius:5px;
@@ -65,4 +70,25 @@ button {
 h2{
     padding-top:20px;
     color:#FD4C2A;
+}
+.SecondPart{
+    padding-left:40px;
+    position:relative;
+    display:block;
+    clear: both;
+    width:100%;
+}
+.quantityContent{
+    width:40px;
+    height:20px;
+}
+.DecQuantity {
+    padding : 6px;
+}
+.IncQuantity{
+    padding:6px;
+}
+.picProd{
+    display:flex;
+    align-items:center;
 }

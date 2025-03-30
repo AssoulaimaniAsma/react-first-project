@@ -10,7 +10,9 @@ export default {
       colors: {
         '[#FD4C2A]': '#FD4C2A',
       },
+      fontFamily: {
+        sans: ['Oxygen', 'sans-serif'],
+      },
     },
   },
 }
-

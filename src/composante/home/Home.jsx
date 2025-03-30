@@ -82,18 +82,19 @@ function Home() {
           <p className="adtext2 pl-40">you—quick, easy, and hassle-free!</p>
 
           {/* Bouton Explore */}
-          {/*<button className="transition duration-700 ease-in-out explore ml-48 mt-5 bg-[#FD4C2A] text-white px-8 py-2 rounded-full">
-            Explore →
-          </button>*/}
-          <a href="#_" class="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]">
-            <span class="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
-            <span class="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </span>
-            <span class="relative">Explore</span>
-          </a>
+          <a href="#_" className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]">
+
+  <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-500 ease"></span>
+
+  <span className="relative z-10">Explore</span>
+
+
+  <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease opacity-0 group-hover:opacity-100">
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+  </svg>
+</span>
+</a>
         </div>
       </div>
       
