@@ -5,14 +5,17 @@ function CartPage(){
     const Products =[
         {id: 1 , image: require("../../image/pizza.png"), name: "item1" , price: 180, quantity : 1 },
         {id: 2 , image: require("../../image/pizza.png"), name: "item2" , price: 40, quantity : 1 },
-        {id: 3 , image: require("../../image/pizza.png"), name: "item3" , price: 80, quantity : 1 }
+        {id: 3 , image: require("../../image/pizza.png"), name: "item3" , price: 80, quantity : 1 },
+        {id: 4 , image: require("../../image/pizza.png"), name: "item1" , price: 180, quantity : 1 },
+        {id: 5 , image: require("../../image/pizza.png"), name: "item2" , price: 40, quantity : 1 },
+        {id: 6 , image: require("../../image/pizza.png"), name: "item3" , price: 80, quantity : 1 }
     ];
-    const recommendation=[
+    const recommendations=[
         {id:"x", image: require("../../image/pizza.png"), name: "item x", oldPrice:200, newPrice: 140},
         {id:"y", image: require("../../image/pizza.png"), name: "item y", oldPrice:230, newPrice: 200},
         {id:"z", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
-        {id:"a", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140},
-        {id:"b", image: require("../../image/pizza.png"), name: "item z", oldPrice:200, newPrice: 140}
+        {id:"a", image: require("../../image/pizza.png"), name: "item a", oldPrice:200, newPrice: 140},
+        {id:"b", image: require("../../image/pizza.png"), name: "item b", oldPrice:200, newPrice: 140}
     ];
     const [cart, setCart]=useState(Products);
     const UpdateQuantity = (id,amount) => {
@@ -71,7 +74,7 @@ function CartPage(){
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bodyTab">
                     <tr>
                             <th>SUBTOTAL</th>
                             <td className="tdContent">{subtotal.toFixed(2)} DH</td>
@@ -84,20 +87,27 @@ function CartPage(){
                             <th>TOTAL</th>
                             <td className="tdContent">{total.toFixed(2)} DH</td>
                     </tr>
+                    <tr className="fotter">
+                            <th ><button>Proceed To Checkout</button></th>
+                            <td></td>
+                    </tr>
                 </tbody>
             </table>
             </div>
-            <div className="SecondPart">
-                <h2>You May Also Like</h2>
-                <div className="imageContent">
-                    {recommendation.map(item=>(
-                        <div className="imageItem" key={item.id}>
-                            <span className="discountBadge">13%</span>
-                            <img src={item.image} width="200" height="200" />
-                            <div>{item.name}</div>
-                            <div className="PriceContainer">
-                                <div className="oldPrice">{item.oldPrice}</div>
-                                <div className="newPrice">DH{item.newPrice}</div>
+            <div id="SecondPart">
+                <h2 id="h2content5">You May Also Like</h2>
+                <div id="imageContent2">
+                    {recommendations.map(item=>(
+                        <div id="imageItem2" key={item.id}>
+                            <span id="discountBadge2">13%</span>
+                            <img src={item.image} />
+                            <div id="nameImg2">{item.name}</div>
+                            <div id="PriceContainer2">
+                                <div id="oldPrice2">{item.oldPrice}DH</div>
+                                <div id="newPrice2">{item.newPrice}DH</div>
+                            </div>
+                            <div id="AddToCart2">
+                                <button id="Add2">+</button>
                             </div>
                         </div>
                     ))}
