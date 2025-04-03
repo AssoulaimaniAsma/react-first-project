@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Products from "../Products/Products";
 import "./CartPage.css";
 
@@ -105,6 +106,9 @@ function CartPage() {
   const discount = subtotal * 0.2;
   const total = subtotal - discount;
 
+
+  const navigate = useNavigate();
+  
   return (
     <div className="cartContainer">
       <div className="tableContainer">
@@ -168,7 +172,7 @@ function CartPage() {
             </tr>
             <tr className="fotter">
               <th>
-                <button>Proceed To Checkout</button>
+                <button onClick={() => navigate("/Checkout")}>Proceed To Checkout</button>
               </th>
               <td></td>
             </tr>

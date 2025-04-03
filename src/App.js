@@ -11,6 +11,7 @@ import Sidebar from "./composante/SideBar/Sidebar";
 import AccountSettings from "./composante/Account_Setting/Account_Setting";
 import CartPage from "./composante/CartPage/CartPage";
 import History from "./composante/History/History";
+import Checkout from "./composante/Checkout/Checkout";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -24,6 +25,7 @@ function AnimatedRoutes() {
   const ourmenuRef= useRef(null);
   const sidebarRef=useRef(null);
   const historyRef= useRef(null);
+  const checkoutRef=useRef(null);
 
 
   return (
@@ -41,6 +43,7 @@ function AnimatedRoutes() {
           location.pathname ==="/Our_Menu"  ? ourmenuRef:
           location.pathname === "/History" ? historyRef : 
           location.pathname ==="/SideBar"  ? ourmenuRef:
+          location.pathname ==="/Checkout"  ? checkoutRef:
           homeRef
           
         }
@@ -54,6 +57,7 @@ function AnimatedRoutes() {
           location.pathname ==="/Our_Menu"  ? ourmenuRef:
           location.pathname === "/History" ? historyRef :
           location.pathname ==="/SideBar"  ? ourmenuRef:
+          location.pathname ==="/Checkout"  ? checkoutRef:
           homeRef
         }>
           <Routes location={location}>
@@ -67,6 +71,7 @@ function AnimatedRoutes() {
             <Route path="/Our_Menu" element={<Our_Menu />} />
             <Route path="/SideBar" element={<Sidebar />} />
             <Route path="/history/:userId" element={<History />} />
+            <Route path="/Checkout" element={<Checkout />}/>
           </Routes>
         </div>
       </CSSTransition>

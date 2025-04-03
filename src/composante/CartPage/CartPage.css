@@ -1,10 +1,10 @@
 .cartContainer{
     display:block;
-    align-items:center;
     border-collapse:collapse;
 }
 .tableContainer{
     display:flex;
+    padding-top:90px;
 }
 .Product{
     width:700px;
@@ -43,17 +43,16 @@ button {
     height:auto;
     margin-left:20px;
     border-collapse:collapse;
-    flex-shrink: 0;
-    align-self: flex-start;
+    
 }
 
 .tdContent{
     padding-left:250px;
 }
-
 #SecondPart{
-    margin-top:250px;
+    margin-top:290px;
 }
+
 #h2content5{
     padding-left:600px;
     font-weight:bold !important;

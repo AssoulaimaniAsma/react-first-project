@@ -111,6 +111,23 @@ const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     //The onClick={() => setIsOpen(!isOpen)} toggles the isOpen state each time the user clicks the dropdown.
     <div className="isOpenState" onClick={() => setIsOpen(!isOpen)}>
       <div className="VisiblePart">
@@ -158,33 +175,29 @@ function Home() {
           </p>
           <p className="adtext2 pl-40">you—quick, easy, and hassle-free!</p>
 
-          {/* Bouton Explore */}
-          {/*<button className="transition duration-700 ease-in-out explore ml-48 mt-5 bg-[#FD4C2A] text-white px-8 py-2 rounded-full">
-            Explore →
-            </button>*/}
-          <a
-            href="#_"
-            className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]"
-          >
-            <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
-            <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+          <Link
+                to="/Our_Menu"
+                className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </span>
-            <span class="relative">Explore</span>
-          </a>
+                <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
+                <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    ></path>
+                  </svg>
+                </span>
+                <span className="relative">Explore</span>
+              </Link>
         </div>
       </div>
 
@@ -334,7 +347,7 @@ function Home() {
         </div>
       </div>
 
-      <footer className="fotterPage w-full bg-[#4d1d14] text-white py-10 mt-auto">
+      <footer className="fotterPage ">
         <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-8 py-10 ">
           <div className="col-span-full mb-10 2xl:col-span-2 lg:mb-0 flex items-center flex-col 2xl:items-start">
             <img
