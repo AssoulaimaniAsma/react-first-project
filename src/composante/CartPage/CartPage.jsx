@@ -1,53 +1,12 @@
 import React, { useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Products from "../Products/Products";
+import { CartContext } from "../CartContext/CartContext";
 import "./CartPage.css";
 
 function CartPage() {
-  const products = [
-    {
-      id: 1,
-      image: require("../../image/pizza.png"),
-      name: "item1",
-      price: 180,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: require("../../image/pizza.png"),
-      name: "item2",
-      price: 40,
-      quantity: 1,
-    },
-    {
-      id: 3,
-      image: require("../../image/pizza.png"),
-      name: "item3",
-      price: 80,
-      quantity: 1,
-    },
-    {
-      id: 4,
-      image: require("../../image/pizza.png"),
-      name: "item1",
-      price: 180,
-      quantity: 1,
-    },
-    {
-      id: 5,
-      image: require("../../image/pizza.png"),
-      name: "item2",
-      price: 40,
-      quantity: 1,
-    },
-    {
-      id: 6,
-      image: require("../../image/pizza.png"),
-      name: "item3",
-      price: 80,
-      quantity: 1,
-    },
-  ];
+  const { cart, AddToCart, UpdateQuantity } = useContext(CartContext);
   const recommendations = [
     {
       id: "x",
@@ -85,20 +44,14 @@ function CartPage() {
       newPrice: 140,
     },
   ];
-  const [cart, setCart] = useState(products);
-  const UpdateQuantity = (id, amount) => {
-    setCart(
-      cart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
-          : item
-      )
-    );
-  };
+  
   const RemoveItem = (id) => {
-    setCart(cart.filter((item) => item.id !== id));
+    const updatedCart = cart.filter((item) => item.id !== id);
+    // Save updated cart to localStorage manually since setCart is internal to context
+    localStorage.setItem(`cart_${localStorage.getItem("userId")}`, JSON.stringify(updatedCart));
+    window.location.reload(); // Quick hack to reflect change (or re-render with useEffect)
   };
-
+  <CartContext.Provider value={{ cart, AddToCart, UpdateQuantity }}></CartContext.Provider>
   const subtotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -108,6 +61,7 @@ function CartPage() {
 
 
   const navigate = useNavigate();
+  
   
   return (
     <div className="cartContainer">
@@ -192,7 +146,7 @@ function CartPage() {
                 <div id="newPrice2">{item.newPrice}DH</div>
               </div>
               <div id="AddToCart2">
-                <button id="Add2">+</button>
+                <button id="Add2" onClick={() => AddToCart(item)}>+</button>
               </div>
             </div>
           ))}

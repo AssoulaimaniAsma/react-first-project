@@ -5,6 +5,7 @@
 .tableContainer{
     display:flex;
     padding-top:90px;
+    align-items: flex-start; /* Ensures tables don't stretch to match height */
 }
 .Product{
     width:700px;

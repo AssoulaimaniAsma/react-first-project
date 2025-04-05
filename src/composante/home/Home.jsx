@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useContext } from "react";
 import "./Home.css";
 import MyImage from "../../image/food.jpg";
 import MyImage1 from "../../image/burger1.jpeg";
@@ -16,6 +17,7 @@ import { FiChevronDown } from "react-icons/fi";
 import Mcdo from "../../image/mcdo.png";
 import logo from "../../image/favicon.png";
 import { Link } from "react-router-dom";
+import { CartContext } from "../CartContext/CartContext";
 
 const recommendation = [
   {
@@ -111,23 +113,6 @@ const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     //The onClick={() => setIsOpen(!isOpen)} toggles the isOpen state each time the user clicks the dropdown.
     <div className="isOpenState" onClick={() => setIsOpen(!isOpen)}>
       <div className="VisiblePart">
@@ -147,6 +132,7 @@ const DropdownBox = ({ title, content }) => {
 };
 
 function Home() {
+  const { cart, AddToCart, UpdateQuantity } = useContext(CartContext);
   const [panier, setPanier] = useState([]);
   const AjouterPanier = (item) => {
     console.log(`${item.nom} ajouté au panier`);
@@ -176,28 +162,28 @@ function Home() {
           <p className="adtext2 pl-40">you—quick, easy, and hassle-free!</p>
 
           <Link
-                to="/Our_Menu"
-                className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]"
+            to="/Our_Menu"
+            className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]"
+          >
+            <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
+            <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
-                <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    ></path>
-                  </svg>
-                </span>
-                <span className="relative">Explore</span>
-              </Link>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </span>
+            <span className="relative">Explore</span>
+          </Link>
         </div>
       </div>
 
@@ -217,7 +203,7 @@ function Home() {
                 <div id="newPrice">{item.newPrice}DH</div>
               </div>
               <div id="AddToCart">
-                <button onClick={() => AjouterPanier(item)} id="Add">
+                <button onClick={() => AddToCart(item)} id="Add">
                   +
                 </button>
               </div>
@@ -295,7 +281,9 @@ function Home() {
                 <div className="newPrice">{item.newPrice}DH</div>
               </div>
               <div id="AddToCart1">
-                <button id="Add1">+</button>
+                <button id="Add1" onClick={() => AddToCart(item)}>
+                  +
+                </button>
               </div>
             </div>
           ))}
@@ -483,7 +471,7 @@ function Home() {
 
         <div className="final_part">
           <p className="copyright">
-            &copy; 2025 My Company. All rights reserved.
+            &copy; 2025 SavoryBites. All rights reserved.
           </p>
         </div>
       </footer>

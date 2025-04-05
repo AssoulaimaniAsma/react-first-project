@@ -12,6 +12,7 @@ import AccountSettings from "./composante/Account_Setting/Account_Setting";
 import CartPage from "./composante/CartPage/CartPage";
 import History from "./composante/History/History";
 import Checkout from "./composante/Checkout/Checkout";
+import { CartProvider } from "./composante/CartContext/CartContext";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -67,7 +68,6 @@ function AnimatedRoutes() {
             <Route path="/CartPage" element={<CartPage />} />
             <Route path="/" element={<Home />} />
             <Route path="/account" element={<AccountSettings />} />
-            <Route path="/CartPage" element={<CartPage />} />
             <Route path="/Our_Menu" element={<Our_Menu />} />
             <Route path="/SideBar" element={<Sidebar />} />
             <Route path="/history/:userId" element={<History />} />
@@ -91,9 +91,11 @@ function Main() {
 
 function App() {
   return (
-    <Router>
-      <Main />
-    </Router>
+      <CartProvider>
+        <Router>
+          <Main />
+        </Router>
+      </CartProvider>
   );
 }
 
