@@ -185,7 +185,7 @@ export default function ItemCard() {
 
       {/* Bouton Ajouter */}
       <div className="mt-4 self-end">
-  <button className=" bg-[#FD4C2A] text-white rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }}>
+  <button className=" bg-white text-[#FD4C2A] border border-[#FD4C2A] rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }}>
   <FaPlus className="text-sm" />
   </button>
 </div>

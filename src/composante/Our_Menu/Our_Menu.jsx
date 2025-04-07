@@ -69,7 +69,10 @@ export default function Our_Menu() {
                         ? "bg-yellow-100 text-yellow-700 font-semibold"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
-                    onClick={() => setSelectedCategory(filter.name)}
+                    onClick={() => {
+                      setSelectedCategory(filter.name);
+                      setCurrentPage(1);
+                    }}
                   >
                     <span className="text-xl">{filter.icon}</span> {filter.name}
                   </button>
@@ -102,7 +105,10 @@ export default function Our_Menu() {
                           ? "font-bold text-orange-600"
                           : ""
                       }`}
-                      onClick={() => setSelectedCategory(filter)}
+                      onClick={() => {
+                        setSelectedCategory(filter);
+                        setCurrentPage(1);
+                      }}
                     >
                       {filter}
                     </button>
@@ -123,7 +129,10 @@ export default function Our_Menu() {
               type="text"
               placeholder="Search An Item"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
               className="w-full border border-gray-500 focus:border-orange-500 rounded-full py-2 pl-4 pr-12 outline-none"
             />
             <button className="absolute right-0 top-0 h-full px-3 hover:text-orange-600">
@@ -176,7 +185,7 @@ export default function Our_Menu() {
 
       {/* Bouton Ajouter */}
       <div className="mt-4 self-end">
-  <button className=" bg-[#FD4C2A] text-white rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }}>
+  <button className=" bg-white text-[#FD4C2A] border border-[#FD4C2A] rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }}>
   <FaPlus className="text-sm" />
   </button>
 </div>

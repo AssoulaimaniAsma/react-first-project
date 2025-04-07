@@ -7,11 +7,11 @@ import Navbar from "./composante/Navbar/Navbar";
 import ContactForm from "./composante/feed_back/feed_back";
 import Home from "./composante/home/Home";
 import Our_Menu from "./composante/Our_Menu/Our_Menu";
-import Sidebar from "./composante/SideBar/Sidebar";
 import AccountSettings from "./composante/Account_Setting/Account_Setting";
 import CartPage from "./composante/CartPage/CartPage";
 import History from "./composante/History/History";
 import Checkout from "./composante/Checkout/Checkout";
+import ItemCard from "./composante/Test_item_card/ItemCard";
 import { CartProvider } from "./composante/CartContext/CartContext";
 import "./App.css";
 
@@ -24,7 +24,7 @@ function AnimatedRoutes() {
   const accountRef = useRef(null);
   const cartePageRef= useRef(null);
   const ourmenuRef= useRef(null);
-  const sidebarRef=useRef(null);
+  const itemCardRef=useRef(null);
   const historyRef= useRef(null);
   const checkoutRef=useRef(null);
 
@@ -45,6 +45,7 @@ function AnimatedRoutes() {
           location.pathname === "/History" ? historyRef : 
           location.pathname ==="/SideBar"  ? ourmenuRef:
           location.pathname ==="/Checkout"  ? checkoutRef:
+          location.pathname ==="/ItemCard"  ? itemCardRef:
           homeRef
           
         }
@@ -59,6 +60,7 @@ function AnimatedRoutes() {
           location.pathname === "/History" ? historyRef :
           location.pathname ==="/SideBar"  ? ourmenuRef:
           location.pathname ==="/Checkout"  ? checkoutRef:
+          location.pathname ==="/ItemCard"  ? itemCardRef:
           homeRef
         }>
           <Routes location={location}>
@@ -69,7 +71,7 @@ function AnimatedRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/account" element={<AccountSettings />} />
             <Route path="/Our_Menu" element={<Our_Menu />} />
-            <Route path="/SideBar" element={<Sidebar />} />
+            <Route path="/ItemCard" element={<ItemCard />} />
             <Route path="/history/:userId" element={<History />} />
             <Route path="/Checkout" element={<Checkout />}/>
           </Routes>
