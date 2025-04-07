@@ -6,6 +6,8 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [currentItemName, setCurrentItemName] = useState(""); // Nouvel état pour le nom de l'item
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -23,9 +25,15 @@ export const CartProvider = ({ children }) => {
 
     if (existingItem) {
       UpdateQuantity(item.id, 1);
+      setCurrentItemName(item.name); // Mettez à jour le nom de l'item
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
     } else {
       const updatedCart = [...cart, { ...item, quantity: 1, price: item.newPrice }];
       saveCart(updatedCart);
+      setCurrentItemName(item.name); // Mettez à jour le nom de l'item
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
     }
   };
 
@@ -37,7 +45,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, AddToCart, UpdateQuantity }}>
+    <CartContext.Provider value={{ cart, AddToCart, UpdateQuantity,showAlert,currentItemName }}>
       {children}
     </CartContext.Provider>
   );

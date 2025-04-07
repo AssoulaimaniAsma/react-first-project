@@ -4,6 +4,17 @@
     width:100%;
     margin:0;   
 }
+.fixed-alert {
+    position: fixed;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Assurez-vous qu'il est au-dessus des autres éléments */
+    padding: 10px; /* Ajoutez un peu de marge intérieure si nécessaire */
+    background-color: white; /* Facultatif: ajoutez un fond pour la lisibilité */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Facultatif: ajoutez une ombre */
+  }
 .Savory{
     color :#FD4C2A;
     

@@ -111,7 +111,6 @@ const products = [
 
 const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     //The onClick={() => setIsOpen(!isOpen)} toggles the isOpen state each time the user clicks the dropdown.
     <div className="isOpenState" onClick={() => setIsOpen(!isOpen)}>
@@ -130,16 +129,32 @@ const DropdownBox = ({ title, content }) => {
     </div>
   );
 };
-
 function Home() {
-  const { cart, AddToCart, UpdateQuantity } = useContext(CartContext);
+  const { cart, AddToCart, showAlert, UpdateQuantity,currentItemName  } = useContext(CartContext);
   const [panier, setPanier] = useState([]);
   const AjouterPanier = (item) => {
     console.log(`${item.nom} ajouté au panier`);
     setPanier([...panier, item]); // Ajouter le produit au panier
   };
+  const handleAddToCart = (item) => {
+    AddToCart(item);
+    // The setShowAlert logic is already in the CartContext, so no need to do it here again
+  };
   return (
     <div className="HomeDiv">
+       {showAlert && (
+        <div className="fixed-alert">
+          <div className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400" role="alert">
+            <svg className="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+            </svg>
+            <span className="sr-only">Info</span>
+            <div>
+              <span className="font-medium">{currentItemName} ajouté au panier!</span>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="divcontent">
         {/* Titre */}
         <h1 className="pt-32 pl-40 text-5xl font-bold">
@@ -207,6 +222,7 @@ function Home() {
                   +
                 </button>
               </div>
+              
             </div>
           ))}
         </div>
@@ -351,16 +367,12 @@ function Home() {
                 Trusted by food lovers across the globe. Need help? We're here
                 to help!
               </p>
-              <Link to="/contact">
-                {" "}
-                <a
-                  href=""
-                  className="py-2.5 px-5 h-9 block w-fit bg-[#FD4C2A] rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-[#d63413] lg:mx-0"
-                >
-                  {" "}
-                  Contact us{" "}
-                </a>
-              </Link>
+              <Link
+        to="/contact"
+        className="py-2.5 px-5 h-9 block w-fit bg-[#FD4C2A] rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-[#d63413] lg:mx-0"
+      >
+        Contact us
+      </Link>
             </div>
           </div>
 
@@ -368,22 +380,22 @@ function Home() {
             <h4 className="titleLink">SavoryBites</h4>
             <ul className="text-sm  transition-all duration-500 ">
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Home
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   About
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Pricing
                 </a>
               </li>
               <li>
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Features
                 </a>
               </li>
@@ -394,22 +406,22 @@ function Home() {
             <h4 className="titleLink">Products</h4>
             <ul className="text-sm  transition-all duration-500">
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Figma UI System
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Icons Assets
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Responsive Blocks
                 </a>
               </li>
               <li>
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Components Library
                 </a>
               </li>
@@ -420,22 +432,22 @@ function Home() {
             <h4 className="titleLink">Resources</h4>
             <ul className="text-sm  transition-all duration-500">
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   FAQs
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Quick Start
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   User Guide
                 </a>
               </li>
@@ -446,22 +458,22 @@ function Home() {
             <h4 className="titleLink">Blogs</h4>
             <ul className="text-sm  transition-all duration-500">
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   News
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Tips & Tricks
                 </a>
               </li>
               <li className="mb-6">
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   New Updates
                 </a>
               </li>
               <li>
-                <a href="javascript:;" className="link">
+                <a href="" className="link">
                   Events
                 </a>
               </li>
