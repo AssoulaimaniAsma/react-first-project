@@ -352,10 +352,11 @@ h1{
 .contentVisibility{
     margin-top: 0.75rem;
     color: #FD4C2A;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
 .fleche {
     color: #6B7280;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease;
 }
 .rotate-180 {
     transform: rotate(180deg);
@@ -407,13 +408,8 @@ h1{
     margin-top:50px;
 
 }
-
-
-
-
-
  .fotterPage{
-    padding-top:300px;
+    padding-top:30px;
     align-items: center;
     display:grid;
     background-color:#49140a;
@@ -440,11 +436,11 @@ h1{
     padding-left:100px;
 }
 .link{
-    color: #4B5563; /* text-gray-600 */
+    color: #FD4C2A; /* text-gray-600 */
 }
 
 .link:hover {
-    color: #1F2937; /* hover:text-gray-900 */
+    color: #FFFFFF; /* hover:text-gray-900 */
 }
 .final_part{
     width:100%;
