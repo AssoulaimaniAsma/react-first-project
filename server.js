@@ -41,6 +41,8 @@ const products = [
   { id: 28, name: "Shawarma Plate",category: "Plate", image: "/image/plat/Plat2.jpg", oldPrice: 99, newPrice: 80, discount: 19 },
   { id: 29, name: "Chicken Plate",category: "Plate", image: "/image/plat/Plat3.jpg", oldPrice: 99, newPrice: 80, discount: 19 },
   { id: 30, name: "Wings Plate ",category: "Plate", image: "/image/plat/Plat4.jpg", oldPrice: 99, newPrice: 80, discount: 19 },
+  { id: 31, name: "Tajine",category: "Moroccan Food", image: "/image/maroc/test.jpg", oldPrice: 99, newPrice: 80, discount: 19 },
+  { id: 32, name: "Pasta",category: "Pasta", image: "/image/pasta/test.jpg", oldPrice: 99, newPrice: 80, discount: 19 },
 ];
 
 app.get("/api/products", (req, res) => {
