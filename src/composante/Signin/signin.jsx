@@ -20,7 +20,7 @@ function Signin() {
     console.log("User logged in");
     
     // Rediriger vers la page Home
-    navigate("/home");
+    navigate("/");
   };
   return (
     <div>

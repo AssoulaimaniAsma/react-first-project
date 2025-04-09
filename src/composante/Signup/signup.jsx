@@ -74,23 +74,29 @@ const [errorMessage, setErrorMessage] = useState("");
       console.log("Sending data:", userData); // Vérification avant l'envoi
     
       try {
-        const response = await fetch("http://localhost:5001/api/signup", {
+        const response = await fetch("http://localhost:8080/auth/user/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(userData),
         });
-  
-        const data = await response.json();
-        console.log("Response received:", data); // Vérification de la réponse
-  
+      
         if (response.ok) {
           setSuccessMessage("Account created successfully!");
           setShowSuccessAlert(true);
           setTimeout(() => navigate("../signin"), 3000);
         } else {
-          setErrorMessage(data.message || "Signup failed");
+          // Essayer de lire le message d'erreur si backend envoie du JSON
+          let errorMessage = "Signup failed";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorMessage;
+          } catch (err) {
+            console.warn("Pas de JSON dans la réponse d'erreur");
+          }
+      
+          setErrorMessage(errorMessage);
           setShowErrorAlert(true);
         }
       } catch (error) {
@@ -128,7 +134,7 @@ const [errorMessage, setErrorMessage] = useState("");
               <h3 className="text-lg font-medium">This is a success alert</h3>
             </div>
             <div className="mt-2 mb-4 text-sm">
-              Your account has been created successfully!
+            Verification email has been sent to your email address!
             </div>
             <div className="flex justify-center"> {/* Centrer le bouton */}
               <button

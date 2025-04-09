@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("path");
 
 
-const PORT = 5001;
+const PORT = 5003;
 
 const app = express();
 app.use(express.json()); 
@@ -111,7 +111,7 @@ app.post("/api/signup", (req, res) => {
     return res.status(400).json({ message: "Cet email est déjà utilisé" });
   }
 
-  users.push({ username, email, password });
+  users.push({email, password });
   writeUsers(users);
 
   res.status(201).json({ message: "Utilisateur inscrit avec succès !" });

@@ -12,6 +12,7 @@ import CartPage from "./composante/CartPage/CartPage";
 import History from "./composante/History/History";
 import Checkout from "./composante/Checkout/Checkout";
 import ItemCard from "./composante/Test_item_card/ItemCard";
+import VerifyAccount from "./composante/VerifyAccount/VerifyAccount";
 import { CartProvider } from "./composante/CartContext/CartContext";
 import "./App.css";
 
@@ -27,7 +28,7 @@ function AnimatedRoutes() {
   const itemCardRef=useRef(null);
   const historyRef= useRef(null);
   const checkoutRef=useRef(null);
-
+  const verifyRef=useRef(null);
 
   return (
     <TransitionGroup>
@@ -46,6 +47,7 @@ function AnimatedRoutes() {
           location.pathname ==="/SideBar"  ? ourmenuRef:
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
+          location.pathname==="/VerifyAccount" ? verifyRef:
           homeRef
           
         }
@@ -61,6 +63,7 @@ function AnimatedRoutes() {
           location.pathname ==="/SideBar"  ? ourmenuRef:
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
+          location.pathname==="/VerifyAccount" ? verifyRef:
           homeRef
         }>
           <Routes location={location}>
@@ -74,6 +77,8 @@ function AnimatedRoutes() {
             <Route path="/ItemCard" element={<ItemCard />} />
             <Route path="/history/:userId" element={<History />} />
             <Route path="/Checkout" element={<Checkout />}/>
+            <Route path="/verifyAccount" element={<VerifyAccount />}/>
+
           </Routes>
         </div>
       </CSSTransition>
