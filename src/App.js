@@ -14,6 +14,9 @@ import Checkout from "./composante/Checkout/Checkout";
 import ItemCard from "./composante/Test_item_card/ItemCard";
 import VerifyAccount from "./composante/VerifyAccount/VerifyAccount";
 import { CartProvider } from "./composante/CartContext/CartContext";
+import SigninRestaurant from "./composante/SigninRestaurant/SigninRestaurant";
+import SignupRestaurant from "./composante/SignupRestaurant/SignupRestaurant";
+import VerifyAccountRestaurant from "./composante/VerifyAccountRestaurant/VerifyAccountRestaurant";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -29,7 +32,9 @@ function AnimatedRoutes() {
   const historyRef= useRef(null);
   const checkoutRef=useRef(null);
   const verifyRef=useRef(null);
-
+  const signinRestRef=useRef(null);
+  const signupRestRef=useRef(null);
+  const verifyResRef=useRef(null);
   return (
     <TransitionGroup>
       <CSSTransition 
@@ -48,6 +53,9 @@ function AnimatedRoutes() {
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
+          location.pathname==="/VerifyAccountRestaurant" ? verifyResRef:
+          location.pathname==="/SigninRestaurant" ? signinRestRef:
+          location.pathname==="/SignupRestaurant" ? signupRestRef:
           homeRef
           
         }
@@ -64,6 +72,9 @@ function AnimatedRoutes() {
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
+          location.pathname==="/VerifyAccountRestaurant" ? verifyResRef:
+          location.pathname==="/SigninRestaurant" ? signinRestRef:
+          location.pathname==="/SignupRestaurant" ? signupRestRef:
           homeRef
         }>
           <Routes location={location}>
@@ -78,6 +89,9 @@ function AnimatedRoutes() {
             <Route path="/history/:userId" element={<History />} />
             <Route path="/Checkout" element={<Checkout />}/>
             <Route path="/verifyAccount" element={<VerifyAccount />}/>
+            <Route path="/VerifyAccountRestaurant" element={<VerifyAccountRestaurant />}/>
+            <Route path="/SigninRestaurant" element={<SigninRestaurant />}/>
+            <Route path="/SignupRestaurant" element={<SignupRestaurant />}/>
 
           </Routes>
         </div>
@@ -90,7 +104,7 @@ function Main() {
   const location = useLocation(); 
   return (
     <>
-      {location.pathname !== "/signin" && location.pathname !== "/signup" && <Navbar />}
+      {location.pathname !== "/signin" && location.pathname !== "/signup"&& location.pathname !== "/SigninRestaurant" && location.pathname !== "/SignupRestaurant"&& <Navbar />}
       <AnimatedRoutes />
     </>
   );

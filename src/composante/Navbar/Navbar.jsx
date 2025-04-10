@@ -207,7 +207,7 @@ const Navbar = () => {
                       </button>
                       <div className="absolute left-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{ left: '-100px' }}>
                         <Link to="/signin" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
-                        <Link to="/login/restaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
+                        <Link to="/SigninRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
                       </div>
                     </div>
 
@@ -228,7 +228,7 @@ const Navbar = () => {
                       </button>
                       <div className="absolute left-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{ left: '-100px' }}>
                         <Link to="/signup" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
-                        <Link to="/register/restaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
+                        <Link to="/SignupRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
                       </div>
                     </div>
                   </>
