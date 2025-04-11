@@ -63,7 +63,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
-      showAlertMessage("Vous n'êtes pas connecté.");
+      showAlertMessage("You are not connected!");
       return;
     }
 
