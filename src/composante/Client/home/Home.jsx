@@ -57,6 +57,7 @@ function Home() {
   useEffect(() => {
     // Récupérer les données depuis le serveur
     axios
+
       .get("http://localhost:5007/products")
       .then((response) => {
         setItems(response.data); // Met à jour l'état avec les données reçues
