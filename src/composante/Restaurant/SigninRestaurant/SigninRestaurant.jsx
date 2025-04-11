@@ -36,7 +36,7 @@ function SigninRestaurant() {
         console.log("Token reçu:", data.jwt);
         // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
         localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
-        navigate("/"); // Redirige vers la page d'accueil après la connexion
+        navigate("/restaurant"); // Redirige vers la page d'accueil après la connexion
       } else {
         const errorData = await response.json();
         console.error("Erreur de connexion:", errorData);
@@ -69,7 +69,7 @@ function SigninRestaurant() {
               <p className="text-gray-600 mt-5">
                 Do not have an account,{" "}
                 <Link
-                  to="../SignupRestaurant"
+                  to="/restaurant/SignupRestaurant"
                   onClick={() => setReverseLayout(!reverseLayout)}
                   className="text-[#FD4C2A] font-medium underline"
                 >

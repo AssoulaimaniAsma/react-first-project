@@ -117,7 +117,7 @@ function SignupRestaurant() {
         if (response.ok) {
           setSuccessMessage("Restaurant account created successfully!");
           setShowSuccessAlert(true);
-          setTimeout(() => navigate("../SigninRestaurant"), 3000);
+          setTimeout(() => navigate("/restaurant/SigninRestaurant"), 3000);
         } else {
           let errorMessage = "Signup failed";
           try {
@@ -169,7 +169,7 @@ function SignupRestaurant() {
                 className="text-green-800 bg-transparent border border-green-900 hover:bg-green-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 text-center dark:hover:bg-green-600 dark:border-green-600 dark:text-green-400 dark:hover:text-white dark:focus:ring-green-800"
                 onClick={() => {
                   setShowSuccessAlert(false);
-                  navigate("../SigninRestaurant");
+                  navigate("/restaurant/SigninRestaurant");
                 }}
               >
                 Ok
@@ -242,7 +242,7 @@ function SignupRestaurant() {
           <p className="text-gray-600 mt-2">
             Already have a Restaurant Account?{" "}
             <Link
-              to="../SigninRestaurant"
+              to="/restaurant/SigninRestaurant"
               className="text-[#FD4C2A] font-medium underline"
             >
               Login.

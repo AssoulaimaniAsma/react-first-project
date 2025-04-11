@@ -42,15 +42,15 @@ const Navbar = () => {
   }, []);
 
   const categories = [
-    { name: "All", icon: "🍽️", path: "/Our_Menu?category=All" },
-    { name: "Burger", icon: "🍔", path: "/Our_Menu?category=Burger" },
-    { name: "Plate", icon: "🍛", path: "/Our_Menu?category=Plate" },
-    { name: "Dessert", icon: "🍰", path: "/Our_Menu?category=Dessert" },
-    { name: "Pasta", icon: "🍝", path: "/Our_Menu?category=Pasta" },
+    { name: "All", icon: "🍽️", path: "client/Our_Menu?category=All" },
+    { name: "Burger", icon: "🍔", path: "client/Our_Menu?category=Burger" },
+    { name: "Plate", icon: "🍛", path: "client/Our_Menu?category=Plate" },
+    { name: "Dessert", icon: "🍰", path: "client/Our_Menu?category=Dessert" },
+    { name: "Pasta", icon: "🍝", path: "client/Our_Menu?category=Pasta" },
     {
       name: "Moroccan Food",
       icon: <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg" alt="Maroc" className="w-6 h-6" />,
-      path: "/Our_Menu?category=Moroccan Food",
+      path: "client/Our_Menu?category=Moroccan Food",
     },
   ];
 
@@ -81,7 +81,7 @@ const Navbar = () => {
       if (response.ok) {
         localStorage.removeItem("authToken");
         setIsAuthenticated(false);
-        navigate("/signin");
+        navigate("/client/signin");
       } else {
         const errorMessage = await response.text();
         console.error("Erreur de déconnexion:", errorMessage);
@@ -115,14 +115,14 @@ const Navbar = () => {
 
       <div className="font-bold flex items-center space-x-2">
         <img src={logo} className="w-10 h-10" alt="Logo" />
-        <Link to="/" className="text-black text-lg">
+        <Link to="/client" className="text-black text-lg">
           <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
         </Link>
       </div>
 
       <ul className="flex space-x-6 text-gray-700 font-medium">
         <li>
-          <Link to="/" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Home</Link>
+          <Link to="/client" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Home</Link>
         </li>
 
         <li className="relative" ref={dropdownRef}>
@@ -160,11 +160,11 @@ const Navbar = () => {
           )}
         </li>
         <li>
-          <Link to="/Our_Menu" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Menu
+          <Link to="client/Our_Menu" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Menu
           </Link>
         </li>
         <li>
-          <Link to="/contact" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Contact Us</Link>
+          <Link to="client/contact" className="relative px-4 py-2 text-black hover:text-[#FD4C2A]">Contact Us</Link>
         </li>
       </ul>
 
@@ -185,7 +185,7 @@ const Navbar = () => {
               <div className="p-2">
                 {isAuthenticated ? (
                   <>
-                    <Link to="/account" className="block px-4 py-2 hover:bg-[#FD4C2A] hover:text-white" onClick={() => setUserMenuOpen(false)}>Profile</Link>
+                    <Link to="client/account" className="block px-4 py-2 hover:bg-[#FD4C2A] hover:text-white" onClick={() => setUserMenuOpen(false)}>Profile</Link>
                     <button onClick={handleLogout} className="block px-4 py-2 text-left hover:bg-[#FD4C2A] hover:text-white w-full">Logout</button>
                   </>
                 ) : (
@@ -206,8 +206,8 @@ const Navbar = () => {
                         </svg>
                       </button>
                       <div className="absolute left-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{ left: '-100px' }}>
-                        <Link to="/signin" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
-                        <Link to="/SigninRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
+                        <Link to="client/signin" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
+                        <Link to="restaurant/SigninRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
                       </div>
                     </div>
 
@@ -227,8 +227,8 @@ const Navbar = () => {
                         </svg>
                       </button>
                       <div className="absolute left-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{ left: '-100px' }}>
-                        <Link to="/signup" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
-                        <Link to="/SignupRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
+                        <Link to="client/signup" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Client</Link>
+                        <Link to="restaurant/SignupRestaurant" className="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
                       </div>
                     </div>
                   </>
@@ -237,7 +237,7 @@ const Navbar = () => {
             </div>
           )}
         </div>
-        <Link to="/CartPage">
+        <Link to="client/CartPage">
           <FaShoppingBag className="text-xl cursor-pointer text-orange-700 hover:text-orange-500 transition" />
         </Link>
       </div>

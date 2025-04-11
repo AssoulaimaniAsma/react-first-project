@@ -326,7 +326,7 @@ function Home() {
                 to help!
               </p>
               <Link
-                to="/contact"
+                to="/client/contact"
                 className="py-2.5 px-5 h-9 block w-fit bg-[#FD4C2A] rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-[#d63413] lg:mx-0"
               >
                         Contact us      {" "}
