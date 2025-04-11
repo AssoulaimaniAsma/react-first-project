@@ -1,22 +1,22 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useRef } from "react";
-import Signin from "./composante/Signin/signin";
-import Signup from "./composante/Signup/signup";
-import Navbar from "./composante/Navbar/Navbar";
-import ContactForm from "./composante/feed_back/feed_back";
-import Home from "./composante/home/Home";
-import Our_Menu from "./composante/Our_Menu/Our_Menu";
-import AccountSettings from "./composante/Account_Setting/Account_Setting";
-import CartPage from "./composante/CartPage/CartPage";
-import History from "./composante/History/History";
-import Checkout from "./composante/Checkout/Checkout";
-import ItemCard from "./composante/Test_item_card/ItemCard";
-import VerifyAccount from "./composante/VerifyAccount/VerifyAccount";
-import { CartProvider } from "./composante/CartContext/CartContext";
-import SigninRestaurant from "./composante/SigninRestaurant/SigninRestaurant";
-import SignupRestaurant from "./composante/SignupRestaurant/SignupRestaurant";
-import VerifyAccountRestaurant from "./composante/VerifyAccountRestaurant/VerifyAccountRestaurant";
+import Signin from "./composante/Client/Signin/signin";
+import Signup from "./composante/Client/Signup/signup";
+import Navbar from "./composante/Client/Navbar/Navbar";
+import ContactForm from "./composante/Client/feed_back/feed_back";
+import Home from "./composante/Client/home/Home";
+import Our_Menu from "./composante/Client/Our_Menu/Our_Menu";
+import AccountSettings from "./composante/Client/Account_Setting/Account_Setting";
+import CartPage from "./composante/Client/CartPage/CartPage";
+import History from "./composante/Client/History/History";
+import Checkout from "./composante/Client/Checkout/Checkout";
+import ItemCard from "./composante/Client/Test_item_card/ItemCard";
+import VerifyAccount from "./composante/Client/VerifyAccount/VerifyAccount";
+import { CartProvider } from "./composante/Client/CartContext/CartContext";
+import SigninRestaurant from "./composante/Restaurant/SigninRestaurant/SigninRestaurant";
+import SignupRestaurant from "./composante/Restaurant/SignupRestaurant/SignupRestaurant";
+import VerifyAccountRestaurant from "./composante/Restaurant/VerifyAccountRestaurant/VerifyAccountRestaurant";
 import "./App.css";
 
 function AnimatedRoutes() {

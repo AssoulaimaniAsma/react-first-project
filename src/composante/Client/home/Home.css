@@ -340,7 +340,6 @@ h1{
 }
 .Section6{
     padding-top:200px;
-    padding-bottom:300px;
     padding-left:110px;
     position: relative; 
     z-index: 10; 
@@ -399,13 +398,11 @@ h1{
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
   }
 
   .dropdowns {
     display: grid;
     z-index:1;
-    position:absolute;
     gap: 20px;
   }
 .AskQuestion{
@@ -417,15 +414,14 @@ h1{
     color:white;
     grid-column: 1 / -1;
     margin-top:50px;
+    position:absolute;
+    
 
 }
  .fotterPage{
-    padding-top:30px;
     align-items: center;
     display:grid;
     background-color:#49140a;
-    width:100vw;
-    height:650px;
     position :absolute;
     left:0;
     right:0;
@@ -455,14 +451,10 @@ h1{
 }
 .final_part{
     width:100%;
-    height:0px;
     border: 1px solid #D7D2D0;
     display:absolute;
 }
 .copyright{
     color:rgb(3, 3, 3);
     padding-left:700px;
-}
-body {
-    font-family: 'Oxygen';
 }

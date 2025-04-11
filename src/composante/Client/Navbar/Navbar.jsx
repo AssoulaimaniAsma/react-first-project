@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import logo from "../../image/favicon.png";
+import logo from "../../../image/favicon.png";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

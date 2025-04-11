@@ -201,7 +201,7 @@ const [errorMessage, setErrorMessage] = useState("");
     transition={{ duration: 0.5 }}
   >
     <img
-      src={require("../../image/signin.jfif")}
+      src={require("../../../image/signin.jfif")}
       alt="Food"
       className="w-full h-full object-cover"
     />

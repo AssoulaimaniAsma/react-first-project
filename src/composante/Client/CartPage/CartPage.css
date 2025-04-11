@@ -1,0 +1,141 @@
+.cartContainer{
+    display:block;
+    border-collapse:collapse;
+}
+.tableContainer{
+    display:flex;
+    padding-top:90px;
+    align-items: flex-start; /* Ensures tables don't stretch to match height */
+}
+.Product{
+    width:700px;
+    height:auto;
+    border-radius:50px;
+    border-collapse: collapse;
+    margin-left:50px;
+}
+.headTable , .headTable2 th, .fotter{
+    background-color:#FD4C2A;
+    color :white ;
+    height:50px;
+}
+.headTable th{
+    text-align:center;
+}
+.bodyTab2 td{
+    text-align :center;
+    justify-content:center;
+}
+.bodyTab2 tr{
+    border:1px solid rgb(214, 211, 211);
+    height:auto;
+}
+.TotalPrice .bodyTab tr{
+    border:1px solid rgb(214, 211, 211);
+    height:50px;
+}
+button {
+    border:none;
+    background-color:transparent;
+}
+
+.TotalPrice{
+    width:40%;
+    height:auto;
+    margin-left:20px;
+    border-collapse:collapse;
+    
+}
+
+.tdContent{
+    padding-left:250px;
+}
+#SecondPart{
+    margin-top:290px;
+}
+
+#h2content5{
+    padding-left:600px;
+    font-weight:bold !important;
+    font-size:2rem;
+    color:#FD4C2A;
+}
+#discountBadge2{
+    padding:3px;
+    margin-left:170px;
+    position:absolute;
+    background-color:#FD4C2A;
+    border-radius:5px;
+} 
+#imageContent2 {
+    display: flex;
+    flex-wrap: wrap; 
+    width: 100%;
+    max-width: 1400px;
+    height:350px;
+    position:relative;
+    z-index:1; 
+    gap : 50px;
+    margin-top:50px;
+    margin-left:150px;
+}
+
+#imageItem2 {
+    width: 200px;
+    height:200px;
+    flex-direction: column;
+}
+
+#imageItem2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 25px;
+}
+#nameImg2 {
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+
+#PriceContainer2 {
+    display: flex;
+}
+#oldPrice2{
+    padding-left:0;
+    color:#6B7280;
+    text-decoration:line-through;
+}
+.PriceContainer2{
+    margin-left:-30px;
+    display:flex;
+    position:absolute;
+}
+#Add2{
+    border:2px solid #FD4C2A;
+    color:#FD4C2A;
+    width:30px;
+    border-radius:50%;
+    font-weight:bold;
+    
+}
+#AddToCart2{
+    padding-left:170px;
+}
+.quantityContent{
+    width:40px;
+    height:20px;
+}
+.DecQuantity {
+    padding : 6px;
+}
+.IncQuantity{
+    padding:6px;
+}
+.picProd{
+    display:flex;
+    align-items:center;
+}
+.fotter{
+    align-items:center;
+}

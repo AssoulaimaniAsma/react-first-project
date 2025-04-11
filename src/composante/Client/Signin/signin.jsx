@@ -54,7 +54,7 @@ function Signin() {
       {loading ? (
         <div className="loader-container">
           <div className="spinner">
-            <img src={require("../../image/Pizza.gif")} alt="Loading..." />
+            <img src={require("../../../image/Pizza.gif")} alt="Loading..." />
           </div>
         </div>
       ) : (
@@ -135,7 +135,7 @@ function Signin() {
             <div className=" pl-10 hidden md:block h-full">
               <img
                 id="image"
-                src={require("../../image/signin.jfif")}
+                src={require("../../../image/signin.jfif")}
                 alt="Food"
                 className="w-full h-full object-cover"
               />

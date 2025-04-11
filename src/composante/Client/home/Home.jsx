@@ -1,113 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useContext } from "react";
 import "./Home.css";
-import MyImage from "../../image/food.jpg";
-import MyImage1 from "../../image/burger1.jpeg";
-import MyImage2 from "../../image/pizza1.jpeg";
-import MyImage3 from "../../image/Harissa.jpeg";
-import MyImage4 from "../../image/Teriyaki.jpeg";
-import back1 from "../../image/burger.jpg";
-import back2 from "../../image/pizza.png";
-import back3 from "../../image/pasta.png";
-import back4 from "../../image/frenchfries.png";
-import back5 from "../../image/sauce.png";
-import back6 from "../../image/pizza2.png";
+import MyImage from "../../../image/food.jpg";
+import MyImage1 from "../../../image/burger1.jpeg";
+import MyImage2 from "../../../image/pizza1.jpeg";
+import MyImage3 from "../../../image/Harissa.jpeg";
+import MyImage4 from "../../../image/Teriyaki.jpeg";
+import back1 from "../../../image/burger.jpg";
+import back2 from "../../../image/pizza.png";
+import back3 from "../../../image/pasta.png";
+import back4 from "../../../image/frenchfries.png";
+import back5 from "../../../image/sauce.png";
+import back6 from "../../../image/pizza2.png";
 import ButtonWithLogo from "../ButtonWithLogo/ButtonWithLogo";
 import { FiChevronDown } from "react-icons/fi";
-import Mcdo from "../../image/mcdo.png";
-import logo from "../../image/favicon.png";
+import Mcdo from "../../../image/mcdo.png";
+import logo from "../../../image/favicon.png";
 import { Link } from "react-router-dom";
 import { CartContext } from "../CartContext/CartContext";
-
-const recommendation = [
-  {
-    id: "x",
-    image: require("../../image/food.jpg"),
-    name: "item x",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "y",
-    image: require("../../image/food.jpg"),
-    name: "item y",
-    oldPrice: 230,
-    newPrice: 200,
-  },
-  {
-    id: "z",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "b",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-];
-
-const products = [
-  {
-    id: "a",
-    image: require("../../image/food.jpg"),
-    name: "item x",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "c",
-    image: require("../../image/food.jpg"),
-    name: "item y",
-    oldPrice: 230,
-    newPrice: 200,
-  },
-  {
-    id: "d",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "e",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "f",
-    image: require("../../image/food.jpg"),
-    name: "item x",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "j",
-    image: require("../../image/food.jpg"),
-    name: "item y",
-    oldPrice: 230,
-    newPrice: 200,
-  },
-  {
-    id: "h",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-  {
-    id: "i",
-    image: require("../../image/food.jpg"),
-    name: "item z",
-    oldPrice: 200,
-    newPrice: 140,
-  },
-];
+import axios from "axios";
+import picsData from "../backend/pics.json";
 
 const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -125,12 +37,48 @@ const DropdownBox = ({ title, content }) => {
         />
       </div>
 
-      {isOpen && <div className="contentVisibility">{content}</div>}
+      <div
+        className="contentVisibility transition-all duration-500 ease-in-out"
+        style={{
+          height: isOpen ? "auto" : "0", // Automatically adjusts based on content
+          overflow: "hidden",             // Hides content when closed
+        }}
+      >
+          {content}
+        </div>
     </div>
   );
 };
+
 function Home() {
-  const { cart, AddToCart, showAlert, UpdateQuantity,currentItemName  } = useContext(CartContext);
+
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    // Récupérer les données depuis le serveur
+    axios
+      .get("http://localhost:5007/products")
+      .then((response) => {
+        setItems(response.data); // Met à jour l'état avec les données reçues
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des produits:", error);
+      });
+  }, []);
+
+  const section1 = items.slice(0, 4);
+  const section2 = items.slice(-8);
+
+
+
+
+
+
+
+
+
+  const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } =
+    useContext(CartContext);
   const [panier, setPanier] = useState([]);
   const AjouterPanier = (item) => {
     console.log(`${item.nom} ajouté au panier`);
@@ -142,15 +90,26 @@ function Home() {
   };
   return (
     <div className="HomeDiv">
-       {showAlert && (
+      {showAlert && (
         <div className="fixed-alert">
-          <div className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400" role="alert">
-            <svg className="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+          <div
+            className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400"
+            role="alert"
+          >
+            <svg
+              className="shrink-0 inline w-4 h-4 me-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
             <span className="sr-only">Info</span>
             <div>
-              <span className="font-medium">{currentItemName} ajouté au panier!</span>
+              <span className="font-medium">
+                {currentItemName} ajouté au panier!
+              </span>
             </div>
           </div>
         </div>
@@ -208,7 +167,7 @@ function Home() {
       <div className="section2">
         <h2 id="h2content">ON SALE</h2>
         <div id="imageContent">
-          {recommendation.map((item) => (
+          {section1.map((item) => (
             <div id="imageItem" key={item.id}>
               <span id="discountBadge">13%</span>
               <img src={item.image} />
@@ -222,7 +181,6 @@ function Home() {
                   +
                 </button>
               </div>
-              
             </div>
           ))}
         </div>
@@ -287,7 +245,7 @@ function Home() {
       <div className="Section4">
         <h2 id="h2content1">Most Popular Products</h2>
         <div id="imageContent1">
-          {products.map((item) => (
+          {section2.map((item) => (
             <div id="imageItem1" key={item.id}>
               <span id="discountBadge1">13%</span>
               <img src={item.image} />
@@ -368,11 +326,11 @@ function Home() {
                 to help!
               </p>
               <Link
-        to="/contact"
-        className="py-2.5 px-5 h-9 block w-fit bg-[#FD4C2A] rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-[#d63413] lg:mx-0"
-      >
-        Contact us
-      </Link>
+                to="/contact"
+                className="py-2.5 px-5 h-9 block w-fit bg-[#FD4C2A] rounded-full shadow-sm text-xs text-white mx-auto transition-all  duration-500 hover:bg-[#d63413] lg:mx-0"
+              >
+                        Contact us      {" "}
+              </Link>
             </div>
           </div>
 

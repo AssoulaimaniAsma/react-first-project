@@ -1,9 +1,9 @@
 import React from "react";
-import Mcdo from "../../image/mcdo.png";
-import Bk from "../../image/burgerKing.png";
-import kf from "../../image/kfc.png";
-import pzhut from "../../image/pizzaHut.png";
-import dominos from "../../image/dominos.png";
+import Mcdo from "../../../image/mcdo.png";
+import Bk from "../../../image/burgerKing.png";
+import kf from "../../../image/kfc.png";
+import pzhut from "../../../image/pizzaHut.png";
+import dominos from "../../../image/dominos.png";
 import "./ButtonWithLogo.css";
 
 const restaurantData = [

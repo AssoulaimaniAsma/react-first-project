@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("path");
 
 
-const PORT = 5003;
+const PORT = 5009;
 
 const app = express();
 app.use(express.json()); 
@@ -56,17 +56,17 @@ app.use("/image", express.static("image"));
 
 
 
-const USERS_FILE = path.join(__dirname, "src", "composante", "Signup", "users.json");
+/*const USERS_FILE = path.join(__dirname, "src", "composante", "Signup", "users.json");
 
 // Vérifier si le fichier existe, sinon le créer avec un tableau vide
 if (!fs.existsSync(USERS_FILE)) {
   fs.writeFileSync(USERS_FILE, "[]", "utf-8");
-}
+}*/
 
 app.listen(PORT, () => {
   console.log(`✅ Serveur en ligne sur http://localhost:${PORT}`);
 });
-app.get("/api/signup", (req, res) => {
+/*app.get("/api/signup", (req, res) => {
   try {
     const users = JSON.parse(fs.readFileSync(USERS_FILE, "utf-8"));
     res.json(users);
@@ -74,11 +74,11 @@ app.get("/api/signup", (req, res) => {
     res.status(500).json({ message: "Erreur lors de la lecture des utilisateurs" });
   }
 });
-
+*/
 
 
 // Fonction pour lire les utilisateurs
-const readUsers = () => {
+/*const readUsers = () => {
   try {
     const data = fs.readFileSync(USERS_FILE, "utf-8");
     return JSON.parse(data);
@@ -87,9 +87,9 @@ const readUsers = () => {
     return [];
   }
 };
-
+*/
 // Fonction pour écrire les utilisateurs
-const writeUsers = (users) => {
+/*const writeUsers = (users) => {
   try {
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), "utf-8");
   } catch (error) {
@@ -121,4 +121,5 @@ app.get("/api/signup", (req, res) => {
   const users = readUsers();
   res.json(users);
 });
+*/
 

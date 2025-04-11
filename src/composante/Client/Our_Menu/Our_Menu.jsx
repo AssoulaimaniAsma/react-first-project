@@ -40,7 +40,7 @@ export default function ItemCard() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5001/api/products")
+      .get("http://localhost:5009/api/products")
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erreur :", error));
   }, []);
@@ -203,7 +203,7 @@ export default function ItemCard() {
                 {/* Image - verticale */}
                 <div className="w-full h-80 bg-gray-200 rounded-2xl overflow-hidden mb-4">
                   <img
-                    src={`http://localhost:5001${item.image}`}
+                    src={`http://localhost:5009${item.image}`}
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
