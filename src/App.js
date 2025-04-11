@@ -4,7 +4,7 @@ import { CartProvider } from "./composante/Client/CartContext/CartContext";
 import AppClient from "./layouts/AppClient";
 import AppRestaurant from "./layouts/AppRestaurant";
 import ChooseRole from "./ChooseRole"; // à créer
-
+import { AuthProvider } from "./contexts/AuthContext";
 function RoutesManager() {
   const location = useLocation();
   const path = location.pathname;
@@ -18,11 +18,15 @@ function RoutesManager() {
 
 function App() {
   return (
+    <AuthProvider>
+
     <CartProvider>
       <Router>
         <RoutesManager />
       </Router>
     </CartProvider>
+    </AuthProvider>
+
   );
 }
 

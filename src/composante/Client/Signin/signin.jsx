@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext"; // adapte le chemin selon ta structure
 import "./signin.css";
 
 function Signin() {
@@ -11,6 +12,7 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     setTimeout(() => {
@@ -35,9 +37,10 @@ function Signin() {
       if (response.ok) {
         const data = await response.json();
         console.log("Token reçu:", data.jwt);
-        // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
-        localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
-        navigate("/"); // Redirige vers la page d'accueil après la connexion
+      
+        login(data.jwt); // ← met à jour le contexte et le localStorage
+      
+        navigate("/client"); // Redirige vers la page d'accueil après connexion
       } else {
         const errorData = await response.json();
         console.error("Erreur de connexion:", errorData);
@@ -70,7 +73,7 @@ function Signin() {
               <p className="text-gray-600 mt-5">
                 Do not have an account,{" "}
                 <Link
-                  to="../signup"
+                  to="/client/signup"
                   onClick={() => setReverseLayout(!reverseLayout)}
                   className="text-[#FD4C2A] font-medium underline"
                 >
