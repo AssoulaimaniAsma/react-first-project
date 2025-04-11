@@ -226,7 +226,7 @@ function SignupRestaurant() {
           transition={{ duration: 0.5 }}
         >
           <img
-            src={require("../../image/signinRes.jpg")}
+            src={require("../../../image/signinRes.jpg")}
             alt="Food"
             className="w-full h-full object-cover"
           />
