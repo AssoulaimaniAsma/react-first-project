@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "./Account_Setting.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "./account_setting.css";
 
 
 const AccountSettings = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    title: "",
     phone: "",
+    email: "",
+    contactEmail:"",
+    paypalEmail:"",
     oldPassword: "",
     newPassword: "",
   });
-
-  const [profileImage, setProfileImage] = useState(null);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -24,11 +27,11 @@ const AccountSettings = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/restaurant/account_settings");
 
     const fetchAccountDetails = async () => {
       try {
-        const res = await fetch("http://localhost:8080/user/accountDetails", {
+        const res = await fetch("http://localhost:8080/restaurant/accountDetails", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,8 +43,9 @@ const AccountSettings = () => {
         const user = await res.json();
 
         setFormData({
-          firstName: user.firstName || "",
-          lastName: user.lastName || "",
+          title: user.title || "",
+          contactEmail: user.contactEmail || "",
+          paypalEmail: user.paypalEmail || "",
           email: user.email || "",
           phone: user.phone || "",
           oldPassword: "",
@@ -58,7 +62,7 @@ const AccountSettings = () => {
   }, [navigate]);
 
   const userInitials =
-    (formData.firstName[0] || "") + (formData.lastName[0] || "");
+    (formData.title[0] || "");
 
   // ✅ MODIFIÉ : Enregistrer juste le chemin relatif
   const handleImageChange = (e) => {
@@ -74,12 +78,6 @@ const AccountSettings = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!/^[A-Za-z]+$/.test(formData.firstName)) {
-      newErrors.firstName = "Le prénom ne doit pas contenir de chiffres.";
-    }
-    if (!/^[A-Za-z]+$/.test(formData.lastName)) {
-      newErrors.lastName = "Le nom ne doit pas contenir de chiffres.";
-    }
     if (
       !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
         formData.email
@@ -87,6 +85,20 @@ const AccountSettings = () => {
     ) {
       newErrors.email = "Adresse email invalide.";
     }
+    if (
+        !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
+          formData.contactEmail
+        )
+      ) {
+        newErrors.contactEmail = "Adresse email invalide.";
+      }
+      if (
+        !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
+          formData.paypalEmail
+        )
+      ) {
+        newErrors.paypalEmail = "Adresse email invalide.";
+      }
     if (!/^(?:\+2126|06)\d{8}$/.test(formData.phone)) {
       newErrors.phone =
         "Numéro invalide. Format : +2126xxxxxxxx ou 06xxxxxxxx";
@@ -107,11 +119,12 @@ const AccountSettings = () => {
     if (!validateForm()) return;
 
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/restaurant/SigninRestaurant");
 
     const formDataToSend = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      title: formData.title,
+      paypalEmail: formData.paypalEmail,
+      contactEmail: formData.contactEmail,
       email: formData.email,
       phone: formData.phone,
       oldPassword: formData.oldPassword,
@@ -124,7 +137,7 @@ const AccountSettings = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:8080/user/updateAccountDetails", {
+      const res = await fetch("http://localhost:8080/restaurant/updateAccountDetails", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -209,7 +222,7 @@ const AccountSettings = () => {
         )}
         <div>
           <h3 className="text-lg font-semibold">
-            {formData.firstName} {formData.lastName}
+            {formData.title}
           </h3>
           <p className="text-gray-500">{formData.email}</p>
         </div>
@@ -234,7 +247,7 @@ const AccountSettings = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {["firstName", "lastName", "email", "phone"].map((field) => (
+        {["title", "contactEmail","paypalEmail", "email", "phone"].map((field) => (
           <div key={field}>
             <label className="text-gray-600 capitalize">{field}</label>
             <input
@@ -253,32 +266,45 @@ const AccountSettings = () => {
       </div>
 
       {isEditable && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-gray-600">Old Password</label>
-            <input
-              type="password"
-              name="oldPassword"
-              value={formData.oldPassword}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="text-gray-600">New Password</label>
-            <input
-              type="password"
-              name="newPassword"
-              value={formData.newPassword}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-            />
-            {errors.newPassword && (
-              <p className="text-red-500 text-sm">{errors.newPassword}</p>
-            )}
-          </div>
-        </div>
+  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="relative">
+      <label className="text-gray-600">Old Password</label>
+      <input
+        type={showOldPassword ? "text" : "password"}
+        name="oldPassword"
+        value={formData.oldPassword}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray-300 rounded-lg pr-10"
+      />
+      <span
+        className="absolute top-9 right-4 text-gray-500 cursor-pointer"
+        onClick={() => setShowOldPassword(!showOldPassword)}
+      >
+        {showOldPassword ? <FaEyeSlash /> : <FaEye />}
+      </span>
+    </div>
+
+    <div className="relative">
+      <label className="text-gray-600">New Password</label>
+      <input
+        type={showNewPassword ? "text" : "password"}
+        name="newPassword"
+        value={formData.newPassword}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray-300 rounded-lg pr-10"
+      />
+      <span
+        className="absolute top-9 right-4 text-gray-500 cursor-pointer"
+        onClick={() => setShowNewPassword(!showNewPassword)}
+      >
+        {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+      </span>
+      {errors.newPassword && (
+        <p className="text-red-500 text-sm">{errors.newPassword}</p>
       )}
+    </div>
+  </div>
+)}
 
       <div className="Address mt-6">
         <span>Address</span>

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function HomeRestaurant() {
+export default function Menu_Restaurant() {
   return (
     <>
       
