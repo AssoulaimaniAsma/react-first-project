@@ -13,6 +13,7 @@ import VerifyAccountRestaurant from "../composante/Restaurant/VerifyAccountResta
 import Navbar_Restaurant from "../composante/Restaurant/Navbar_Restaurant/Navbar_Restaurant";
 import Menu_Restaurant from "../composante/Restaurant/Menu_Restaurant/Menu_Restaurant";
 import AccountSettings from "../composante/Restaurant/Account_settings/account_settings";
+import AddFood from "../composante/Restaurant/AddFood/addfood";
 import "./App.css";
 
 // Layout avec Navbar fixe
@@ -72,6 +73,14 @@ function AnimatedRoutes() {
               element={
                 <RestaurantLayout>
                   <AccountSettings />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/addfood"
+              element={
+                <RestaurantLayout>
+                  <AddFood />
                 </RestaurantLayout>
               }
             />

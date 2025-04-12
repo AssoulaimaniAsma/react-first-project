@@ -89,7 +89,7 @@ function Main() {
   const location = useLocation(); 
   return (
     <>
-      {location.pathname !== "/signin" && location.pathname !== "/signup"&& <Navbar />}
+      {location.pathname !== "/client/signin" && location.pathname !== "/client/signup"&& <Navbar />}
       <AnimatedRoutes />
     </>
   );
