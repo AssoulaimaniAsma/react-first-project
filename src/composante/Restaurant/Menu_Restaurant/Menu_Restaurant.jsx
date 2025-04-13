@@ -2,33 +2,92 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaPlus, FaTrash, FaInfoCircle, FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 export default function Menu_Restaurant() {
   const [foodItems, setFoodItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4); // Nombre d'éléments par page
+  const [itemsPerPage] = useState(4);
+  const [alert, setAlert] = useState({ type: "", message: "" });
+  const [showModal, setShowModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    console.log(token); // Vérifie le token ici
-    if (token) {
-      // Si le token existe, faire la requête.
-      axios.get('http://localhost:8080/restaurant/foodItem/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setFoodItems(res.data);
-      })
-      .catch((err) => {
-        console.error("Erreur lors du fetch des données:", err);
-      });
-    }
-  }, []);
 
-  // Calculer les éléments à afficher en fonction de la page actuelle
+    if (token) {
+      axios.get('http://localhost:8080/restaurant/foodItem/', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => {
+          setFoodItems(res.data);
+        })
+        .catch((err) => {
+          console.error("Erreur lors du fetch des données:", err);
+        });
+    }
+
+    if (location.state?.reload) {
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state?.reload]);
+
+  useEffect(() => {
+    if (alert.message) {
+      const timeout = setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alert]);
+
+  const handleDeleteClick = (id) => {
+    setItemToDelete(id);
+    setShowModal(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.post(`http://localhost:8080/restaurant/foodItem/${itemToDelete}/delete`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setFoodItems(prev => prev.filter(item => item.id !== itemToDelete));
+      setAlert({ type: "success", message: "Item deleted successfully." });
+    } catch (err) {
+      console.error(err);
+      setAlert({ type: "error", message: "Error deleting item." });
+    } finally {
+      setShowModal(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const handleAvailabilityToggle = async (itemId,foodTitle, currentAvailability) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.post(`http://localhost:8080/restaurant/foodItem/${itemId}/toggle`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setFoodItems(prev =>
+        prev.map(item =>
+          item.id === itemId ? { ...item, isAvailable: !currentAvailability } : item
+        )
+      );
+      setAlert({
+        type: "success",
+        message: `Availability of ${foodTitle} updated to ${!currentAvailability ? 'Enable' : 'Disable'}.`,
+      });
+    } catch (error) {
+      console.error("Error toggling availability:", error);
+      setAlert({ type: "error", message: "Failed to update availability." });
+    }
+  };
+
   const filteredItems = foodItems.filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -37,10 +96,8 @@ export default function Menu_Restaurant() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Changer la page active
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Calculer le nombre total de pages
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(filteredItems.length / itemsPerPage); i++) {
     pageNumbers.push(i);
@@ -51,6 +108,18 @@ export default function Menu_Restaurant() {
       <div className="flex flex-col">
         <div className="overflow-x-auto">
           <div className="min-w-full inline-block align-middle">
+            {alert.message && (
+              <div
+                className={`p-4 mb-4 mx-4 mt-6 text-sm rounded-lg shadow transition-all duration-300 ${
+                  alert.type === "success"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {alert.message}
+              </div>
+            )}
+
             <div className="flex justify-between items-center mt-10">
               {/* Search */}
               <div className="relative text-[#FD4C2A] focus-within:text-gray-600">
@@ -85,56 +154,73 @@ export default function Menu_Restaurant() {
                     <th className="p-5 text-left text-white text-sm font-semibold">Title</th>
                     <th className="p-5 text-left text-white text-sm font-semibold">Price</th>
                     <th className="p-5 text-left text-white text-sm font-semibold">Category</th>
+                    <th className="p-5 text-left text-white text-sm font-semibold">Availability</th>
                     <th className="p-5 text-left text-white text-sm font-semibold rounded-tr-lg">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300 border">
                   {currentItems.map((item) => (
                     <tr key={item.id} className="bg-white hover:bg-gray-50 transition-all">
-                      {/* Image */}
                       <td className="p-5">
                         <img
                           src={item.image}
                           alt={item.title}
                           className="w-12 h-12 rounded-full object-cover"
-                          onError={(e) => { e.target.src = "/fallback.png" }} // optional fallback image
+                          onError={(e) => { e.target.src = "/fallback.png" }}
                         />
                       </td>
-                      {/* Title */}
                       <td className="p-5 text-sm font-medium text-gray-900 whitespace-nowrap">
                         {item.title}
                       </td>
-                      {/* Price */}
                       <td className="p-5 text-sm font-medium text-gray-900 whitespace-nowrap">
-                        {item.price} DA
+                        {item.price} Dh
                       </td>
-                      {/* Category */}
                       <td className="p-5 text-sm font-medium text-gray-900 whitespace-nowrap">
                         {item.categoryList.map((cat) => (
-                          <span key={cat.id}>
-                            {cat.title}
-                          </span>
+                          <span key={cat.id}>{cat.title}</span>
                         ))}
                       </td>
-                      {/* Actions */}
+                      <td className="p-5">
+                        <div className="flex items-center gap-3">
+                          <label className="inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="sr-only peer"
+                              checked={item.isAvailable}
+                              onChange={() => handleAvailabilityToggle(item.id,item.title, item.isAvailable)}
+                            />
+                            <div className="relative w-11 h-6 bg-gray-200 rounded-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#FD4C2A]/40 peer peer-checked:bg-[#FD4C2A] after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></div>
+                            <span className="ms-3 text-sm font-medium text-gray-900">
+                              {item.isAvailable ? "Enable" : "Disable"}
+                            </span>
+                          </label>
+                        </div>
+                      </td>
                       <td className="p-5">
                         <div className="flex gap-4">
-                          <button className="text-blue-500 hover:text-blue-700 flex items-center gap-1">
-                            <FaEdit /> Edit
-                          </button>
-                          <button className="text-red-500 hover:text-red-700 flex items-center gap-1">
+                          <Link to={`/restaurant/edit/${item.id}`}>
+                            <button className="text-blue-500 hover:text-blue-700 flex items-center gap-1">
+                              <FaEdit /> Edit
+                            </button>
+                          </Link>
+                          <button
+                            onClick={() => handleDeleteClick(item.id)}
+                            className="text-red-500 hover:text-red-700 flex items-center gap-1"
+                          >
                             <FaTrash /> Delete
                           </button>
-                          <button className="text-green-500 hover:text-green-700 flex items-center gap-1">
-                            <FaInfoCircle /> Details
-                          </button>
+                          <Link to={`/restaurant/itemDetail/${item.id}`}>
+                            <button className="text-green-500 hover:text-green-700 flex items-center gap-1">
+                              <FaInfoCircle /> Details
+                            </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>
                   ))}
                   {currentItems.length === 0 && (
                     <tr>
-                      <td colSpan="5" className="p-5 text-center text-gray-500">
+                      <td colSpan="6" className="p-5 text-center text-gray-500">
                         No food items found.
                       </td>
                     </tr>
@@ -165,6 +251,30 @@ export default function Menu_Restaurant() {
           </div>
         </div>
       </div>
+
+      {/* Modal Popup */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 shadow-xl max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
+            <p className="mb-6">Are you sure you want to delete this item?</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white text-sm"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
