@@ -1,0 +1,22 @@
+.DivTableClient{
+    justify-content:center;
+    align-items:center;
+    flex-direction: column;
+    display:flex;
+    width:100%;
+}
+.Clients{
+    font-size:2rem;
+    font-weight:bold;
+    color:#FD4C2A;
+}
+.TableClient{
+    border:1px solid black;
+    text-align:center;
+    width:70vw;
+}
+.trTableClient{
+    border:1px solid black;
+    background-color:#FD4C2A;
+}
+

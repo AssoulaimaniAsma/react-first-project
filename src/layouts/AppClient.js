@@ -67,16 +67,16 @@ function AnimatedRoutes() {
         }>
           <Routes location={location}>
           <Route path="/client" element={<Home />} />
-<Route path="/client/signin" element={<Signin />} />
-<Route path="/client/signup" element={<Signup />} />
-            <Route path="/client/contact" element={<ContactForm />} />
-            <Route path="/client/CartPage" element={<CartPage />} />
-            <Route path="/client/account" element={<AccountSettings />} />
-            <Route path="/client/Our_Menu" element={<Our_Menu />} />
-            <Route path="/client/ItemCard" element={<ItemCard />} />
-            <Route path="/client/history/:userId" element={<History />} />
-            <Route path="/client/Checkout" element={<Checkout />}/>
-            <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
+          <Route path="/client/signin" element={<Signin />} />
+          <Route path="/client/signup" element={<Signup />} />
+          <Route path="/client/contact" element={<ContactForm />} />
+          <Route path="/client/CartPage" element={<CartPage />} />
+          <Route path="/client/account" element={<AccountSettings />} />
+          <Route path="/client/Our_Menu" element={<Our_Menu />} />
+          <Route path="/client/ItemCard" element={<ItemCard />} />
+          <Route path="/client/history/:userId" element={<History />} />
+          <Route path="/client/Checkout" element={<Checkout />}/>
+          <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
 
           </Routes>
         </div>

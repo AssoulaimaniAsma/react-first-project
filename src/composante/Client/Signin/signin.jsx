@@ -23,6 +23,8 @@ function Signin() {
   const handleLogin = async () => {
     setLoginError(""); // Réinitialise le message d'erreur
     try {
+      // Le concept de ce code, c’est d’envoyer au serveur (en utilisant une requête POST) l’email et le password sous forme de données JSON.
+      //  Et "application/json" indique que le format des données est JSON
       const response = await fetch("http://localhost:8080/auth/user/login", {
         method: "POST",
         headers: {
@@ -34,18 +36,21 @@ function Signin() {
         }),
       });
 
+      //vérifies si la réponse du serveur est réussie
       if (response.ok) {
+        // convertis la réponse du serveur en objet JSON
         const data = await response.json();
+        //affiches le token JWT reçu dans la console C’est une preuve que l’utilisateur est connecté
         console.log("Token reçu:", data.jwt);
-      
-        login(data.jwt); // ← met à jour le contexte et le localStorage
-      
-        navigate("/client"); // Redirige vers la page d'accueil après connexion
+        // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
+        localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
+        navigate("/"); // Redirige vers la page d'accueil après la connexion
       } else {
         const errorData = await response.json();
         console.error("Erreur de connexion:", errorData);
         setLoginError(errorData.message || "Erreur de connexion. Veuillez réessayer.");
       }
+      //si y'a une grosse erreur (serveur down, mauvaise URL, pas d’internet...) :
     } catch (error) {
       console.error("Erreur lors de la requête de connexion:", error);
       setLoginError("Une erreur s'est produite lors de la connexion. Veuillez vérifier votre connexion.");
