@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import logo from "../../../image/favicon.png";
 import "./SideBar.css";
 
 const Sidebar = () => {
@@ -27,6 +28,13 @@ const Sidebar = () => {
 
       {/* Sidebar content */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
+      <div className="flex items-center py-20 space-x-2 font-bold">
+          <img src={logo} className="w-12 h-12" alt="Logo" />
+          <Link to="/restaurant" className="text-black text-3xl">
+            <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
+          </Link>
+        </div>
+        <div className="sidebar-lines">
         <Link
           to="/admin/TabOrders"
           id="idSidebar-line"
@@ -43,6 +51,7 @@ const Sidebar = () => {
         <Link to="/admin/TabRestaurant" className="sidebar-line">
           <FaUtensils className="icon" /> Tab Restaurant
         </Link>
+        </div>
       <div className="profile-icon">
         <FaUserCircle size={50} color="#ccc" />
       </div>
