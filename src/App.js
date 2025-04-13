@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { CartProvider } from "./composante/Client/CartContext/CartContext";
 import AppClient from "./layouts/AppClient";
 import AppRestaurant from "./layouts/AppRestaurant";
+import AppAdmin from "./layouts/AppAdmin";
 import ChooseRole from "./ChooseRole"; // à créer
 
 function RoutesManager() {
@@ -11,6 +12,7 @@ function RoutesManager() {
 
   if (path.startsWith("/restaurant")) return <AppRestaurant />;
   if (path.startsWith("/client")) return <AppClient />;
+  if (path.startsWith("/admin")) return <AppAdmin />;
   
   // Page d’accueil générale
   return <ChooseRole />;
