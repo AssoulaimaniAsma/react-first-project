@@ -1,13 +1,49 @@
 import { Link } from "react-router-dom";
+import logo from "./image/favicon.png";
 
 function ChooseRole() {
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Bienvenue sur notre plateforme</h1>
-      <p>Veuillez choisir votre espace :</p>
-      <Link to="/client" style={{ marginRight: "20px" , fontSize: "20px" }}>Espace Client</Link>
-      <Link to="/restaurant" style={{ marginRight: "20px" , fontSize: "20px" }}>Espace Restaurant</Link>
-      <Link to="/admin" style={{ fontSize: "20px" }}>Espace Admin</Link>
+    
+    <div className="flex flex-col items-center justify-start min-h-screen pt-2">
+      
+      {/* Logo du site */}
+      <div className="flex items-center space-x-2 font-bold mt-10 mb-10">
+        <img src={logo} className="w-12 h-12" alt="Logo" />
+        <Link to="/restaurant" className="text-black text-3xl">
+          <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
+        </Link>
+      </div>
+
+      {/* Cartes */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+        <Link to="/client" className="w-96 flex flex-col items-center gap-2">
+          
+          <div className="w-96 h-96 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition duration-300">
+            <img
+              src="image/client.jpg"
+              alt="Espace Client"
+              className="w-full h-full object-cover rounded-lg transition-all duration-300 hover:scale-110"
+            />
+          </div>
+          <div className="text-[#FD4C2A] font-bold text-2xl">
+          Client Space
+          </div>
+        </Link>
+
+        <Link to="/restaurant/SigninRestaurant" className="w-96 flex flex-col items-center gap-2">
+          
+          <div className="w-96 h-96 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition duration-300">
+            <img
+              src="/image/signinRes.jpg"
+              alt="Espace Restaurant"
+              className="w-full h-full object-cover rounded-lg transition-all duration-300 hover:scale-110"
+            />
+          </div>
+          <div className="text-[#FD4C2A] font-bold text-2xl">
+          Restaurant Space
+                    </div>
+        </Link>
+      </div>
     </div>
   );
 }

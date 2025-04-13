@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation
+} from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useRef } from "react";
 import { CartProvider } from "../composante/Client/CartContext/CartContext";
@@ -6,40 +11,79 @@ import SigninRestaurant from "../composante/Restaurant/SigninRestaurant/SigninRe
 import SignupRestaurant from "../composante/Restaurant/SignupRestaurant/SignupRestaurant";
 import VerifyAccountRestaurant from "../composante/Restaurant/VerifyAccountRestaurant/VerifyAccountRestaurant";
 import Navbar_Restaurant from "../composante/Restaurant/Navbar_Restaurant/Navbar_Restaurant";
-import HomeRestaurant from "../composante/Restaurant/Home_Restaurant/Home_Restaurant";
+import Menu_Restaurant from "../composante/Restaurant/Menu_Restaurant/Menu_Restaurant";
+import AccountSettings from "../composante/Restaurant/Account_settings/account_settings";
+import AddFood from "../composante/Restaurant/AddFood/addfood";
 import "./App.css";
 
+// Layout avec Navbar fixe
+const RestaurantLayout = ({ children }) => {
+  return (
+    <div className="flex min-h-screen">
+      <div className="w-64 fixed top-0 left-0 h-full z-10">
+        <Navbar_Restaurant />
+      </div>
+      <div className="flex-1 ml-64 p-4">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Gestion des routes avec animation
 function AnimatedRoutes() {
   const location = useLocation();
-  const signinRestRef=useRef(null);
-  const signupRestRef=useRef(null);
-  const verifyResRef=useRef(null);
-  const homeRestaurantRef = useRef(null);
+  const nodeRef = useRef(null);
+
   return (
     <TransitionGroup>
-      <CSSTransition 
-        key={location.pathname} 
-        classNames="fade" 
-        timeout={500} 
-        nodeRef={
-          location.pathname==="/restaurant/VerifyAccountRestaurant" ? verifyResRef:
-          location.pathname==="/restaurant/SigninRestaurant" ? signinRestRef:
-          location.pathname==="/restaurant/SignupRestaurant" ? signupRestRef:
-          homeRestaurantRef
-          
-        }
+      <CSSTransition
+        key={location.pathname}
+        classNames="fade"
+        timeout={300}
+        nodeRef={nodeRef}
       >
-        <div ref={
-          location.pathname==="/restaurant/VerifyAccountRestaurant" ? verifyResRef:
-          location.pathname==="/restaurant/SigninRestaurant" ? signinRestRef:
-          location.pathname==="/restaurant/SignupRestaurant" ? signupRestRef:
-          homeRestaurantRef
-        }>
+        <div ref={nodeRef}>
           <Routes location={location}>
-            <Route path="/restaurant" element={<HomeRestaurant />} />
-            <Route path="/restaurant/SigninRestaurant" element={<SigninRestaurant />} />
-            <Route path="/restaurant/SignupRestaurant" element={<SignupRestaurant />} />
-            <Route path="/restaurant/VerifyAccountRestaurant" element={<VerifyAccountRestaurant />} />
+            {/* Pages sans layout (pas de sidebar) */}
+            <Route
+              path="/restaurant/SigninRestaurant"
+              element={<SigninRestaurant />}
+            />
+            <Route
+              path="/restaurant/SignupRestaurant"
+              element={<SignupRestaurant />}
+            />
+            <Route
+              path="/restaurant/VerifyAccountRestaurant"
+              element={<VerifyAccountRestaurant />}
+            />
+
+            {/* Pages avec layout/sidebar */}
+            <Route
+              path="/restaurant"
+              element={
+                <RestaurantLayout>
+                  <Menu_Restaurant />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/account_settings"
+              element={
+                <RestaurantLayout>
+                  <AccountSettings />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/addfood"
+              element={
+                <RestaurantLayout>
+                  <AddFood />
+                </RestaurantLayout>
+              }
+            />
           </Routes>
         </div>
       </CSSTransition>
@@ -47,21 +91,17 @@ function AnimatedRoutes() {
   );
 }
 
+// Main
 function Main() {
-  const location = useLocation(); 
-  return (
-    <>
-      {location.pathname !== "/restaurant/SigninRestaurant" && location.pathname !== "/restaurant/SignupRestaurant"&& <Navbar_Restaurant />}
-      <AnimatedRoutes />
-    </>
-  );
+  return <AnimatedRoutes />;
 }
 
+// App parent
 function AppRestaurant() {
   return (
-      <CartProvider>
-          <Main />
-      </CartProvider>
+    <CartProvider>
+      <AnimatedRoutes />
+    </CartProvider>
   );
 }
 

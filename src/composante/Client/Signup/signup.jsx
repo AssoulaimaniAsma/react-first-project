@@ -85,7 +85,7 @@ const [errorMessage, setErrorMessage] = useState("");
         if (response.ok) {
           setSuccessMessage("Account created successfully!");
           setShowSuccessAlert(true);
-          setTimeout(() => navigate("../signin"), 3000);
+          setTimeout(() => navigate("/client/signin"), 3000);
         } else {
           // Essayer de lire le message d'erreur si backend envoie du JSON
           let errorMessage = "Signup failed";
@@ -142,7 +142,7 @@ const [errorMessage, setErrorMessage] = useState("");
                 className="text-green-800 bg-transparent border border-green-900 hover:bg-green-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 text-center dark:hover:bg-green-600 dark:border-green-600 dark:text-green-400 dark:hover:text-white dark:focus:ring-green-800"
                 onClick={() => {
                   setShowSuccessAlert(false); // Masquer l'alerte
-                  navigate("../signin"); // Rediriger vers la page de connexion
+                  navigate("/client/signin"); // Rediriger vers la page de connexion
                 }}
               >
                 Ok
@@ -218,7 +218,7 @@ const [errorMessage, setErrorMessage] = useState("");
           <p className="text-gray-600 mt-2">
             Already have an Account?{" "}
             <Link
-              to="../signin"
+              to="/client/signin"
               className="text-[#FD4C2A] font-medium underline"
             >
               Login.
