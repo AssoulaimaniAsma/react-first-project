@@ -44,7 +44,8 @@ function Signin() {
         console.log("Token reçu:", data.jwt);
         // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
         localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
-        navigate("/"); // Redirige vers la page d'accueil après la connexion
+        login(data.jwt); // ✅ Appelle le login ici
+        navigate("/client"); // Redirige vers la page d'accueil après la connexion
       } else {
         const errorData = await response.json();
         console.error("Erreur de connexion:", errorData);
