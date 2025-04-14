@@ -57,7 +57,7 @@ function Home() {
   useEffect(() => {
     // Récupérer les données depuis le serveur
     axios
-      .get("http://localhost:5003/products")
+      .get("http://localhost:5006/products")
       .then((response) => {
         setItems(response.data); // Met à jour l'état avec les données reçues
       })
@@ -68,14 +68,6 @@ function Home() {
 
   const section1 = items.slice(0, 4);
   const section2 = items.slice(-8);
-
-
-
-
-
-
-
-
 
   const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } =
     useContext(CartContext);
@@ -116,28 +108,28 @@ function Home() {
       )}
       <div className="divcontent">
         {/* Titre */}
-        <h1 className="pt-32 pl-40 text-5xl font-bold">
+        <h1 className="h1SavoryBites">
           <span className="Savory">Savory</span>Bites - Your Favorite Meals,
           <br />
           <span className="Delivered">Delivered</span>
         </h1>
 
         {/* Texte descriptif */}
-        <div className="adtext pl-36 pt-12 text-xl ">
-          <p className="adtext1 pl-40">
+        <div className="adtext">
+          <p className="adtext1">
             Craving something delicious? With SavoryBites, you
           </p>
-          <p className="adtext2 pl-40">
+          <p className="adtext2">
             can explore a variety of dishes, place your order in
           </p>
-          <p className="adtext1 pl-40">
+          <p className="adtext1 ">
             seconds, and enjoy fresh meals delivered straight to
           </p>
-          <p className="adtext2 pl-40">you—quick, easy, and hassle-free!</p>
+          <p className="adtext3 ">you—quick, easy, and hassle-free!</p>
 
           <Link
             to="/Our_Menu"
-            className="relative inline-flex items-center ml-48 mt-5 px-12 py-3 overflow-hidden text-lg font-medium text-[#FD4C2A] border-2 border-[#FD4C2A] rounded-full hover:text-white group hover:bg-[#FD4C2A]"
+            className="explore hover:text-white group hover:bg-[#FD4C2A]"
           >
             <span className="absolute left-0 block w-full h-0 transition-all bg-[#FD4C2A] opacity-100 group-hover:h-full top-1/2 group-hover:top-0 duration-400 ease"></span>
             <span className="absolute right-0 flex items-center justify-start w-10 h-10 duration-300 transform translate-x-full group-hover:translate-x-0 ease">
@@ -192,13 +184,13 @@ function Home() {
         <h2 id="h2content3">View Our Range Of Categories</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] p-8">
           {/* Burgers & Fast Food */}
-          <div className="relative pl-11">
+          <div className="relative pl-[11%]">
             <img
-              className="w-full h-[450px] object-cover rounded-lg"
+              className="w-full h-[100%] object-cover rounded-lg"
               src={MyImage1}
               alt="Burger"
             />
-            <div className="absolute bottom-4 left-4 pl-12 text-white px-4 py-2 text-xl font-bold">
+            <div className="absolute bottom-4 left-4 pl-[11%] text-white px-[4%] py-2 text-xl font-bold">
               Burgers & Fast Food
             </div>
           </div>
@@ -207,7 +199,7 @@ function Home() {
           <div className="flex flex-col gap-2">
             <div className="relative">
               <img
-                className="w-full h-[220px] object-cover rounded-lg"
+                className="w-full h-[265px] object-cover rounded-lg"
                 src={MyImage2}
                 alt="Pizza"
               />
@@ -217,7 +209,7 @@ function Home() {
             </div>
             <div className="relative">
               <img
-                className="w-full h-[220px] object-cover rounded-lg"
+                className="w-full h-[265px] object-cover rounded-lg"
                 src={MyImage3}
                 alt="Pasta"
               />
@@ -230,7 +222,7 @@ function Home() {
           {/* Tacos */}
           <div className="relative pr-11">
             <img
-              className="w-full h-[450px] object-cover rounded-lg"
+              className="w-full h-[100%] object-cover rounded-lg"
               src={MyImage4}
               alt="Tacos"
             />

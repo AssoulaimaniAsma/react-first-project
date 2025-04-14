@@ -1,6 +1,8 @@
 import React ,{useState,useEffect}from "react";
 import axios from "axios";
 import "./TabClient.css";
+import { FaTrash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function TabClient(){
     const [clients, setClient]= useState([]);
@@ -15,6 +17,26 @@ function TabClient(){
                 console.error("Erreur lors de la récupération des clients:", error);
             });
         }, []);
+
+        const handleDelete = async (id) => {
+            const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+            if (!confirmDelete) return;
+          
+            try {
+              const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+                method: "DELETE",
+              });
+          
+              if (res.ok) {
+                setClient((prev) => prev.filter((user) => user._id !== id));
+              } else {
+                console.error("Failed to delete user");
+              }
+            } catch (error) {
+              console.error("Error deleting user:", error);
+            }
+          };
+          
     return(
         <div className="DivTableClient">
             <h1 className="Clients">Clients</h1>
@@ -27,6 +49,7 @@ function TabClient(){
                         <th>Phone Number</th>
                         <th>Email Address</th>
                         <th>Approved</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,6 +61,7 @@ function TabClient(){
                         <td className="tdTableClient">{client.phone}</td>
                         <td className="tdTableClient">{client.mail}</td>
                         <td className="tdTableClient">{client.approved}</td>
+                        <td className="tdTableClient"><Link  className="LinkDeleteClient" onClick={()=> handleDelete(client.id)}><FaTrash/>Delete</Link></td>
                     </tr>
                     ))}
                 </tbody>

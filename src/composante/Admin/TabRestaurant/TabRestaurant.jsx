@@ -3,70 +3,79 @@ import axios from "axios";
 import "./TabRestaurant.css";
 
 function TabRestaurant() {
-  const [restaurants, setRestaurant] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
+
   useEffect(() => {
-    // Récupérer les données depuis le serveur
     axios
       .get("http://localhost:8080/api/restaurant")
       .then((response) => {
-        setRestaurant(response.data); // Met à jour l'état avec les données reçues
+        setRestaurants(response.data);
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des restaurant:", error);
+        console.error("Erreur lors de la récupération des restaurants:", error);
       });
   }, []);
 
-  // Function to handle approving a restaurant
   const approveRestaurant = (id) => {
     axios
       .get(`http://localhost:8080/admin/approveRestaurants/${id}`)
       .then((response) => {
-        alert(response.data); // You can show a success message
-        // Optionally, re-fetch the restaurant data to update the UI
-        setRestaurant((prevRestaurants) =>
-          prevRestaurants.map((restaurant) =>
+        alert(response.data);
+        setRestaurants((prev) =>
+          prev.map((restaurant) =>
             restaurant.id === id
-              ? { ...restaurant, approved: true }
+              ? { ...restaurant, isApproved: true }
               : restaurant
           )
         );
       })
       .catch((error) => {
-        console.error("Error approving restaurant", error);
-        alert("Error approving the restaurant");
+        console.error("Erreur lors de l'approbation du restaurant", error);
+        alert("Erreur lors de l'approbation du restaurant");
       });
   };
+
   return (
     <div className="DivTableRestaurant">
-      <h1 className="restaurants">Restaurant</h1>
+      <h1 className="restaurants">Restaurants</h1>
       <table className="TableRestaurant">
         <thead>
           <tr className="trTableRestaurant">
-            <th>UserID</th>
-            <th>Restaurant Name</th>
-            <th>Phone Number</th>
-            <th>Email Address</th>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Contact Email</th>
+            <th>PayPal Email</th>
+            <th>Role</th>
             <th>Approved</th>
+            <th>Verified</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {restaurants.map((restaurant) => (
-            <tr key={restaurant.id}>
-              <td className="tdTableRestaurant">{restaurant.id}</td>
-              <td className="tdTableRestaurant">{restaurant.RestaurantName}</td>
-              <td className="tdTableRestaurant">{restaurant.phone}</td>
-              <td className="tdTableRestaurant">{restaurant.mail}</td>
+          {restaurants.map((r) => (
+            <tr key={r.id}>
+              <td className="tdTableRestaurant">{r.id}</td>
+              <td className="tdTableRestaurant">{r.title}</td>
+              <td className="tdTableRestaurant">{r.address}</td>
+              <td className="tdTableRestaurant">{r.phone}</td>
+              <td className="tdTableRestaurant">{r.contact_Email}</td>
+              <td className="tdTableRestaurant">{r.paypal_Email}</td>
+              <td className="tdTableRestaurant">{r.role}</td>
               <td className="tdTableRestaurant">
-                {restaurant.isApproved === null
-                  ? "Not Yet Approved"
-                  : restaurant.isApproved === true
+                {r.isApproved === null
+                  ? "Not Yet"
+                  : r.isApproved
                   ? "Approved"
-                  : "Not Approved"}
+                  : "Rejected"}
               </td>
-              <td>
-                {restaurant.isApproved === null && (
-                  <button onClick={() => approveRestaurant(restaurant.id)}>
+              <td className="tdTableRestaurant">
+                {r.isVerified ? "Yes" : "No"}
+              </td>
+              <td className="tdTableRestaurant">
+                {r.isApproved === null && (
+                  <button onClick={() => approveRestaurant(r.id)}>
                     Approve
                   </button>
                 )}
@@ -78,4 +87,5 @@ function TabRestaurant() {
     </div>
   );
 }
+
 export default TabRestaurant;

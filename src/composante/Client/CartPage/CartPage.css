@@ -4,15 +4,15 @@
 }
 .tableContainer{
     display:flex;
-    padding-top:90px;
+    padding-top:5%;
     align-items: flex-start; /* Ensures tables don't stretch to match height */
 }
 .Product{
-    width:700px;
+    width:50%;
     height:auto;
     border-radius:50px;
     border-collapse: collapse;
-    margin-left:50px;
+    margin-left:5%;
 }
 .headTable , .headTable2 th, .fotter{
     background-color:#FD4C2A;
@@ -42,7 +42,7 @@ button {
 .TotalPrice{
     width:40%;
     height:auto;
-    margin-left:20px;
+    margin-left:2%;
     border-collapse:collapse;
     
 }
@@ -51,18 +51,18 @@ button {
     padding-left:250px;
 }
 #SecondPart{
-    margin-top:290px;
+    margin-top:19%;
 }
 
 #h2content5{
-    padding-left:600px;
+    padding-left:39%;
     font-weight:bold !important;
     font-size:2rem;
     color:#FD4C2A;
 }
 #discountBadge2{
     padding:3px;
-    margin-left:170px;
+    margin-left:12%;
     position:absolute;
     background-color:#FD4C2A;
     border-radius:5px;
@@ -71,17 +71,17 @@ button {
     display: flex;
     flex-wrap: wrap; 
     width: 100%;
-    max-width: 1400px;
-    height:350px;
+    height:20%;
     position:relative;
     z-index:1; 
     gap : 50px;
-    margin-top:50px;
-    margin-left:150px;
+    margin-top:1%;
+    margin-left:10%;
+    margin-bottom:10%;
 }
 
 #imageItem2 {
-    width: 200px;
+    width: -7%;
     height:200px;
     flex-direction: column;
 }
@@ -94,7 +94,7 @@ button {
 }
 #nameImg2 {
     font-size: 20px;
-    margin-top: 5px;
+    margin-top: 5%;
 }
 
 
@@ -107,7 +107,7 @@ button {
     text-decoration:line-through;
 }
 .PriceContainer2{
-    margin-left:-30px;
+    margin-left:-30%;
     display:flex;
     position:absolute;
 }
@@ -120,7 +120,7 @@ button {
     
 }
 #AddToCart2{
-    padding-left:170px;
+    padding-left:90%;
 }
 .quantityContent{
     width:40px;

@@ -42,6 +42,22 @@ app.get("/clients", (req, res) => {
   res.json(clients);
 });
 
+// DELETE client by ID
+app.delete("/clients/:id", (req, res) => {
+  const { id } = req.params;
+  const index = clients.findIndex(client => client.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Client not found" });
+  }
+
+  const deletedClient = clients.splice(index, 1); // remove from array
+  res.status(200).json({ message: "Client deleted successfully", deletedClient });
+});
+
+
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`✅ Server is running at http://localhost:${port}`);
