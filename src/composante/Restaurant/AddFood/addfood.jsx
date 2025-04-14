@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Utensils } from 'lucide-react';
 
 export default function AddFood() {
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const [currentItemName, setCurrentItemName] = useState('');
   const [formData, setFormData] = useState({
     title: '',
@@ -81,13 +83,26 @@ export default function AddFood() {
       });
   
       if (response.ok) {
-        const message = await response.json(); // Parse la réponse en JSON
-        console.log('Success:', message);
-        setShowAlert(true);
-        setFormData({ title: '', description: '', image: null, price: '', discount: '', category: '' });
-        setImagePreviewUrl(null);
-        setTimeout(() => setShowAlert(false), 3000);
-      } else {
+        const contentType = response.headers.get("content-type");
+
+  if (contentType && contentType.includes("application/json")) {
+    const message = await response.json();
+    console.log('Success:', message);
+    setAlertMessage('Food item added successfully!'); // ✅ ici
+
+  } else {
+    const message = await response.text(); // <- ici on lit la réponse texte
+    console.log('Success:', message);
+    setAlertMessage('Food item added successfully!'); // ✅ ici aussi
+
+
+  }
+
+  setShowAlert(true);
+  setFormData({ title: '', description: '', image: null, price: '', discount: '', category: [] });
+  setImagePreviewUrl(null);
+  setTimeout(() => setShowAlert(false), 3000);
+} else {
         const errorText = await response.text(); // Lire la réponse en texte brut
       console.error('Error:', errorText);
       alert('Erreur: ' + errorText); 
@@ -115,8 +130,8 @@ export default function AddFood() {
             className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400"
             role="alert"
           >
-            {/* ... alert content ... */}
-          </div>
+      <span className="font-medium">{alertMessage}</span>
+      </div>
         </div>
       )}
 
@@ -135,11 +150,9 @@ export default function AddFood() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-lg font-bold text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.99-2.99m-1.5-1.5l.707-.707a2.25 2.25 0 013.182 0l-2.99 2.99m1.5 1.5l-.707.707a2.25 2.25 0 01-3.182 0l5.159-5.159m-1.5-1.5l-1.409 1.409a2.25 2.25 0 01-3.182 0l2.99 2.99m1.5 1.5l.707-.707a2.25 2.25 0 01-3.182 0l-5.159 5.159" />
-                </svg>
-              </span>
+<div className="flex justify-center items-center w-16 h-16 bg-gray-100 rounded-full">
+  <Utensils className="w-8 h-8 text-gray-500" />
+</div>
             )}
           </div>
           <div className="flex-grow">

@@ -14,6 +14,9 @@ import Navbar_Restaurant from "../composante/Restaurant/Navbar_Restaurant/Navbar
 import Menu_Restaurant from "../composante/Restaurant/Menu_Restaurant/Menu_Restaurant";
 import AccountSettings from "../composante/Restaurant/Account_settings/account_settings";
 import AddFood from "../composante/Restaurant/AddFood/addfood";
+import ItemDetails from "../composante/Restaurant/ItemDetails/itemDetail";
+import DeleteItem from "../composante/Restaurant/DeleteItem/DeleteItem";
+import EditFood from "../composante/Restaurant/EditItem/EditItem";
 import "./App.css";
 
 // Layout avec Navbar fixe
@@ -81,6 +84,30 @@ function AnimatedRoutes() {
               element={
                 <RestaurantLayout>
                   <AddFood />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/itemDetail/:foodId"
+              element={
+                <RestaurantLayout>
+                  <ItemDetails />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/delete/:foodId"
+              element={
+                <RestaurantLayout>
+                  <DeleteItem />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/edit/:foodId"
+              element={
+                <RestaurantLayout>
+                  <EditFood />
                 </RestaurantLayout>
               }
             />

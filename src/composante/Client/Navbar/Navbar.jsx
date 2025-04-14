@@ -17,6 +17,7 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
 
+
   // Liste des catégories
   const categories = [
     { name: "All", icon: "🍽️", path: "client/Our_Menu?category=All" },
@@ -165,7 +166,7 @@ const Navbar = () => {
             <FaUser className="text-xl text-orange-700" />
           </button>
           {userMenuOpen && (
-            <div className="absolute mt-2 w-48 bg-white shadow-lg rounded-md border border-orange-400" style={{ left: "-120px" }}>
+            <div className="absolute mt-2 w-40 bg-white shadow-lg rounded-md border border-orange-400" style={{ left: "-120px" }}>
               <div className="p-2">
                 {isAuthenticated ? (
                   <>
@@ -174,20 +175,16 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    {["Login", "Register"].map((type) => (
-                      <div className="relative group" key={type}>
-                        <button className="flex justify-between items-center px-4 py-2 w-full text-left hover:bg-gray-100">
-                          <span>{type} as</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        <div className="absolute mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{ left: '-100px' }}>
-                          <Link to={`client/${type.toLowerCase()}`} className="block px-4 py-2 hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>Client</Link>
-                          <Link to={`restaurant/${type}Restaurant`} className="block px-4 py-2 hover:bg-gray-100" onClick={() => setUserMenuOpen(false)}>Restaurant</Link>
-                        </div>
-                      </div>
-                    ))}
+                    {["Signin", "Signup"].map((type) => (
+  <Link
+    key={type}
+    to={`client/${type.toLowerCase()}`}
+    className="block px-4 py-2 hover:bg-gray-100"
+    onClick={() => setUserMenuOpen(false)}
+  >
+    {type} 
+  </Link>
+))}
                   </>
                 )}
               </div>
