@@ -124,9 +124,9 @@ function SigninRestaurant() {
 
               {/* Oublie mot de passe */}
               <p className="text-center mt-4">
-                <a href="#" className="text-[#FD4C2A] font-medium underline">
-                  Forgot Your Password
-                </a>
+              <Link to="/auth/ForgotPasswordForm" className="text-[#FD4C2A] font-medium underline">
+    Forgot Your Password
+  </Link>
               </p>
             </div>
 

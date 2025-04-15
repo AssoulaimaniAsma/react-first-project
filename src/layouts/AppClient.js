@@ -14,6 +14,8 @@ import Checkout from "../composante/Client/Checkout/Checkout";
 import ItemCard from "../composante/Client/Test_item_card/ItemCard";
 import VerifyAccount from "../composante/Client/VerifyAccount/VerifyAccount";
 import { CartProvider } from "../composante/Client/CartContext/CartContext";
+import ForgotPasswordForm from "../composante/Reset/ForgotPasswordForm";
+import ResetPasswordForm from "../composante/Reset/ResetPasswordForm";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -29,6 +31,8 @@ function AnimatedRoutes() {
   const historyRef= useRef(null);
   const checkoutRef=useRef(null);
   const verifyRef=useRef(null);
+  const resetRef = useRef(null);
+  const forgetRef=useRef(null);
   return (
     <TransitionGroup>
       <CSSTransition 
@@ -47,6 +51,8 @@ function AnimatedRoutes() {
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
+          location.pathname==="/auth/ForgotPasswordForm" ? forgetRef:
+          location.pathname==="/auth/resetPassword" ? resetRef:
           homeRef
           
         }
@@ -63,6 +69,8 @@ function AnimatedRoutes() {
           location.pathname ==="/Checkout"  ? checkoutRef:
           location.pathname ==="/ItemCard"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
+          location.pathname==="auth/ForgotPasswordForm" ? forgetRef:
+          location.pathname==="/auth/resetPassword" ? resetRef:
           homeRef
         }>
           <Routes location={location}>
@@ -77,6 +85,9 @@ function AnimatedRoutes() {
           <Route path="/client/history/:userId" element={<History />} />
           <Route path="/client/Checkout" element={<Checkout />}/>
           <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
+          <Route path="/auth/resetPassword" element={<ResetPasswordForm />}/>
+          <Route path="/auth/ForgotPasswordForm" element={<ForgotPasswordForm />}/>
+
 
           </Routes>
         </div>
@@ -89,7 +100,7 @@ function Main() {
   const location = useLocation(); 
   return (
     <>
-      {location.pathname !== "/client/signin" && location.pathname !== "/client/signup"&& <Navbar />}
+      {location.pathname !== "/client/signin" && location.pathname !== "/client/signup"&& location.pathname !== "/auth/resetPassword" && location.pathname !== "/auth/ForgotPasswordForm" && <Navbar />}
       <AnimatedRoutes />
     </>
   );

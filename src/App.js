@@ -13,6 +13,7 @@ function RoutesManager() {
   if (path.startsWith("/restaurant")) return <AppRestaurant />;
   if (path.startsWith("/client")) return <AppClient />;
   if (path.startsWith("/admin")) return <AppAdmin />;
+  if (path.startsWith("/auth")) return <AppClient />;
   
   // Page d’accueil générale
   return <ChooseRole />;

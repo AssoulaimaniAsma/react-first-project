@@ -16,7 +16,7 @@ function ChooseRole() {
 
       {/* Cartes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-        <Link to="/client" className="w-96 flex flex-col items-center gap-2">
+        <Link to="/client/signin" className="w-96 flex flex-col items-center gap-2">
           
           <div className="w-96 h-96 overflow-hidden rounded-lg shadow-md hover:shadow-lg transition duration-300">
             <img
