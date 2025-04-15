@@ -27,3 +27,6 @@
     color:red;
     text-decoration:underline;
 }
+.LinkDeleteClient :hover{
+    color:black;
+}

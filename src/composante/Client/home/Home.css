@@ -3,6 +3,7 @@
 .HomeDiv{
     width:100%;
     margin:0; 
+    overflow: hidden;
 }
 .fixed-alert {
     position: fixed;
@@ -75,7 +76,7 @@
 
 #imageItem{
     min-width: 41.5%;
-    height:120%;
+    height:100%;
     flex-direction: column;
 }
 #imageItem img {
@@ -91,7 +92,7 @@
 #imageContent{
     display:flex;
     gap: 60px;
-    width: 100vw;
+    width: 100%;
     max-width: 53%;
     padding-left:7%;
     height:332px; 

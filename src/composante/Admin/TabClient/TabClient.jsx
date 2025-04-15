@@ -18,17 +18,21 @@ function TabClient(){
             });
         }, []);
 
+        //async est un mot-clé qu'on utilise pour déclarer une fonction asynchrone.Cela veut dire que cette fonction va attendre des opérations 
+        // longues (comme une requête HTTP, un accès à une base de données, etc.) sans bloquer le reste du programme.
         const handleDelete = async (id) => {
-            const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+            const confirmDelete = window.confirm("Are you sure you want to delete this client?");
+            //Si l'utilisateur annule, on arrête l'exécution de la fonction 
             if (!confirmDelete) return;
           
             try {
-              const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+                const res = await fetch(`http://localhost:3001/clients/${id}`, {
                 method: "DELETE",
               });
           
               if (res.ok) {
-                setClient((prev) => prev.filter((user) => user._id !== id));
+                //garde tous les clients sauf celui qu’on vient de supprimer (user.id !== id)
+                setClient((prev) => prev.filter((user) => user.id !== id));
               } else {
                 console.error("Failed to delete user");
               }

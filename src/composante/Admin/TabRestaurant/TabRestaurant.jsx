@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./TabRestaurant.css";
+import {FaTrash} from "react-icons/fa";
+import {Link} from "react-router-dom";
 
 function TabRestaurant() {
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/restaurant")
+      .get("http://localhost:3004/restaurant")
       .then((response) => {
         setRestaurants(response.data);
       })
@@ -18,7 +20,7 @@ function TabRestaurant() {
 
   const approveRestaurant = (id) => {
     axios
-      .get(`http://localhost:8080/admin/approveRestaurants/${id}`)
+      .get(`http://localhost:3004/restaurant`)
       .then((response) => {
         alert(response.data);
         setRestaurants((prev) =>
@@ -35,6 +37,25 @@ function TabRestaurant() {
       });
   };
 
+  const HandleDelete = async (id) =>{
+    const confirm=window.confirm("Are you sure you want to delete this restaurant")
+    if(!confirm) return;
+
+    try{
+      const res= await fetch ("http://localhost:/3004/restaurant",{
+        method : "DELETE",
+      });
+
+      if(res.ok){
+        setRestaurants((prev) => prev.filter((user) => user.id !== id));
+      }
+      else{
+        console.error("Failed to delete the user");
+      }
+    }catch(error){
+      console.error("Error deleting user",error);
+    }
+  }
   return (
     <div className="DivTableRestaurant">
       <h1 className="restaurants">Restaurants</h1>
@@ -47,39 +68,37 @@ function TabRestaurant() {
             <th>Phone</th>
             <th>Contact Email</th>
             <th>PayPal Email</th>
-            <th>Role</th>
             <th>Approved</th>
             <th>Verified</th>
             <th>Action</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {restaurants.map((r) => (
-            <tr key={r.id}>
-              <td className="tdTableRestaurant">{r.id}</td>
-              <td className="tdTableRestaurant">{r.title}</td>
-              <td className="tdTableRestaurant">{r.address}</td>
-              <td className="tdTableRestaurant">{r.phone}</td>
-              <td className="tdTableRestaurant">{r.contact_Email}</td>
-              <td className="tdTableRestaurant">{r.paypal_Email}</td>
-              <td className="tdTableRestaurant">{r.role}</td>
+          {restaurants.map((restaurant) => (
+            <tr key={restaurant.id}>
+              <td className="tdTableRestaurant">{restaurant.id}</td>
+              <td className="tdTableRestaurant">{restaurant.title}</td>
+              <td className="tdTableRestaurant">{restaurant.address}</td>
+              <td className="tdTableRestaurant">{restaurant.phone}</td>
+              <td className="tdTableRestaurant">{restaurant.contact_Email}</td>
+              <td className="tdTableRestaurant">{restaurant.paypal_Email}</td>
               <td className="tdTableRestaurant">
-                {r.isApproved === null
-                  ? "Not Yet"
-                  : r.isApproved
-                  ? "Approved"
+                {restaurant.isApproved === null? "Not Yet"
+                  : restaurant.isApproved? "Approved"
                   : "Rejected"}
               </td>
               <td className="tdTableRestaurant">
-                {r.isVerified ? "Yes" : "No"}
+                {restaurant.isVerified ? "Yes" : "No"}
               </td>
               <td className="tdTableRestaurant">
-                {r.isApproved === null && (
-                  <button onClick={() => approveRestaurant(r.id)}>
+                {restaurant.isApproved === null && (
+                  <button onClick={() => approveRestaurant(restaurant.id)}>
                     Approve
                   </button>
                 )}
               </td>
+              <td><Link className="DeleteRestaurant" onClick={()=> HandleDelete(restaurant.id)}><FaTrash/>Delete</Link></td>
             </tr>
           ))}
         </tbody>
