@@ -19,4 +19,13 @@
     border:1px solid black;
     background-color:#FD4C2A;
 }
+.DeleteRestaurant{
+    align-items:center;
+    display:flex;
+    color:red;
+    text-decoration:underline;
+}
+.DeleteRestaurant:hover{
+    color:black;
+}
 
