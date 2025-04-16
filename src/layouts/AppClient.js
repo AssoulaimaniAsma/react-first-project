@@ -16,6 +16,7 @@ import VerifyAccount from "../composante/Client/VerifyAccount/VerifyAccount";
 import { CartProvider } from "../composante/Client/CartContext/CartContext";
 import ForgotPasswordForm from "../composante/Reset/ForgotPasswordForm";
 import ResetPasswordForm from "../composante/Reset/ResetPasswordForm";
+import AddressForm from "../composante/AddressForm";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -33,6 +34,7 @@ function AnimatedRoutes() {
   const verifyRef=useRef(null);
   const resetRef = useRef(null);
   const forgetRef=useRef(null);
+  const addresRef= useRef(null);
   return (
     <TransitionGroup>
       <CSSTransition 
@@ -53,6 +55,7 @@ function AnimatedRoutes() {
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="/auth/ForgotPasswordForm" ? forgetRef:
           location.pathname==="/auth/resetPassword" ? resetRef:
+          location.pathname==="/client/Address" ? addresRef:
           homeRef
           
         }
@@ -71,6 +74,7 @@ function AnimatedRoutes() {
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="auth/ForgotPasswordForm" ? forgetRef:
           location.pathname==="/auth/resetPassword" ? resetRef:
+          location.pathname==="/client/Address" ? addresRef:
           homeRef
         }>
           <Routes location={location}>
@@ -87,7 +91,7 @@ function AnimatedRoutes() {
           <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
           <Route path="/auth/resetPassword" element={<ResetPasswordForm />}/>
           <Route path="/auth/ForgotPasswordForm" element={<ForgotPasswordForm />}/>
-
+          <Route path="/client/Address" element={<AddressForm />}/>
 
           </Routes>
         </div>

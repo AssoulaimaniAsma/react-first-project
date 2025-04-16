@@ -22,7 +22,7 @@ export default function VerifyAccountRestaurant() {
           if (isMounted) {
             if (res.status === 200) {
               setStatus("success");
-              setTimeout(() => navigate("/SigninRestaurant"), 5000);
+              setTimeout(() => navigate("/restaurant/SigninRestaurant"), 5000);
             } else {
               setStatus("error");
             }
