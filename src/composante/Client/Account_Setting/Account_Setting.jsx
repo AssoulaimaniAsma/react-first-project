@@ -282,7 +282,7 @@ const AccountSettings = () => {
 
       <div className="Address mt-6">
         <span>Address</span>
-        <Link to="/address-form" className="addressLink">
+        <Link to="/client/Address" className="addressLink">
           Manage Address
         </Link>
       </div>

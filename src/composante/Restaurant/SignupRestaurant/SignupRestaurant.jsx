@@ -1,89 +1,51 @@
+
+
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useNavigate,Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-function SignupRestaurant() {
+import axios from "axios";
+
+
+const SignupRestaurant = () => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [step, setStep] = useState(1);
+  const [regions, setRegions] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [communes, setCommunes] = useState([]);
+  const [showCoordinates, setShowCoordinates] = useState(false);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
   const [formData, setFormData] = useState({
     restaurantName: "",
     email: "",
+    shippingFees:"",
     phone: "",
     paypalEmail: "",
     contactEmail: "",
     password: "",
     confirmPassword: "",
     address: "",
+    title: "",
+    street: "",
+    region: "",
+    province: "",
+    comune: "",
+    isDefault: false
   });
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!formData.restaurantName.trim()) {
-      newErrors.restaurantName = "Restaurant name is required.";
-    }
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Invalid email address.";
-    }
-
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = "Phone number must be 10 digits.";
-    }
-
-    const generalEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (formData.paypalEmail && !generalEmailRegex.test(formData.paypalEmail)) {
-      newErrors.paypalEmail = "Invalid PayPal email address.";
-    }
-
-    if (formData.contactEmail && !generalEmailRegex.test(formData.contactEmail)) {
-      newErrors.contactEmail = "Invalid contact email address.";
-    }
-
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = "Password must be at least 8 characters, include an uppercase letter, a lowercase letter, and a number.";
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required.";
-    }
-
-    if (!isTermsAccepted) {
-      newErrors.terms = "You must accept the Terms of Service and Privacy Policy.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const resetForm = () => {
     setFormData({
       restaurantName: "",
       email: "",
+      
       phone: "",
       paypalEmail: "",
       contactEmail: "",
@@ -93,57 +55,150 @@ function SignupRestaurant() {
     });
     setIsTermsAccepted(false);
     setErrors({});
+    setStep(1);
+    setShowCoordinates(false);
+  };
+  const navigate = useNavigate();
+  const validateStep = () => {
+    const newErrors = {};
+  
+    if (step === 1) {
+      if (!formData.restaurantName) newErrors.restaurantName = "Restaurant Name is required";
+      if (!formData.email) newErrors.email = "Email is required";
+      if (!formData.contactEmail) newErrors.contactEmail = "Contact Email is required";
+      if (!formData.phone) newErrors.phone = "Phone is required";
+      if (!formData.password) newErrors.password = "Password is required";
+      if (formData.password !== formData.confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+    }
+  
+    if (step === 2) {
+      if (!formData.title) newErrors.title = "Title is required";
+      if (!formData.street) newErrors.street = "Street is required";
+      if (!formData.region) newErrors.region = "Region is required";
+      if (!formData.province) newErrors.province = "Province is required";
+      if (!formData.comune) newErrors.comune = "Commune is required";
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  useEffect(() => {
+    axios.get("http://localhost:8080/public/addressDetails/Regions")
+      .then(res => setRegions(res.data))
+      .catch(err => console.error("Regions loading error", err));
+  }, []);
+
+  useEffect(() => {
+    if (formData.region) {
+      axios.get(`http://localhost:8080/public/addressDetails/Provinces?regionID=${formData.region}`)
+        .then(res => setProvinces(res.data))
+        .catch(err => console.error("Provinces loading error", err));
+    }
+  }, [formData.region]);
+
+  useEffect(() => {
+    if (formData.province) {
+      axios.get(`http://localhost:8080/public/addressDetails/Communes?provinceID=${formData.province}`)
+        .then(res => setCommunes(res.data))
+        .catch(err => console.error("Communes loading error", err));
+    }
+  }, [formData.province]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSignup = async () => {
-    if (validateForm()) {
-      const restaurantData = {
-        restaurantName: formData.restaurantName,
-        email: formData.email,
-        phone: formData.phone,
-        paypalEmail: formData.paypalEmail,
-        contactEmail: formData.contactEmail,
-        password: formData.password,
-        address: formData.address,
-      };
-      console.log("Sending data:", restaurantData);
-      try {
-        const response = await fetch("http://localhost:8080/auth/restaurant/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(restaurantData),
-        });
-
-        if (response.ok) {
-          setSuccessMessage("Restaurant account created successfully!");
-          setShowSuccessAlert(true);
-          setTimeout(() => navigate("/restaurant/SigninRestaurant"), 3000);
-        } else {
-          let errorMessage = "Signup failed";
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-          } catch (err) {
-            console.warn("Pas de JSON dans la réponse d'erreur");
-          }
-          setErrorMessage(errorMessage);
-          setShowErrorAlert(true);
+  const handleCheckboxChange = () => {
+    const activate = !showCoordinates;
+    if (activate) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLatitude(pos.coords.latitude);
+          setLongitude(pos.coords.longitude);
+          setShowCoordinates(true);
+        },
+        () => {
+          setShowCoordinates(false);
+          alert("Permission denied for location");
         }
-      } catch (error) {
-        console.error("Fetch error:", error);
-        setErrors({ api: "Server error, please try again later." });
-        setShowErrorAlert(true);
-      }
+      );
+    } else {
+      setShowCoordinates(false);
+      
+      setLatitude(null);
+      setLongitude(null);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleNext = (e) => {
+    e.preventDefault(); // <- IMPORTANT : empêche la soumission accidentelle
+    if (validateStep()) {
+      setStep(step + 1);
+    }
   };
 
-  // Le reste du composant JSX ne change pas
+  const handlePrev = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      restaurantName: formData.restaurantName,
+      email: formData.email,
+      phone: formData.phone,
+      addressRegistrationBody: {
+        title: formData.title,
+        street: formData.street,
+        regionID: parseInt(formData.region),
+        provinceID: parseInt(formData.province),
+        communeID: parseInt(formData.comune),
+        latitude: latitude,
+        longitude: longitude,
+        isDefault: formData.isDefault === "on", 
+        isCoordinationActivated: showCoordinates
+      },
+      shippingFees: 20.0,
+      paypalEmail: formData.paypalEmail,
+      contactEmail: formData.contactEmail,
+      password: formData.password
+    };
+    console.log("Payload envoyé :", payload);
+    try {
+      console.log("Payload envoyé TRY :", payload);
+      const res = await fetch("http://localhost:8080/auth/restaurant/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      console.log("Payload envoyé APRES TRY :", payload);
+      if (res.ok) {
+        setSuccessMessage("Restaurant account created successfully!");
+        setShowSuccessAlert(true);
+        setTimeout(() => navigate("/restaurant/SigninRestaurant"), 3000);
+      } else {
+        let errorMessage = "Signup failed";
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (err) {
+          console.warn("Pas de JSON dans la réponse d'erreur");
+        }
+        setErrorMessage(errorMessage);
+        setShowErrorAlert(true);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setErrors({ api: "Server error, please try again later." });
+      setShowErrorAlert(true);
+    }
+  };
+
   return (
-    <div className="text-primary flex justify-center items-center min-h-screen bg-white px-5">
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       {showSuccessAlert && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50"
@@ -212,181 +267,357 @@ function SignupRestaurant() {
           </div>
         </div>
       )}
-      <motion.div
-        className="max-w-4xl w-full bg-white flex flex-col md:flex-row shadow-lg rounded-lg overflow-hidden"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 100 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          className="md:w-1/2 w-full"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+    <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 max-w-3xl w-full">
+      <h2 className="text-3xl font-bold text-black">Sign up Restaurant</h2>
+      <p className="text-gray-600 mt-2 mb-4">
+        Already have a Restaurant Account?{" "}
+        <Link
+          to="/restaurant/SigninRestaurant"
+          className="text-[#FD4C2A] font-medium underline"
         >
-          <img
-            src={require("../../../image/signinRes.jpg")}
-            alt="Food"
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-
-        <motion.div
-          className="md:w-1/2 w-full p-8"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-3xl font-bold text-black">Sign up Restaurant</h2>
-          <p className="text-gray-600 mt-2">
-            Already have a Restaurant Account?{" "}
-            <Link
-              to="/restaurant/SigninRestaurant"
-              className="text-[#FD4C2A] font-medium underline"
-            >
-              Login.
-            </Link>
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          Login.
+        </Link>
+      </p>
+      <div className="mb-8">
+        <div className="flex justify-between mb-2">
+          {["Personal Info", "Address", "Payment Info"].map((label, index) => {
+            const s = index + 1;
+            return (
+              <span
+                key={s}
+                className={`text-xs font-semibold py-1 px-2 rounded-full ${
+                  step >= s ? "text-white bg-[#FD4C2A]" : "bg-gray-300 text-gray-600"
+                }`}
+              >
+                {label}
+              </span>
+            );
+          })}
+        </div>
+        <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-300">
+          <div
+            style={{ width: `${(step / 3) * 100}%` }}
+            className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#FD4C2A] transition-all duration-500 ease-in-out"
+          ></div>
+        </div>
+      </div>
+  
+      <form onSubmit={handleSubmit} onKeyDown={(e) => {
+        if (e.key === "Enter" && step < 3) e.preventDefault();
+      }}
+        className="mt-8">
+        {step === 1 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700">Restaurant Name</label>
               <input
-                type="text"
-                placeholder="Enter your Restaurant Name"
-                value={formData.restaurantName}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
                 name="restaurantName"
+                placeholder="Restaurant Name"
+                value={formData.restaurantName}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.restaurantName ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              {errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
+              {errors.restaurantName && (
+                <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
+              )}
             </div>
-
+  
             <div>
               <label className="block text-gray-700">Email</label>
               <input
-                type="email"
-                value={formData.email}
-                placeholder="exemple@exemple.com"
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
                 name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.email ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
-
+            <div>
+              <label className="block text-gray-700">Contact Email</label>
+              <input
+                name="contactEmail"
+                placeholder="Contact Email"
+                value={formData.contactEmail}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.contactEmail ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              />
+              {errors.contactEmail && (
+                <p className="text-red-500 text-sm mt-1">{errors.contactEmail}</p>
+              )}
+            </div>
             <div>
               <label className="block text-gray-700">Phone</label>
               <input
-                type="tel"
-                placeholder="Enter your 10-digit phone number"
-                value={formData.phone}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
                 name="phone"
-              />
-              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-            </div>
-
-            <div>
-              <label className="block text-gray-700">PayPal Email (Optional)</label>
-              <input
-                type="email"
-                placeholder="Enter your PayPal email"
-                value={formData.paypalEmail}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
+                placeholder="Phone"
+                value={formData.phone}
                 onChange={handleChange}
-                name="paypalEmail"
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.phone ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              {errors.paypalEmail && <p className="text-red-500 text-sm">{errors.paypalEmail}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
-
-            <div>
-              <label className="block text-gray-700">Contact Email (Optional)</label>
-              <input
-                type="email"
-                placeholder="Enter your contact email"
-                value={formData.contactEmail}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
-                name="contactEmail"
-              />
-              {errors.contactEmail && <p className="text-red-500 text-sm">{errors.contactEmail}</p>}
-            </div>
-
+  
             <div className="relative">
               <label className="block text-gray-700">Password</label>
               <input
-                type={showPassword ? "text" : "password"}
-                placeholder="******"
-                value={formData.password}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
                 name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.password ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              <span className="absolute top-10 right-4 text-gray-500 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+              <span
+                className="absolute top-10 right-4 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
-
+  
             <div className="relative">
               <label className="block text-gray-700">Confirm Password</label>
               <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="******"
-                value={formData.confirmPassword}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
-                onChange={handleChange}
                 name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.confirmPassword ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              <span className="absolute top-10 right-4 text-gray-500 cursor-pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <span
+                className="absolute top-10 right-4 text-gray-500 cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
-              {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+              )}
             </div>
-
+          </div>
+        )}
+  
+        {step === 2 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-gray-700">Address</label>
+              <label className="block text-gray-700">Title</label>
               <input
-                type="text"
-                placeholder="Enter your Restaurant Address"
-                value={formData.address}
-                className="w-full mt-2 p-3 focus:border-2 focus:border-[#FD4C2A] rounded-full bg-gray-50 focus:outline-none"
+                name="title"
+                placeholder="Enter a name to identify this address "
+                value={formData.title}
                 onChange={handleChange}
-                name="address"
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.title ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
               />
-              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {errors.title && (
+                <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+              )}
+            </div>
+  
+            <div>
+              <label className="block text-gray-700">Street</label>
+              <input
+                name="street"
+                placeholder="Street"
+                value={formData.street}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.street ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              />
+              {errors.street && (
+                <p className="text-red-500 text-sm mt-1">{errors.street}</p>
+              )}
+            </div>
+  
+            <div>
+              <label className="block text-gray-700">Region</label>
+              <select
+                name="region"
+                value={formData.region}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.region ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              >
+                <option value="">Select Region</option>
+                {regions.map(r => (
+                  <option key={r.id} value={r.id}>
+                    {r.regionName}
+                  </option>
+                ))}
+              </select>
+              {errors.region && (
+                <p className="text-red-500 text-sm mt-1">{errors.region}</p>
+              )}
+            </div>
+  
+            <div>
+              <label className="block text-gray-700">Province</label>
+              <select
+                name="province"
+                value={formData.province}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.province ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              >
+                <option value="">Select Province</option>
+                {provinces.map(p => (
+                  <option key={p.id} value={p.id}>
+                    {p.provinceName}
+                  </option>
+                ))}
+              </select>
+              {errors.province && (
+                <p className="text-red-500 text-sm mt-1">{errors.province}</p>
+              )}
+            </div>
+  
+            <div>
+              <label className="block text-gray-700">Commune</label>
+              <select
+                name="comune"
+                value={formData.comune}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.comune ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              >
+                <option value="">Select Commune</option>
+                {communes.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.communeName}
+                  </option>
+                ))}
+              </select>
+              {errors.comune && (
+                <p className="text-red-500 text-sm mt-1">{errors.comune}</p>
+              )}
+            </div>
+  
+            <div className="col-span-2 flex flex-wrap items-center gap-x-8 mt-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={showCoordinates}
+                  onChange={handleCheckboxChange}
+                  className="mr-2 text-[#FD4C2A]"
+                />
+                <label className="text-gray-700 text-sm">Add GPS Coordinates</label>
+              </div>
+  
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isDefault"
+                  checked={formData.isDefault}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label htmlFor="isDefault" className="text-sm text-gray-700">⭐ Set as Default Address</label>
+              </div>
+            </div>
+  
+            {/* Champs affichés uniquement si showCoordinates est activé */}
+            {showCoordinates && (
+              <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-white">Longitude</label>
+                  <input
+                    type="text"
+                    value={longitude}
+                    readOnly
+                    className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-white">Latitude</label>
+                  <input
+                    type="text"
+                    value={latitude}
+                    readOnly
+                    className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        {step === 3 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700">PayPal Email</label>
+              <input
+                name="paypalEmail"
+                type="email"
+                placeholder="PayPal Email"
+                value={formData.paypalEmail}
+                onChange={handleChange}
+                className={`w-full mt-2 p-3 rounded-full bg-gray-50 focus:outline-none ${
+                  errors.paypalEmail ? "border-2 border-red-500" : "focus:border-2 focus:border-[#FD4C2A]"
+                }`}
+              />
+              {errors.paypalEmail && (
+                <p className="text-red-500 text-sm mt-1">{errors.paypalEmail}</p>
+              )}
             </div>
           </div>
-
-          <div className="flex items-center mt-4">
-            <input
-              type="checkbox"
-              id="terms"
-              className="mr-2"
-              checked={isTermsAccepted}
-              onChange={(e) => setIsTermsAccepted(e.target.checked)}
-            />
-            <label htmlFor="terms" className="text-gray-700 text-sm">
-              I have read and agreed to the Terms of Service and Privacy Policy
-            </label>
-          </div>
-          {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
-
-          <button
-            className="w-full mt-6 bg-[#FD4C2A] text-white py-3 rounded-full font-bold text-lg hover:bg-orange-600 transition"
-            onClick={handleSignup}
-          >
-            Create Restaurant Account
-          </button>
-
-          {successMessage && <p className="text-green-500 text-sm mt-4">{successMessage}</p>}
-        </motion.div>
-      </motion.div>
+        )}
+  
+        <div className="flex justify-between mt-6">
+          {step > 1 && (
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+            >
+              Previous
+            </button>
+          )}
+          {step < 3 ? (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-10 py-2 bg-[#FD4C2A] text-white rounded hover:bg-orange-600"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="px-10 py-2 bg-[#FD4C2A] text-white rounded hover:bg-orange-600"
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
     </div>
+  </div>
   );
-}
+};
 
 export default SignupRestaurant;
