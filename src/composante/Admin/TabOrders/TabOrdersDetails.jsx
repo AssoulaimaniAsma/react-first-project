@@ -11,7 +11,7 @@ function TabOrdersDetails() {
         console.log("ID de la commande:", id);
       // Effectuer une requête GET pour récupérer la commande par ID
       axios
-        .get(`http://localhost:3006/orders/${id}`)  // Utilisation de l'ID dans l'URL
+        .get(`http://localhost:3007/orders/${id}`)  // Utilisation de l'ID dans l'URL
         .then((response) => {
           setOrder(response.data);  // Met à jour l'état avec la commande
         })

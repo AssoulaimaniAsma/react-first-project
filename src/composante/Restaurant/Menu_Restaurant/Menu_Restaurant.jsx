@@ -19,8 +19,12 @@ export default function Menu_Restaurant() {
 
     if (token) {
       axios.get('http://localhost:8080/restaurant/foodItem/', {
+        // The Authorization header is used to send authentication credentials to the server
+        //Bearer ${token} is the value of the Authorization header
+        //the token value usually containsa jwt
         headers: { Authorization: `Bearer ${token}` },
       })
+      //If the request is successful, it sets the fetched data (probably a list of food items) using setFoodItems
         .then((res) => {
           setFoodItems(res.data);
         })

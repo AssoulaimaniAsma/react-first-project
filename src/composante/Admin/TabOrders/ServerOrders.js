@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const port = 3006;
+const port = 3007;
 
 app.use(cors()); // allow requests from frontend
 app.use(express.json()); // parse JSON bodies
@@ -21,6 +21,7 @@ const orders = [
           description: "description",
           price :"23",
         },
+        
         {
           idItem: "102",
           name: "Burger",

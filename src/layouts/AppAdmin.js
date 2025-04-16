@@ -18,6 +18,7 @@ function AppAdmin() {
       <div style={{ flex: 1 }}>
         <Routes>
           <Route path="/admin" element={<TabOrders />} />
+          <Route path="/admin/TabOrders" element={<TabOrders />} />
           <Route path="/admin/Orders/:id" element={<TabOrdersDetails />} />
           <Route path="/admin/Tabclient" element={<TabClient />} />
           <Route path="/admin/TabRestaurant" element={<TabRestaurant />} />

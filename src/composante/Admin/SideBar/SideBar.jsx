@@ -42,7 +42,7 @@ const Sidebar = () => {
         >
           <FaClipboardList className="icon" /> Tab Orders
         </Link>
-        <Link to="/admin/Orders/1" className="sidebar-line">
+        <Link to="/admin/TabOrdersDetails" className="sidebar-line">
           <FaFileAlt className="icon" /> Tab Orders Details
         </Link>
         <Link to="/admin/Tabclient" className="sidebar-line">
