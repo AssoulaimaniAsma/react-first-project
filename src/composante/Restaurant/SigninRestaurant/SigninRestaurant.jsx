@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-
+import { FaExchangeAlt } from "react-icons/fa";
 function SigninRestaurant() {
   const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -142,6 +142,14 @@ function SigninRestaurant() {
           </div>
         </div>
       )}
+      {/* Bouton switch de mode utilisateur */}
+<div className="fixed bottom-4 left-4 z-50">
+<Link to="/client/signin" className="text-[#FD4C2A] font-bold  flex items-center gap-2 ...">
+      <FaExchangeAlt />
+        Switch User
+  </Link>
+</div>
+
     </div>
   );
 }
