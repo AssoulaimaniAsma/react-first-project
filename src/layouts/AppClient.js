@@ -16,7 +16,10 @@ import VerifyAccount from "../composante/Client/VerifyAccount/VerifyAccount";
 import { CartProvider } from "../composante/Client/CartContext/CartContext";
 import ForgotPasswordForm from "../composante/Reset/ForgotPasswordForm";
 import ResetPasswordForm from "../composante/Reset/ResetPasswordForm";
-import AddressForm from "../composante/AddressForm";
+import AddressForm from "../composante/Client/Address/AddressForm";
+import UserAddresses from "../composante/Client/Address/UserAddresses";
+import EditAddress from "../composante/Client/Address/EditAddress";
+import ShowAddress from "../composante/Client/Address/ShowAddress";
 import "./App.css";
 
 function AnimatedRoutes() {
@@ -35,7 +38,10 @@ function AnimatedRoutes() {
   const resetRef = useRef(null);
   const forgetRef=useRef(null);
   const addresRef= useRef(null);
-  return (
+  const useraddressRef= useRef(null);
+  const editaddressRef= useRef(null);
+  const showaddressRef= useRef(null);
+    return (
     <TransitionGroup>
       <CSSTransition 
         key={location.pathname} 
@@ -55,7 +61,11 @@ function AnimatedRoutes() {
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="/auth/ForgotPasswordForm" ? forgetRef:
           location.pathname==="/auth/resetPassword" ? resetRef:
-          location.pathname==="/client/Address" ? addresRef:
+          location.pathname==="/client/Address/:isEditable" ? addresRef:
+          location.pathname==="/client/allAddress" ? useraddressRef:
+          location.pathname==="/client/Address/edit/:id" ? editaddressRef:
+          location.pathname==="/client/Address/show/:id" ? showaddressRef:
+
           homeRef
           
         }
@@ -74,7 +84,11 @@ function AnimatedRoutes() {
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="auth/ForgotPasswordForm" ? forgetRef:
           location.pathname==="/auth/resetPassword" ? resetRef:
-          location.pathname==="/client/Address" ? addresRef:
+          location.pathname==="/client/Address/:isEditable" ? addresRef:
+          location.pathname==="/client/allAddress" ? useraddressRef:
+          location.pathname==="/client/Address/edit/:id" ? editaddressRef:
+          location.pathname==="/client/Address/show/:id" ? showaddressRef:
+
           homeRef
         }>
           <Routes location={location}>
@@ -91,7 +105,10 @@ function AnimatedRoutes() {
           <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
           <Route path="/auth/resetPassword" element={<ResetPasswordForm />}/>
           <Route path="/auth/ForgotPasswordForm" element={<ForgotPasswordForm />}/>
-          <Route path="/client/Address" element={<AddressForm />}/>
+          <Route path="/client/Address/:isEditable" element={<AddressForm />}/>
+          <Route path="/client/allAddress" element={<UserAddresses />}/>
+          <Route path="/client/Address/edit/:id" element={<EditAddress />}/>
+          <Route path="/client/Address/show/:id" element={<ShowAddress />}/>
 
           </Routes>
         </div>
