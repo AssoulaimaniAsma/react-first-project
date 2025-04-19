@@ -1,5 +1,5 @@
 .DivTableClient{
-    padding-top:5%;
+    padding-top:10%;
     justify-content:center;
     align-items:center;
     flex-direction: column;
@@ -30,3 +30,17 @@
 .LinkDeleteClient :hover{
     color:black;
 }
+.searchBar{
+    border: 2px solid #FD4C2A;
+    padding:5px;
+    width:15%;
+    height:10%;
+    border-radius:25px;
+    margin-left:-55%;
+}
+.searchBar:focus {
+    border-color: #D7D2D0;  /* Darker border on focus */
+    box-shadow: 0 0 5px #525251; /* Blue glow effect */
+    outline: none;
+  }
+

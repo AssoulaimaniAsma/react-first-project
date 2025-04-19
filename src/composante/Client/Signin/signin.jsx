@@ -3,6 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext"; // adapte le chemin selon ta structure
 import "./signin.css";
+import { FaExchangeAlt } from "react-icons/fa";
 
 function Signin() {
   const [loading, setLoading] = useState(true);
@@ -152,6 +153,14 @@ function Signin() {
           </div>
         </div>
       )}
+      <div className="fixed bottom-4 left-4 z-50">
+      <Link to="/restaurant/SigninRestaurant" className="text-[#FD4C2A] font-bold  flex items-center gap-2 ...">
+            <FaExchangeAlt />
+              Switch User
+        </Link>
+      </div>
+      
+          
     </div>
   );
 }

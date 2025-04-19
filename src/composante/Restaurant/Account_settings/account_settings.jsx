@@ -1,33 +1,119 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 import "./account_setting.css";
-
+import { FaEdit } from "react-icons/fa";
 
 const AccountSettings = () => {
   const [formData, setFormData] = useState({
     title: "",
     phone: "",
     email: "",
-    contactEmail:"",
-    paypalEmail:"",
+    contactEmail: "",
+    paypalEmail: "",
     oldPassword: "",
     newPassword: "",
   });
+
+  const [showCoordinates, setShowCoordinates] = useState(false);
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-    const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [isEditable, setIsEditable] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [regions, setRegions] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [communes, setCommunes] = useState([]);
+  const token = localStorage.getItem("authToken");
+  const [address, setAddress] = useState({
+    title: "",
+    street: "",
+    commune: null,
+    province: null,
+    region: null,
+    isDefault: false,
+    id: null,
+  });
+
+  const [formDataa, setFormDataa] = useState({
+    title: "",
+    street: "",
+    region: "",
+    province: "",
+    commune: "",
+    isDefault: false,
+  });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/restaurant/account_settings");
+    const fetchAddress = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/restaurant/address/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAddress(res.data);
+        setFormDataa({
+          title: res.data.title || "",
+          street: res.data.street || "",
+          region: res.data.region?.id || "",
+          province: res.data.province?.id || "",
+          commune: res.data.commune?.id || "",
+          isDefault: res.data.isDefault || false,
+        });
+      } catch (err) {
+        console.error("Error fetching address", err);
+      }
+    };
+
+    if (token) {
+      fetchAddress();
+    }
+  }, [token]);
+
+  // Load regions on mount
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/public/addressDetails/Regions")
+      .then((res) => setRegions(res.data))
+      .catch((err) => console.error("Error fetching regions", err));
+  }, []);
+
+  const handleChange2 = (field, value) => {
+    setFormDataa((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    if (field === "region") {
+      axios
+        .get(`http://localhost:8080/public/addressDetails/Provinces?regionID=${value}`)
+        .then((res) => setProvinces([...res.data])) // Créer une nouvelle référence de tableau
+        .catch((err) => console.error("Error fetching provinces", err));
+      setFormDataa((prev) => ({ ...prev, province: "", commune: "" }));
+      setProvinces([]);
+      setCommunes([]);
+    }
+
+    if (field === "province") {
+      axios
+        .get(`http://localhost:8080/public/addressDetails/Communes?provinceID=${value}`)
+        .then((res) => setCommunes([...res.data])) // Créer une nouvelle référence de tableau
+        .catch((err) => console.error("Error fetching communes", err));
+      setFormDataa((prev) => ({ ...prev, commune: "" }));
+      setCommunes([]);
+    }
+  };
+
+  useEffect(() => {
+    if (!token) return navigate("/restaurant/SigninRestaurant");
 
     const fetchAccountDetails = async () => {
       try {
@@ -59,12 +145,10 @@ const AccountSettings = () => {
     };
 
     fetchAccountDetails();
-  }, [navigate]);
+  }, [navigate, token]);
 
-  const userInitials =
-    (formData.title[0] || "");
+  const userInitials = (formData.title[0] || "").toUpperCase();
 
-  // ✅ MODIFIÉ : Enregistrer juste le chemin relatif
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setProfileImage(file);
@@ -77,31 +161,19 @@ const AccountSettings = () => {
 
   const validateForm = () => {
     const newErrors = {};
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/;
 
-    if (
-      !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
-        formData.email
-      )
-    ) {
+    if (!emailRegex.test(formData.email)) {
       newErrors.email = "Adresse email invalide.";
     }
-    if (
-        !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
-          formData.contactEmail
-        )
-      ) {
-        newErrors.contactEmail = "Adresse email invalide.";
-      }
-      if (
-        !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
-          formData.paypalEmail
-        )
-      ) {
-        newErrors.paypalEmail = "Adresse email invalide.";
-      }
+    if (!emailRegex.test(formData.contactEmail)) {
+      newErrors.contactEmail = "Adresse email invalide.";
+    }
+    if (!emailRegex.test(formData.paypalEmail)) {
+      newErrors.paypalEmail = "Adresse email invalide.";
+    }
     if (!/^(?:\+2126|06)\d{8}$/.test(formData.phone)) {
-      newErrors.phone =
-        "Numéro invalide. Format : +2126xxxxxxxx ou 06xxxxxxxx";
+      newErrors.phone = "Numéro invalide. Format : +2126xxxxxxxx ou 06xxxxxxxx";
     }
     if (
       formData.newPassword &&
@@ -118,7 +190,6 @@ const AccountSettings = () => {
   const handleSaveChanges = async () => {
     if (!validateForm()) return;
 
-    const token = localStorage.getItem("authToken");
     if (!token) return navigate("/restaurant/SigninRestaurant");
 
     const formDataToSend = {
@@ -131,7 +202,6 @@ const AccountSettings = () => {
       newPassword: formData.newPassword,
     };
 
-    // ✅ Envoi du chemin image
     if (profileImageUrl) {
       formDataToSend.profileImg = profileImageUrl;
     }
@@ -173,7 +243,6 @@ const AccountSettings = () => {
         oldPassword: "",
         newPassword: "",
       }));
-
     } catch (err) {
       console.error("Erreur mise à jour compte:", err);
       setErrors({ general: "Erreur de connexion au serveur." });
@@ -185,7 +254,111 @@ const AccountSettings = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditClick = () => setIsEditable(true);
+  const handleEditClick = () => {
+    setIsEditable(true);
+  };
+
+  const handleChangee = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormDataa({
+      ...formDataa,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleCheckboxChange = () => {
+    const newValue = !showCoordinates;
+    setShowCoordinates(newValue);
+    setLatitude("");
+    setLongitude("");
+    if (newValue) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (error) => {
+          console.error("Location permission denied:", error.message);
+          setShowCoordinates(false);
+        }
+      );
+    }
+  };
+
+  const handleSave = () => {
+    const payload = {
+      id: address.id,
+      title: formDataa.title,
+      street: formDataa.street,
+      regionID: formDataa.region,
+      provinceID: formDataa.province,
+      communeID: formDataa.commune,
+      isDefault: formDataa.isDefault,
+      latitude: latitude,
+      longitude: longitude,
+    };
+
+    axios
+      .post("http://localhost:8080/restaurant/address/update", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        alert("✅ Address updated!");
+        setIsEditing(false);
+        // Refetch address data
+        axios
+          .get("http://localhost:8080/restaurant/address/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => setAddress(res.data))
+          .catch((err) => console.error("Error refetching address", err));
+      })
+      .catch((err) => {
+        console.error("Error updating address", err);
+        alert("❌ Failed to update address");
+      });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSave();
+  };
+
+  const handleEditAddressClick = async () => {
+    setIsEditing(true);
+    setFormDataa({
+      title: address.title || "",
+      street: address.street || "",
+      region: address.region?.id || "",
+      province: address.province?.id || "",
+      commune: address.commune?.id || "",
+      isDefault: address.isDefault || false,
+    });
+
+    // Charger les provinces si une région existe
+    if (address.region?.id) {
+      try {
+        const resProvinces = await axios.get(
+          `http://localhost:8080/public/addressDetails/Provinces?regionID=${address.region.id}`
+        );
+        setProvinces(resProvinces.data);
+      } catch (err) {
+        console.error("Error fetching provinces", err);
+      }
+
+      // Charger les communes si une province existe
+      if (address.province?.id) {
+        try {
+          const resCommunes = await axios.get(
+            `http://localhost:8080/public/addressDetails/Communes?provinceID=${address.province.id}`
+          );
+          setCommunes(resCommunes.data);
+        } catch (err) {
+          console.error("Error fetching communes", err);
+        }
+      }
+    }
+  };
 
   return (
     <div className="mt-8 max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
@@ -216,28 +389,28 @@ const AccountSettings = () => {
         ) : (
           <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
             <span className="text-lg font-bold text-gray-600">
-              {userInitials.toUpperCase()}
+              {userInitials}
             </span>
           </div>
         )}
         <div>
-          <h3 className="text-lg font-semibold">
-            {formData.title}
-          </h3>
+          <h3 className="text-lg font-semibold">{formData.title}</h3>
           <p className="text-gray-500">{formData.email}</p>
         </div>
       </div>
 
-      <div className="EditDiv mt-4 flex justify-between">
-        <label className="EditProfile">
-          Change Profile Picture
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageChange}
-          />
-        </label>
+      <div className="EditDiv mt-4 flex justify-between items-center">
+        {isEditable && (
+          <label className="EditProfile cursor-pointer">
+            Change Profile Picture
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+          </label>
+        )}
 
         {!isEditable && (
           <button className="EditButton" onClick={handleEditClick}>
@@ -247,11 +420,11 @@ const AccountSettings = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {["title", "contactEmail","paypalEmail", "email", "phone"].map((field) => (
+        {["title", "contactEmail", "paypalEmail", "email", "phone"].map((field) => (
           <div key={field}>
-            <label className="text-gray-600 capitalize">{field}</label>
+            <label className="text-gray-600 capitalize font-bold">{field}</label>
             <input
-              type={field === "email" ? "email" : "text"}
+              type={field.includes("email") ? "email" : "text"}
               name={field}
               value={formData[field]}
               onChange={handleChange}
@@ -266,67 +439,193 @@ const AccountSettings = () => {
       </div>
 
       {isEditable && (
-  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="relative">
-      <label className="text-gray-600">Old Password</label>
-      <input
-        type={showOldPassword ? "text" : "password"}
-        name="oldPassword"
-        value={formData.oldPassword}
-        onChange={handleChange}
-        className="w-full p-2 border border-gray-300 rounded-lg pr-10"
-      />
-      <span
-        className="absolute top-9 right-4 text-gray-500 cursor-pointer"
-        onClick={() => setShowOldPassword(!showOldPassword)}
-      >
-        {showOldPassword ? <FaEyeSlash /> : <FaEye />}
-      </span>
-    </div>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <label className="text-gray-600 font-bold">Old Password</label>
+            <input
+              type={showOldPassword ? "text" : "password"}
+              name="oldPassword"
+              value={formData.oldPassword}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg pr-10"
+            />
+            <span
+              className="absolute top-9 right-4 text-gray-500 cursor-pointer"
+              onClick={() => setShowOldPassword(!showOldPassword)}
+            >
+              {showOldPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
 
-    <div className="relative">
-      <label className="text-gray-600">New Password</label>
-      <input
-        type={showNewPassword ? "text" : "password"}
-        name="newPassword"
-        value={formData.newPassword}
-        onChange={handleChange}
-        className="w-full p-2 border border-gray-300 rounded-lg pr-10"
-      />
-      <span
-        className="absolute top-9 right-4 text-gray-500 cursor-pointer"
-        onClick={() => setShowNewPassword(!showNewPassword)}
-      >
-        {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-      </span>
-      {errors.newPassword && (
-        <p className="text-red-500 text-sm">{errors.newPassword}</p>
+          <div className="relative">
+            <label className="text-gray-600 font-bold">New Password</label>
+            <input
+              type={showNewPassword ? "text" : "password"}
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg pr-10"
+            />
+            <span
+              className="absolute top-9 right-4 text-gray-500 cursor-pointer"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+            {errors.newPassword && (<p className="text-red-500 text-sm">{errors.newPassword}</p>
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
 
       <div className="Address mt-6">
-        <span>Address</span>
-        <Link to="/address-form" className="addressLink">
-          Manage Address
-        </Link>
+        <span className="text-gray-600 font-bold">Address</span>
+
+        <div className="w-full my-4 p-4 border rounded-xl shadow-sm relative bg-white">
+          {isEditing ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium">Title</label>
+                <input
+                  name="title"
+                  value={formDataa.title}
+                  onChange={handleChangee}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Region</label>
+                <select
+                  name="region"
+                  value={formDataa.region}
+                  onChange={(e) => handleChange2(e.target.name, e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select region</option>
+                  {regions.map((r) => (
+                    <option key={r.id} value={r.id}>{r.regionName}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Province</label>
+                <select
+                  name="province"
+                  value={formDataa.province}
+                  onChange={(e) => handleChange2(e.target.name, e.target.value)}
+
+                  className="w-full p-2 border rounded"
+                  disabled={!formDataa.region}
+                >
+                  <option value="">Select province</option>
+                  {provinces.map((p) => (
+                    <option key={p.id} value={p.id}>{p.provinceName}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Commune</label>
+                <select
+                  name="commune"
+                  value={formDataa.commune}
+                  onChange={(e) => handleChange2(e.target.name, e.target.value)}
+                  className="w-full p-2 border rounded"
+                  disabled={!formDataa.province}
+                >
+                  <option value="">Select commune</option>
+                  {communes.map((c) => (
+                    <option key={c.id} value={c.id}>{c.communeName}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Street</label>
+                <input
+                  name="street"
+                  value={formDataa.street}
+                  onChange={handleChangee}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={showCoordinates}
+                  onChange={handleCheckboxChange}
+                  className="w-4 h-4"
+                />
+                <label>Add GPS coordinates</label>
+              </div>
+
+              {showCoordinates && (
+                <div className="space-y-2">
+                  <input value={latitude} readOnly className="w-full p-2 border rounded bg-gray-100" />
+                  <input value={longitude} readOnly className="w-full p-2 border rounded bg-gray-100" />
+                </div>
+              )}
+
+              <div className="flex justify-end gap-4">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#FD4C2A] text-white rounded hover:bg-[#e04324]"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            // ---------- AFFICHAGE NORMAL ----------
+            <div className="flex justify-between items-center flex-wrap gap-4">
+              <div className="text-gray-800">
+                <h2 className="text-xl font-medium text-red-600">{address.title}</h2>
+                <p className="capitalize">{address.street}</p>
+                <p>{address.commune?.communeName}, {address.province?.provinceName}</p>
+                <p>{address.region?.regionName}</p>
+              </div>
+
+              <div className="flex gap-3 items-center">
+                <button
+                  className="text-blue-500 hover:text-blue-700 flex items-center gap-1 text-sm"
+                  onClick={handleEditAddressClick}
+                >
+                  <FaEdit /> Edit
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
       <div className="Payment">
-        <span>Payment</span>
+        <span className="text-gray-600 font-bold">Payment</span>
         <Link to="/Payment-form" className="PaymentLink">
           Manage Payment Methods
         </Link>
       </div>
 
-      <div className="mt-6 text-right">
-        <button
-          onClick={isEditable ? handleSaveChanges : handleEditClick}
-          className="px-6 py-2 text-white bg-[#FD4C2A] rounded-[25px] w-full"
-        >
-          {isEditable ? "Save Changes" : "Edit"}
-        </button>
-      </div>
+      {isEditable && (
+        <div className="mt-6 text-right">
+          <button
+            onClick={handleSaveChanges}
+            className="px-6 py-2 text-white bg-[#FD4C2A] rounded-[25px] w-full"
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
     </div>
   );
 };

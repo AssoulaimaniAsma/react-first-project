@@ -116,6 +116,7 @@ const SignupRestaurant = () => {
     if (activate) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+          console.log("Nouvelle position :", pos.coords.latitude, pos.coords.longitude);
           setLatitude(pos.coords.latitude);
           setLongitude(pos.coords.longitude);
           setShowCoordinates(true);

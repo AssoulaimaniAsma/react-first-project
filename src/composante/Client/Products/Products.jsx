@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Products({ products, UpdateQuantity, RemoveItem }) {
   return (
     <table className="Product">
@@ -15,14 +17,14 @@ export default function Products({ products, UpdateQuantity, RemoveItem }) {
           <tr key={item.id}>
             {RemoveItem && (
               <td>
-                <button onClick={() => RemoveItem(item.id)}>X</button>
+                <button onClick={async () => await RemoveItem(item.id)}>X</button>
               </td>
             )}
             <td className="picProd">
               <img src={item.image} alt={item.name} width="50" height="50" />
-              {item.name}
+              <span>{item.name}</span>
             </td>
-            <td>{item.price}DH</td>
+            <td>{item.price} DH</td>
             <td className="quantityContent">
               <button
                 className="DecQuantity"
@@ -30,7 +32,7 @@ export default function Products({ products, UpdateQuantity, RemoveItem }) {
               >
                 -
               </button>
-              {item.quantity}
+              <span>{item.quantity}</span>
               <button
                 className="IncQuantity"
                 onClick={() => UpdateQuantity(item.id, 1)}
@@ -38,7 +40,7 @@ export default function Products({ products, UpdateQuantity, RemoveItem }) {
                 +
               </button>
             </td>
-            <td>{item.price * item.quantity}DH</td>
+            <td>{(item.price * item.quantity).toFixed(2)} DH</td>
           </tr>
         ))}
       </tbody>
