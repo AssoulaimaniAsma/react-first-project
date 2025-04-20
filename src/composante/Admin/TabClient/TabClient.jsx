@@ -30,7 +30,6 @@ function TabClient(){
     
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("clients Data", data);
                     setClient(data);
                 } else {
                     const errorData = await res.json();
@@ -55,33 +54,56 @@ function TabClient(){
 
               // Filter clients based on the search query, with safeguards for undefined values
             const filteredClients = clients.filter((client) =>
-                (client.first ? client.first.toLowerCase() : "")
+                (client.firstName ? client.firstName.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase()) ||
-                (client.last ? client.last.toLowerCase() : "")
+                (client.lastName ? client.lastName.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase()) ||
-                (client.mail ? client.mail.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase())
+                (client.email ? client.email.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) ||
+                (client.phone ? client.phone.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) ||
+                (client.status ? client.status.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) 
             );
 
             const handleDelete = async (userId) => {
+                const token = localStorage.getItem("authToken");
+    
+            if (!token) return navigate("/admin/login");
                 const confirmDelete = window.confirm("Are you sure you want to delete this client?");
                 if (!confirmDelete) return;
-
+            
                 try {
-                const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
-                    method: "DELETE",
-                });
+                    const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
+                        method: "DELETE",
+                        headers:{
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+            
+                    console.log("User ID:", userId);
+                    console.log("token",token);
 
-                if (res.ok) {
-                    setClient((prev) => prev.filter((client) => client.id !== userId));
-                } else {
-                    const errorText=await res.text();
-                    console.error("Failed to delete user",errorText);
-                }
+                    if (res.ok) {
+                        console.log("User deleted successfully");
+                        setClient((prev) => {
+                            console.log(prev); // Vérifie l'état précédent
+                            return prev.filter((client) => client.id !== userId);
+                        });
+                    } else {
+                        console.error(`Failed to delete user. Status: ${res.status}`);
+                        const errorText =  await res.text();
+                        console.error("Error message:", errorText);
+                    }
                 } catch (error) {
-                console.error("Error deleting user:", error);
+                    console.error("Error deleting user:", error);
                 }
             };
+
+            const handleBan = async (userId) => {
+                
+            };
+            
 
 
     return(
