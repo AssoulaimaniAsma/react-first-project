@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaChartLine, FaLuggageCart,FaUtensils, FaClipboardList, FaChartBar } from "react-icons/fa";
-import logo from "../../../image/favicon.png";
+import logo from "../../../image/favicon.jpeg";
 import { FaUserCircle } from "react-icons/fa"; // Icône user si pas d’image
+import { MdDeliveryDining } from "react-icons/md";
+import { IoIosNotifications } from "react-icons/io";
+import { IoFastFood } from "react-icons/io5";
 
 const Navbar_Restaurant = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -110,14 +113,21 @@ useEffect(() => {
             
             <li>
               <Link to="/restaurant/commandes" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                <FaClipboardList className="text-xl" />
+                <IoFastFood  className="text-xl" />
                 <span className="ms-3">Orders</span>
               </Link>
             </li>
             <li>
               <Link to="/restaurant/statistiques" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                <FaLuggageCart className="text-xl" />
+                <IoIosNotifications className="text-xl" />
                 <span className="ms-3">Incoming orders</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/restaurant/delivery" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                <MdDeliveryDining  
+                className="text-xl" />
+                <span className="ms-3">Courier </span>
               </Link>
             </li>
             <li>

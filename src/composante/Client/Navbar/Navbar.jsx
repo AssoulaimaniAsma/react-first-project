@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import logo from "../../../image/favicon.png";
+import logo from "../../../image/favicon.jpeg";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const Navbar = () => {
