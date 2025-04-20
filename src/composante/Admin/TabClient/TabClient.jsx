@@ -1,6 +1,7 @@
 import React ,{useState,useEffect}from "react";
 import "./TabClient.css";
 import { FaTrash } from "react-icons/fa";
+import { FaBan } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
 
 function TabClient(){
@@ -13,6 +14,8 @@ function TabClient(){
     const [firstName,setFirstName]=useState("");
     const [lastName,setLastName]=useState("");
     const [status,setStatus]=useState("");
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
     useEffect(() => {
         const fetchClients = async () => {
             const token = localStorage.getItem("authToken");
@@ -30,7 +33,6 @@ function TabClient(){
     
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("clients Data", data);
                     setClient(data);
                 } else {
                     const errorData = await res.json();
@@ -63,34 +65,72 @@ function TabClient(){
                 .includes(searchQuery.toLowerCase()) ||
                 (client.phone ? client.phone.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase()) ||
-                (client.username ? client.username.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) ||
-                (client.staus ? client.status.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase())
+                (client.status ? client.status.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) 
             );
 
             const handleDelete = async (userId) => {
+                const token = localStorage.getItem("authToken");
+    
+            if (!token) return navigate("/admin/login");
                 const confirmDelete = window.confirm("Are you sure you want to delete this client?");
                 if (!confirmDelete) return;
-
+            
                 try {
-                const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
-                    method: "DELETE",
-                });
+                    const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
+                        method: "DELETE",
+                        headers:{
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
 
-                if (res.ok) {
-                    setClient((prev) => prev.filter((client) => client.id !== userId));
-                } else {
-                    const errorText=await res.text();
-                    console.error("Failed to delete user",errorText);
-                }
+                    if (res.ok) {
+                        console.log("User deleted successfully");
+                        setClient((prev) => {
+                            console.log(prev); // Vérifie l'état précédent
+                            return prev.filter((client) => client.id !== userId);
+                        });
+                    } else {
+                        console.error(`Failed to delete user. Status: ${res.status}`);
+                        const errorText =  await res.text();
+                        console.error("Error message:", errorText);
+                    }
                 } catch (error) {
-                console.error("Error deleting user:", error);
+                    console.error("Error deleting user:", error);
                 }
             };
             const handleBan = async (userId) => {
-                const token = localStorage.getItem("authToken")
-            };
+                const token = localStorage.getItem("authToken");
+                if(!token) return navigate("/admin/login");
+
+                const confirmBan = window.confirm("Are you sure you want to ban this client?");
+                if (!confirmBan) return;
+
+                try{
+                    const res = await fetch(`http://localhost:8080/admin/users/${userId}/ban`,{
+                        method: "PUT",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    if(res.ok){
+                        const updatedClient = clients.find(client => client.id === userId);
+                    if (updatedClient?.status === "BANNED") {
+                        setPopupMessage("User is already banned.");
+                        setShowPopup(true);
+                    } else {
+                        setClient((prev) => prev.filter((client) => client.id !== userId));
+                        setPopupMessage("User has been banned successfully.");
+                    }
+                    }else{
+                        const errorText =  await res.text();
+                        console.error("Error message:", errorText);
+                    }
+                }catch(error){
+                    console.error("Error Banning user :",error);
+                }
+                };
+            
 
 
     return(
@@ -114,6 +154,7 @@ function TabClient(){
                         <th>Phone Number</th>
                         <th>Email</th>
                         <th>Status</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -142,11 +183,28 @@ function TabClient(){
                                     <FaTrash /> Delete
                                 </Link>
                             </td>
+                            <td className="tdTableClient">
+                                <Link
+                                    className="LinkDeleteClient"
+                                    onClick={() => handleBan(client.id)}
+                                >
+                                    <FaBan/> Ban
+                                </Link>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            {showPopup && (
+            <div className="popup-overlay">
+                <div className="popup-content">
+                <p>{popupMessage}</p>
+                <button onClick={() => setShowPopup(false)}>OK</button>
+                </div>
+            </div>
+            )}
+
         </div>
     );
 }
-export default TabClient;
+export default TabClient; 
