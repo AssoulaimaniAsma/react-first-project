@@ -55,11 +55,17 @@ function TabClient(){
 
               // Filter clients based on the search query, with safeguards for undefined values
             const filteredClients = clients.filter((client) =>
-                (client.first ? client.first.toLowerCase() : "")
+                (client.firstName ? client.firstName.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase()) ||
-                (client.last ? client.last.toLowerCase() : "")
+                (client.lastName ? client.lastName.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase()) ||
-                (client.mail ? client.mail.toLowerCase() : "")
+                (client.email ? client.email.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) ||
+                (client.phone ? client.phone.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) ||
+                (client.username ? client.username.toLowerCase() : "")
+                .includes(searchQuery.toLowerCase()) ||
+                (client.staus ? client.status.toLowerCase() : "")
                 .includes(searchQuery.toLowerCase())
             );
 
@@ -81,6 +87,9 @@ function TabClient(){
                 } catch (error) {
                 console.error("Error deleting user:", error);
                 }
+            };
+            const handleBan = async (userId) => {
+                const token = localStorage.getItem("authToken")
             };
 
 

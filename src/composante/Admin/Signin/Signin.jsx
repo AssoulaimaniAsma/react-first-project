@@ -15,7 +15,8 @@ function Signin(){
     const [passwordError, setPasswordError] = useState("");
     const [generalError, setGeneralError] = useState("");
   
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+      e.preventDefault();
       // Réinitialise les erreurs
       setEmailError("");
       setPasswordError("");
@@ -66,12 +67,12 @@ function Signin(){
             <div className="InfoAdmin">
                 <h1 className="h2content8">Login</h1>
                 <div>
-                <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                <form onSubmit={  handleLogin}>
   <label>Email or Phone</label>
   <input
     type="email"
     name="email"
-    placeholder="example@example.com"
+    placeholder="example@example.com or phone number"
     value={email}
     onChange={(e) => setEmail(e.target.value)}
     required
@@ -98,7 +99,7 @@ function Signin(){
 {passwordError && <p className="error">{passwordError}</p>}
 
 
-  <button type="submit">Login</button>
+  <button type="submit" >Login</button>
   {generalError && <p className="error-message">{generalError}</p>}
 
   <Link to="/auth/ForgotPasswordForm" className="ForgotPassword">Forgot Password</Link>

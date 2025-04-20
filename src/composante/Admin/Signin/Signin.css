@@ -2,12 +2,11 @@
     display: flex;
     justify-content: center; /* center horizontally */
     align-items: center;     /* center vertically */
-    height: 100vh;           /* full screen height (this is key for vertical centering) */
     gap: 2rem;
     width: 60%;
-    height: 90%;
+    height: 80%;
     margin-left:20%;
-    margin-top: 5%;
+    margin-top: 10%;
     margin-right:15%;
     padding:0;
     box-sizing: border-box;
@@ -26,26 +25,30 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    margin-left: -50%;
   }
   
   .h2content8{
     font-weight: bold;
     font-size:2rem;
+    margin-left: -50%;
   }
   .InfoAdmin input {
     font-size: 1rem;
-    width:100%;
+    width:95%;
   }
   .InfoAdmin button{
     color:white;
     background-color: #FD4C2A;
     border-radius: 25px;
     height:50px ;
+    width:90%;
     font-size: 1.25rem;
     font-weight: bold;
   }
 .Adminimg{
-    height:70vh;
+    height:55vh;
+    width:25vw;
     margin-left: 25%;
     padding:0;
 }
@@ -53,9 +56,19 @@
     color:#FD4C2A;
     text-decoration: underline;
 }
-.error-message{
-  color:red;
+.error-message {
+  color: red;
+  font-size: 14px;
+  min-height: 18px; /* Réserve de l’espace même quand il n'y a pas de texte */
+  margin-top: 5px;
 }
+.error {
+  color: red;
+  font-size: 14px;
+  min-height: 18px;
+  margin-top: 5px;
+}
+
 .password-wrapper{
   position:relative;
   display: flex;
