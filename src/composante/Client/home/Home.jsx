@@ -62,8 +62,16 @@ function Home() {
     })
       .catch((err) => console.error("Error loading categories:", err));
   }, []);
-  console.log(categories);
+ 
+  const [popular, setPopular] = useState([]);
 
+  useEffect(() => {
+    axios.get("http://localhost:8080/public/popularFood")
+    .then((res) => {
+      setPopular(res.data);
+    })
+      .catch((err) => console.error("Error loading popula food:", err));
+  }, []);
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -79,7 +87,7 @@ function Home() {
   }, []);
 
   const section1 = items.slice(0, 4);
-  const section2 = items.slice(-8);
+  const section2 = popular.slice(-8);
 
   const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } =
     useContext(CartContext);
@@ -257,18 +265,21 @@ function Home() {
 
       <div className="Section4">
         <h2 id="h2content1">Most Popular Products</h2>
-        <div id="imageContent1">
+        <div id="imageContent">
           {section2.map((item) => (
-            <div id="imageItem1" key={item.id}>
-              <span id="discountBadge1">13%</span>
+            
+            <div id="imageItem" key={item.id}>
+              <span id="discountBadge">{Number(item.discount)}%</span>
               <img src={item.image} />
-              <div id="nameImg1">{item.name}</div>
-              <div id="PriceContainer1">
-                <div id="oldPrice1">{item.oldPrice}DH</div>
-                <div className="newPrice">{item.newPrice}DH</div>
+              <div id="nameImg">{item.title}</div>
+              <div id="PriceContainer">
+                
+                <div id="newPrice">{Number(item.discountedPrice).toFixed(2)}DH</div>
+                <div id="oldPrice">  {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)} DH
+                </div>
               </div>
-              <div id="AddToCart1">
-                <button id="Add1" onClick={() => AddToCart(item)}>
+              <div id="AddToCart">
+                <button onClick={() => AddToCart(item)} id="Add">
                   +
                 </button>
               </div>
