@@ -8,23 +8,6 @@ import axios from "axios";
 import { CartContext } from "../CartContext/CartContext";
 import { useNavigate, Link, useSearchParams } from "react-router-dom"; // Importez useNavigate, Link et useSearchParams
 
-const popularFilters = [
-  { name: "All", icon: "🍽️" },
-  { name: "Burger", icon: "🍔" },
-  { name: "Plate", icon: "🍛" },
-  { name: "Dessert", icon: "🍰" },
-  { name: "Pasta", icon: "🍝" },
-  {
-    name: "Moroccan Food",
-    icon: (
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg"
-        alt="Maroc"
-        className="w-6 h-6"
-      />
-    ),
-  },
-];
 
 const moreFilters = ["American", "Asian", "Bakery & Pastry", "Shawarma"];
 
@@ -37,7 +20,23 @@ export default function ItemCard() {
   const itemsPerPage = 6;
   const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } = useContext(CartContext);
   const [searchParams] = useSearchParams(); // Récupérez les paramètres de l'URL
+  const [popularFilters, setPopularFilters] = useState([]);
 
+  useEffect(() => {
+    fetch("http://localhost:8080/public/allCategories")
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredAndSorted = data
+          .map((cat) => ({
+            id: cat.id,
+            name: cat.title,
+            icon: cat.categoryIcon,
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name)); // ✅ trier alphabétiquement
+          setPopularFilters(filteredAndSorted);
+      })
+      .catch((err) => console.error("Erreur de récupération :", err));
+  }, []);
   useEffect(() => {
     axios
       .get("http://localhost:5009/api/products")
@@ -97,7 +96,7 @@ export default function ItemCard() {
             <h2 className="text-xl font-bold mb-3">
               <span className="text-[#FD4C2A] font-extrabold">|</span> Categories
             </h2>
-            <ul className="space-y-2">
+            <ul className="space-y-2" style={{ left: "-50px", maxHeight: "500px", overflowY: "auto" }}>
               {popularFilters.map((filter, index) => (
                 <li key={index}>
                   <button
@@ -118,20 +117,7 @@ export default function ItemCard() {
             </ul>
 
             {/* More Filters */}
-            <h2 className="text-lg font-semibold text-gray-800 mt-6 mb-2">
-              Plus de filtres
-            </h2>
-            <button
-              className="w-full flex justify-between items-center p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-              onClick={() => setOpenMoreFilters(!openMoreFilters)}
-            >
-              Plus de filtres
-              {openMoreFilters ? (
-                <ChevronDown size={18} />
-              ) : (
-                <ChevronRight size={18} />
-              )}
-            </button>
+
             {openMoreFilters && (
               <ul className="mt-2 space-y-2 pl-4 text-gray-700 text-sm">
                 {moreFilters.map((filter, index) => (

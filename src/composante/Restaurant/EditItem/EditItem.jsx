@@ -253,14 +253,24 @@ export default function EditFood() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
-  const categories = [
-    { id: 1, name: "All", icon: "🍽️" },
-    { id: 2, name: "Burger", icon: "🍔" },
-    { id: 3, name: "Plate", icon: "🍛" },
-    { id: 4, name: "Dessert", icon: "🍰" },
-    { id: 5, name: "Pasta", icon: "🍝" },
-    { id: 6, name: "Moroccan Food", icon: "🇲🇦" },
-  ];
+   const [categories, setCategories] = useState([]);
+ 
+   useEffect(() => {
+     fetch("http://localhost:8080/public/allCategories")
+       .then((res) => res.json())
+       .then((data) => {
+         const filteredAndSorted = data
+           .filter((cat) => cat.title.toLowerCase() !== 'all') // ❌ exclure 'All'
+           .map((cat) => ({
+             id: cat.id,
+             name: cat.title,
+             icon: cat.categoryIcon,
+           }))
+           .sort((a, b) => a.name.localeCompare(b.name)); // ✅ trier alphabétiquement
+         setCategories(filteredAndSorted);
+       })
+       .catch((err) => console.error("Erreur de récupération :", err));
+   }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -387,7 +397,7 @@ export default function EditFood() {
     <img
       src={imagePreviewUrl}
       alt="Preview"
-      className="w-[140px] h-[140px] object-cover rounded-full"
+      className="w-[140px] h-[140px] object-cover "
     />
   ) : (
     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">

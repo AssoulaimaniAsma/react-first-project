@@ -112,13 +112,13 @@ useEffect(() => {
             </li>
             
             <li>
-              <Link to="/restaurant/commandes" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              <Link to="/restaurant/order" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <IoFastFood  className="text-xl" />
                 <span className="ms-3">Orders</span>
               </Link>
             </li>
             <li>
-              <Link to="/restaurant/statistiques" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              <Link to="/restaurant/incoming-notifications" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <IoIosNotifications className="text-xl" />
                 <span className="ms-3">Incoming orders</span>
               </Link>

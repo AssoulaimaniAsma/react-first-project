@@ -19,6 +19,8 @@ import DeleteItem from "../composante/Restaurant/DeleteItem/DeleteItem";
 import EditFood from "../composante/Restaurant/EditItem/EditItem";
 import RestaurantAddresses from "../composante/Restaurant/Address/RestaurantAddresses";
 import Delivery from "../composante/Restaurant/Delivery/Delivery";
+import Orders from "../composante/Restaurant/Order/Order";
+import IncomingNotifications from "../composante/Restaurant/Order/IncomingOrder";
 import "./App.css";
 import { IoMagnet } from "react-icons/io5";
 
@@ -123,10 +125,26 @@ function AnimatedRoutes() {
               }
             />
             <Route
+              path="/restaurant/order"
+              element={
+                <RestaurantLayout>
+                  <Orders />
+                </RestaurantLayout>
+              }
+            />
+            <Route
               path="/restaurant/delivery"
               element={
                 <RestaurantLayout>
                   <Delivery />
+                </RestaurantLayout>
+              }
+            />
+            <Route
+              path="/restaurant/incoming-notifications"
+              element={
+                <RestaurantLayout>
+                  <IncomingNotifications />
                 </RestaurantLayout>
               }
             />

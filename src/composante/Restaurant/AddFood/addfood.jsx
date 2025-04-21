@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Utensils } from 'lucide-react';
 
 export default function AddFood() {
@@ -16,14 +16,34 @@ export default function AddFood() {
 
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null); // State for image preview URL
 
-  const categories = [
+  /*const categories = [
     { id: 1, name: "All", icon: "🍽️" },
     { id: 2, name: "Burger", icon: "🍔" },
     { id: 3, name: "Plate", icon: "🍛" },
     { id: 4, name: "Dessert", icon: "🍰" },
     { id: 5, name: "Pasta", icon: "🍝" },
     { id: 6, name: "Moroccan Food", icon: "🇲🇦" },
-  ];
+  ];*/
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/public/allCategories")
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredAndSorted = data
+          .filter((cat) => cat.title.toLowerCase() !== 'all') // ❌ exclure 'All'
+          .map((cat) => ({
+            id: cat.id,
+            name: cat.title,
+            icon: cat.categoryIcon,
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name)); // ✅ trier alphabétiquement
+        setCategories(filteredAndSorted);
+      })
+      .catch((err) => console.error("Erreur de récupération :", err));
+  }, []);
+  
+  
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   const handleImageChange = (e) => {
@@ -227,22 +247,24 @@ export default function AddFood() {
 
         {/* Category Selection */}
         <div>
-          <label htmlFor="category" className="text-gray-600 block mb-1">Category</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            multiple 
-            className="w-full p-2 border border-gray-300 rounded-lg bg-[#f6f6f6] focus:border-[#FD4C2A] focus:ring-[#FD4C2A]"
-          >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <label htmlFor="category" className="text-gray-600 block mb-1">
+        Category
+      </label>
+      <select
+        id="category"
+        name="category"
+        value={formData.category}
+        onChange={handleInputChange}
+        multiple
+        className="w-full p-2 border border-gray-300 rounded-lg bg-[#f6f6f6] focus:border-[#FD4C2A] focus:ring-[#FD4C2A]"
+      >
+        {categories.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.icon} {cat.name}
+          </option>
+        ))}
+      </select>
+    </div>
 
         {/* Submit Button */}
         <div className="flex justify-end">
