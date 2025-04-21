@@ -29,7 +29,7 @@ export const CartProvider = ({ children }) => {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000);
     } else {
-      const updatedCart = [...cart, { ...item, quantity: 1, price: item.newPrice }];
+      const updatedCart = [...cart, { ...item, quantity: 1, price: item.discountedPrice }];
       saveCart(updatedCart);
       setCurrentItemName(item.name); // Mettez à jour le nom de l'item
       setShowAlert(true);

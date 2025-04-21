@@ -22,7 +22,7 @@ export default function Products({ products, UpdateQuantity, RemoveItem }) {
               <img src={item.image} alt={item.name} width="50" height="50" />
               {item.name}
             </td>
-            <td>{item.price}DH</td>
+            <td>{Number(item.discountedPrice).toFixed(2)}DH</td>
             <td className="quantityContent">
               <button
                 className="DecQuantity"
@@ -38,7 +38,7 @@ export default function Products({ products, UpdateQuantity, RemoveItem }) {
                 +
               </button>
             </td>
-            <td>{item.price * item.quantity}DH</td>
+            <td>{Number(item.discountedPrice).toFixed(2) * item.quantity}DH</td>
           </tr>
         ))}
       </tbody>
