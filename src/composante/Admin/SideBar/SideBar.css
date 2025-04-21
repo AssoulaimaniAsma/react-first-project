@@ -1,6 +1,6 @@
 .sidebar {
-  width: 250px;
-  height: 100vh;
+  width: 20%;
+  height: 100%;
   background-color: #1e1e2f;
   position: fixed;
   left: 0;
@@ -17,12 +17,12 @@
 
 .SIDE {
   font-size: 24px;
-  margin: 10px;
+  margin: 5%;
   cursor: pointer;
   z-index: 1100;
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: -5%;
+  left: -3%;
   color: black;
 }
 
@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 16px;
+  padding: 3% 16%;
   color: #FD4C2A;
   text-decoration: none;
   font-size: 20px;
@@ -40,13 +40,13 @@
   font-size: 30px;
 }
 #idSidebar-line{
-  padding-top:200px;
+  padding-top:20%;
 }
 .sidebar-line:hover {
   color: white;
 }
 .profile-icon{
-  padding-top:160px;
+  padding-top:64%;
   padding-left:10px;
 }
 

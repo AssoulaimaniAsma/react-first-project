@@ -40,16 +40,16 @@ const Sidebar = () => {
           id="idSidebar-line"
           className="sidebar-line"
         >
-          <FaClipboardList className="icon" /> Tab Orders
+          <FaClipboardList className="icon" /> Orders
         </Link>
-        <Link to="/admin/Orders/1" className="sidebar-line">
-          <FaFileAlt className="icon" /> Tab Orders Details
+        <Link to="/admin/TabOrdersDetails" className="sidebar-line">
+          <FaFileAlt className="icon" /> Orders Details
         </Link>
         <Link to="/admin/Tabclient" className="sidebar-line">
-          <FaUserFriends className="icon" /> Tab Client
+          <FaUserFriends className="icon" /> Client
         </Link>
         <Link to="/admin/TabRestaurant" className="sidebar-line">
-          <FaUtensils className="icon" /> Tab Restaurant
+          <FaUtensils className="icon" /> Restaurant
         </Link>
         </div>
       <div className="profile-icon">

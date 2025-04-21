@@ -15,6 +15,7 @@
     border :1px solid black;
 }
 .divContentOrder{
+    margin-top:10% ;
     justify-content:center;
     align-items:center;
     flex-direction: column;
