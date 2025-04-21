@@ -170,7 +170,7 @@ export default function Menu_Restaurant() {
                         <img
                           src={item.image}
                           alt={item.title}
-                          className="w-12 h-12 rounded-full object-cover"
+                          className="w-16 h-16 object-cover"
                           onError={(e) => { e.target.src = "/fallback.png" }}
                         />
                       </td>

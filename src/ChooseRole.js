@@ -1,16 +1,22 @@
 import { Link } from "react-router-dom";
-import logo from "./image/favicon.png";
-
+import logo from "./image/favicon.jpeg";
+import { MdAdminPanelSettings } from "react-icons/md";
 function ChooseRole() {
   return (
     
     <div className="flex flex-col items-center justify-start min-h-screen pt-2">
-      
+        
+
       {/* Logo du site */}
       <div className="flex items-center space-x-2 font-bold mt-10 mb-10">
-        <img src={logo} className="w-12 h-12" alt="Logo" />
+        <img src={logo} className="w-14 h-14" alt="Logo" />
         <Link to="/restaurant" className="text-black text-3xl">
           <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
+        </Link>
+
+        <Link to="/admin" className="text-black text-3xl">
+        <MdAdminPanelSettings />
+
         </Link>
       </div>
 

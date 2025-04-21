@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import logo from "../../../image/favicon.png";
+import logo from "../../../image/favicon.jpeg";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const Navbar = () => {
@@ -19,24 +19,23 @@ const Navbar = () => {
 
 
   // Liste des catégories
-  const categories = [
-    { name: "All", icon: "🍽️", path: "client/Our_Menu?category=All" },
-    { name: "Burger", icon: "🍔", path: "client/Our_Menu?category=Burger" },
-    { name: "Plate", icon: "🍛", path: "client/Our_Menu?category=Plate" },
-    { name: "Dessert", icon: "🍰", path: "client/Our_Menu?category=Dessert" },
-    { name: "Pasta", icon: "🍝", path: "client/Our_Menu?category=Pasta" },
-    {
-      name: "Moroccan Food",
-      icon: (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg"
-          alt="Maroc"
-          className="w-6 h-6"
-        />
-      ),
-      path: "client/Our_Menu?category=Moroccan Food",
-    },
-  ];
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/public/allCategories")
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredAndSorted = data
+          .map((cat) => ({
+            id: cat.id,
+            name: cat.title,
+            icon: cat.categoryIcon,
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name)); // ✅ trier alphabétiquement
+        setCategories(filteredAndSorted);
+      })
+      .catch((err) => console.error("Erreur de récupération :", err));
+  }, []);
 
   // Fermer les dropdowns quand on clique à l'extérieur
   useEffect(() => {
@@ -135,11 +134,12 @@ const Navbar = () => {
             </svg>
           </button>
           {dropdownOpen && (
-            <ul className="absolute z-10 mt-2 w-48 bg-white border border-orange-400 shadow-lg rounded-md" style={{ left: "-50px" }}>
+            <ul className="absolute z-10 mt-2 w-48 bg-white border border-orange-400 shadow-lg rounded-md"
+    style={{ left: "-50px", maxHeight: "200px", overflowY: "auto" }}>
               {categories.map((cat, i) => (
                 <li key={i} className="px-4 py-2 hover:bg-[#FD4C2A] hover:text-white flex items-center gap-2 rounded">
                   <span>{cat.icon}</span>
-                  <button onClick={() => handleCategoryClick(cat.path)} className="w-full text-left">
+                  <button onClick={() => handleCategoryClick(`client/Our_Menu?category=${cat.name}`)} className="w-full text-left">
                     {cat.name}
                   </button>
                 </li>

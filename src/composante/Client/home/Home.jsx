@@ -20,9 +20,11 @@ import { Link } from "react-router-dom";
 import { CartContext } from "../CartContext/CartContext";
 import axios from "axios";
 import picsData from "../backend/pics.json";
-
+import { FaPlus } from "react-icons/fa";
+ 
 const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
+  
   return (
     //The onClick={() => setIsOpen(!isOpen)} toggles the isOpen state each time the user clicks the dropdown.
     <div className="isOpenState" onClick={() => setIsOpen(!isOpen)}>
@@ -49,15 +51,33 @@ const DropdownBox = ({ title, content }) => {
     </div>
   );
 };
-
 function Home() {
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    axios.get("http://localhost:8080/public/categories")
+    .then((res) => {
+      const filtered = res.data.filter(cat => cat.title.toLowerCase() !== "all");
+      setCategories(filtered);
+    })
+      .catch((err) => console.error("Error loading categories:", err));
+  }, []);
+ 
+  const [popular, setPopular] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/public/popularFood")
+    .then((res) => {
+      setPopular(res.data);
+    })
+      .catch((err) => console.error("Error loading popula food:", err));
+  }, []);
   const [items, setItems] = useState([]);
 
   useEffect(() => {
     // Récupérer les données depuis le serveur
     axios
-      .get("http://localhost:5006/products")
+      .get("http://localhost:8080/public/onSaleFood")
       .then((response) => {
         setItems(response.data); // Met à jour l'état avec les données reçues
       })
@@ -67,7 +87,7 @@ function Home() {
   }, []);
 
   const section1 = items.slice(0, 4);
-  const section2 = items.slice(-8);
+  const section2 = popular.slice(-8);
 
   const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } =
     useContext(CartContext);
@@ -156,17 +176,20 @@ function Home() {
       <img className="backgroundimg1" src={back1} alt="Burger background" />
       <img className="backgroundimg2" src={back2} alt="Pizza background" />
 
-      <div className="section2">
+     <div className="section2">
         <h2 id="h2content">ON SALE</h2>
         <div id="imageContent">
           {section1.map((item) => (
+            
             <div id="imageItem" key={item.id}>
-              <span id="discountBadge">13%</span>
+              <span id="discountBadge">{Number(item.discount)}%</span>
               <img src={item.image} />
-              <div id="nameImg">{item.name}</div>
+              <div id="nameImg">{item.title}</div>
               <div id="PriceContainer">
-                <div id="oldPrice">{item.oldPrice}DH</div>
-                <div id="newPrice">{item.newPrice}DH</div>
+                
+                <div id="newPrice">{Number(item.discountedPrice).toFixed(2)}DH</div>
+                <div id="oldPrice">  {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)} DH
+                </div>
               </div>
               <div id="AddToCart">
                 <button onClick={() => AddToCart(item)} id="Add">
@@ -178,20 +201,24 @@ function Home() {
         </div>
       </div>
 
+
       <img className="backgroundimg3" src={back3} alt="Pasta background" />
 
       <div className="Section3">
+      {categories.length > 3 && (
+  
+<>
         <h2 id="h2content3">View Our Range Of Categories</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] p-8">
           {/* Burgers & Fast Food */}
           <div className="relative pl-[11%]">
             <img
               className="w-full h-[100%] object-cover rounded-lg"
-              src={MyImage1}
-              alt="Burger"
+              src={categories[0].categoryImage}
+              alt=""
             />
             <div className="absolute bottom-4 left-4 pl-[11%] text-white px-[4%] py-2 text-xl font-bold">
-              Burgers & Fast Food
+            {categories[0].title}
             </div>
           </div>
 
@@ -200,21 +227,21 @@ function Home() {
             <div className="relative">
               <img
                 className="w-full h-[265px] object-cover rounded-lg"
-                src={MyImage2}
-                alt="Pizza"
+                src={categories[1].categoryImage}
+                alt=""
               />
               <div className="absolute bottom-4 left-1 text-white px-4 py-2 text-xl font-bold">
-                Pizzas
+              {categories[1].title}
               </div>
             </div>
             <div className="relative">
               <img
                 className="w-full h-[265px] object-cover rounded-lg"
-                src={MyImage3}
-                alt="Pasta"
+                src={categories[2].categoryImage}
+                alt=""
               />
               <div className="absolute bottom-4 left-1 text-white px-4 py-2 text-xl font-bold">
-                Pasta
+              {categories[2].title}
               </div>
             </div>
           </div>
@@ -223,31 +250,36 @@ function Home() {
           <div className="relative pr-11">
             <img
               className="w-full h-[100%] object-cover rounded-lg"
-              src={MyImage4}
-              alt="Tacos"
+              src={categories[3].categoryImage}
+              alt=""
             />
             <div className="absolute bottom-4 left-4 text-white px-4 py-2 text-xl font-bold">
               {" "}
-              Tacos
+              {categories[3].title}
             </div>
           </div>
         </div>
+        </>
+        )}
       </div>
 
       <div className="Section4">
         <h2 id="h2content1">Most Popular Products</h2>
-        <div id="imageContent1">
+        <div id="imageContent">
           {section2.map((item) => (
-            <div id="imageItem1" key={item.id}>
-              <span id="discountBadge1">13%</span>
+            
+            <div id="imageItem" key={item.id}>
+              <span id="discountBadge">{Number(item.discount)}%</span>
               <img src={item.image} />
-              <div id="nameImg1">{item.name}</div>
-              <div id="PriceContainer1">
-                <div id="oldPrice1">{item.oldPrice}DH</div>
-                <div className="newPrice">{item.newPrice}DH</div>
+              <div id="nameImg">{item.title}</div>
+              <div id="PriceContainer">
+                
+                <div id="newPrice">{Number(item.discountedPrice).toFixed(2)}DH</div>
+                <div id="oldPrice">  {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)} DH
+                </div>
               </div>
-              <div id="AddToCart1">
-                <button id="Add1" onClick={() => AddToCart(item)}>
+              <div id="AddToCart">
+                <button onClick={() => AddToCart(item)} id="Add">
                   +
                 </button>
               </div>

@@ -87,7 +87,8 @@
 }
 #nameImg{
     margin-left:0%;
-    font-size:20px;
+    font-size:18px;
+    font-weight: bold;
 }
 #imageContent{
     display:flex;
@@ -102,20 +103,29 @@
 }
 #discountBadge{
     padding:3px;
-    margin-left:31.69%;
+    margin-left:31.20%;
+    color: white;
     position:absolute;
     background-color:#FD4C2A;
     border-radius:5px;
 }
 #oldPrice{
     padding-left:0;
+    font-size: 13px;
     color:#6B7280;
     text-decoration:line-through;
+}
+#newPrice{
+    margin-right:5;
+    color:#FD4C2A;
+    font-weight: bold;
+
 }
 #PriceContainer{
     margin-left:0%;
     display:flex;
     position:absolute;
+    width: 150px;
 }
 #Add{
     border:2px solid #FD4C2A;
@@ -192,7 +202,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-left:7%;
+   /* margin-left:7%;*/
     margin-right:10%;
 }
 
@@ -200,6 +210,8 @@
     font-weight: bold !important;
     color: #FD4C2A;
     font-size: 2rem;
+    margin-left:7%;
+    z-index:9999;
     margin-bottom: 2%;
 }
 
