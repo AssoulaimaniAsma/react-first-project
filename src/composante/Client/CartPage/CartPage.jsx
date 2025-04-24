@@ -1,262 +1,132 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Products from "../Products/Products";
+import { CartContext } from "../CartContext/CartContext";
 import "./CartPage.css";
 
 function CartPage() {
-  const [cart, setCart] = useState([]);
   const navigate = useNavigate();
-  const [orderDetails, setOrderDetails] = useState({ total: 0, subTotal: 0, shipping: 0 });
-  const [recommendations, setRecommendations] = useState([]);
-  const [error, setError] = useState("");
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch cart contents from backend
+  const { cart, AddToCart, orderDetails, updateQuantity, removeItem } = useContext(CartContext);
+  const isLoggedIn = localStorage.getItem("authToken");
+
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchRecommendations = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) return navigate("/client/login");
 
       try {
-        const response = await fetch("http://localhost:8080/user/cart/", {
+        const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          setCart(data);
-        } else if (response.status === 401) {
-          navigate("/client/login");
-        } else {
-          console.error("Failed to fetch cart:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching cart contents:", error);
+        const data = await res.json();
+        setFoods(data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch data");
+        setLoading(false);
       }
     };
 
-    fetchCart();
+    fetchRecommendations();
   }, [navigate]);
 
-  // Add item to the cart
-  const addItemToCart = async (foodID) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return navigate("/client/login");
 
-      const addResponse = await fetch(`http://localhost:8080/user/cart/addItem?foodID=${foodID}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!addResponse.ok) {
-        throw new Error("Failed to add item", foodID);
-      }
-
-      const addData = await addResponse.text();
-      console.log("Item added:", addData);
-
-      const cartResponse = await fetch("http://localhost:8080/user/cart/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!cartResponse.ok) {
-        throw new Error("Failed to fetch updated cart");
-      }
-
-      const updatedCart = await cartResponse.json();
-      setCart(updatedCart);
-    } catch (error) {
-      console.error("Failed to add item to cart:", error);
-    }
-  };
-
-  const incrementItem = async (itemID) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return navigate("/client/login");
-
-      const res = await fetch(`http://localhost:8080/user/cart/${itemID}/increment`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to increment item");
-      }
-
-      const cartResponse = await fetch("http://localhost:8080/user/cart/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!cartResponse.ok) {
-        throw new Error("Failed to fetch updated cart");
-      }
-
-      const updatedCart = await cartResponse.json();
-      setCart(updatedCart);
-    } catch (error) {
-      console.error("Failed to increment item in cart:", error);
-    }
-  };
-
-  const decrementItem = async (itemID) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return navigate("/client/login");
-
-      const res = await fetch(`http://localhost:8080/user/cart/${itemID}/decrement`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to decrement item");
-      }
-
-      const cartResponse = await fetch("http://localhost:8080/user/cart/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!cartResponse.ok) {
-        throw new Error("Failed to fetch updated cart");
-      }
-
-      const updatedCart = await cartResponse.json();
-      setCart(updatedCart);
-    } catch (error) {
-      console.error("Failed to decrement item in cart:", error);
-    }
-  };
-
-  const removeItem = async (itemID) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return navigate("/client/login");
-
-      const res = await fetch(`http://localhost:8080/user/cart/${itemID}/delete`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to delete item");
-      }
-
-      const cartResponse = await fetch("http://localhost:8080/user/cart/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!cartResponse.ok) {
-        throw new Error("Failed to fetch updated cart");
-      }
-
-      const updatedCart = await cartResponse.json();
-      setCart(updatedCart);
-    } catch (error) {
-      console.error("Failed to delete item from cart:", error);
-    }
-  };
-
-  const fetchCartDetails = async () => {
+  // Fetch cart when the component mounts
+  const fetchCart = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) return navigate("/client/login");
 
     try {
-      const subtotalResponse = await fetch("http://localhost:8080/user/cart/subTotal", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const subTotal = parseFloat(await subtotalResponse.text());
-
-      const shippingResponse = await fetch("http://localhost:8080/user/cart/shipping", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const shipping = parseFloat(await shippingResponse.text());
-
-      const totalResponse = await fetch("http://localhost:8080/user/cart/total", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const total = parseFloat(await totalResponse.text());
-
-      setOrderDetails({ total, subTotal, shipping });
-
-      const cartResponse = await fetch("http://localhost:8080/user/cart/", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const updatedCart = await cartResponse.json();
-      setCart(updatedCart);
-    } catch (error) {
-      console.error("Failed to calculate cart details:", error);
-    }
-  };
-
-  const fetchRecommendations = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-
-      const response = await fetch("http://localhost:8080/youMayAlsoLike", {
+      const res = await fetch("http://localhost:8080/user/cart/", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setRecommendations(data);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to fetch suggested food.");
-      }
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      setError("Something went wrong while fetching suggestions.");
+      const data = await res.json();
+      setFoods(data); // Update the foods state with cart data
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch data");
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCartDetails();
-    fetchRecommendations();
+    fetchCart(); // Fetch cart data when component mounts
   }, []);
 
+
+  // If cart is empty, show a message
+  if (cart.length === 0) {
+    return (
+      <div className="emptyCartContainer">
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven’t added anything yet.</p>
+        <button className="startShoppingBtn" onClick={() => navigate("/products")}>
+          Start Shopping
+        </button>
+
+        <h2 className="h2content5">You May Also Like</h2>
+        <div className="imageContent2">
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>{error}</div>
+          ) : (
+            foods.map((item) => (
+              <div className="imageItem2" key={item.id}>
+                <span className="discountBadge2">{Number(item.discount)}%</span>
+                <img src={item.image} alt={item.title} />
+                <div className="nameImg2">{item.title}</div>
+                <div className="PriceContainer2">
+                  <span className="oldPrice2">
+                    {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)}DH
+                  </span>
+                  <span className="newPrice2">{Number(item.discountedPrice).toFixed(2)}DH</span>
+                </div>
+                <div className="AddToCart2">
+                  <button
+                    className="Add2"
+                    onClick={() => {
+                      if (isLoggedIn) {
+                        AddToCart(item);
+                      }
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate totals from cart items
+  const subtotal = cart.reduce((acc, item) => acc + item.totalPrice, 0);
+  const shipping = subtotal * 0.1;
+  const total = subtotal + shipping;
+
   return (
-    <div className="cartContainer">
-      <div className="tableContainer">
-        <Products
-          products={cart}
-          RemoveItem={(id) => removeItem(id)}
-          UpdateQuantity={(id, delta) =>
-            delta > 0 ? incrementItem(id) : decrementItem(id)
-          }
-        />
+    <div className="cart-page">
+      <div id="firstPart" className="tables-container">
+        <div className="Product">
+          <Products
+            products={cart}
+            UpdateQuantity={updateQuantity}
+            removeItem={removeItem}
+          />
+        </div>
         <table className="TotalPrice">
           <thead>
             <tr className="headTable2">
@@ -267,40 +137,59 @@ function CartPage() {
           <tbody className="bodyTable2">
             <tr>
               <td>Subtotal</td>
-              <td>{Number(orderDetails.subTotal).toFixed(2)} MAD</td>
+              <td>{subtotal.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Shipping</td>
-              <td>{Number(orderDetails.shipping).toFixed(2)} MAD</td>
+              <td>{shipping.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Total</td>
-              <td>{Number(orderDetails.total).toFixed(2)} MAD</td>
+              <td>{total.toFixed(2)} MAD</td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr>
+              <td className="footTable2" colSpan="2">Place Order</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
 
       <div id="SecondPart">
-        <h2 id="h2content5">You May Also Like</h2>
-        <div id="imageContent2">
-          {recommendations.map((item) => (
-            <div id="imageItem2" key={item.foodID}>
-              <span id="discountBadge2">13%</span>
-              <img src={item.image} alt={item.name} />
-              <div id="nameImg2">{item.name}</div>
-              <div id="PriceContainer2">
-                <div id="oldPrice2">{item.oldPrice}DH</div>
-                <div id="newPrice2">{item.newPrice}DH</div>
+        <h2 className="h2content5">You May Also Like</h2>
+        <div className="imageContent2">
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>{error}</div>
+          ) : (
+            foods.map((item) => (
+              <div className="imageItem2" key={item.id}>
+                <span className="discountBadge2">{Number(item.discount)}%</span>
+                <img src={item.image} alt={item.title} />
+                <div className="nameImg2">{item.title}</div>
+                <div className="PriceContainer2">
+                  <span className="oldPrice2">
+                    {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)}DH
+                  </span>
+                  <span className="newPrice2">{Number(item.discountedPrice).toFixed(2)}DH</span>
+                </div>
+                <div className="AddToCart2">
+                  <button
+                    className="Add2"
+                    onClick={() => {
+                      if (isLoggedIn) {
+                        AddToCart(item);
+                      }
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div id="AddToCart2">
-                <button id="Add2" onClick={() => addItemToCart(item.foodID)}>
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
-          {error && <div className="error-message">{error}</div>}
+            ))
+          )}
         </div>
       </div>
     </div>

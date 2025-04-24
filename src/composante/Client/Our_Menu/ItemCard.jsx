@@ -53,11 +53,6 @@ const [showModal, setShowModal] = useState(false);
     if (!token || !item) return navigate("/client/login");
 
     try {
-      await axios.post(
-        `http://localhost:8080/user/cart/addItem?foodID=${item.id}&qte=${Math.max(1, quantity)}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
       AddToCart(item);
       setShowModal(false);
     } catch (err) {
@@ -72,11 +67,7 @@ const [showModal, setShowModal] = useState(false);
     if (!token || !item) return navigate("/client/login");
 
     try {
-      await axios.post(
-        `http://localhost:8080/user/cart/addItem?foodID=${item.id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      
       AddToCart(item);
     } catch (err) {
       console.error("Erreur lors de l'ajout au panier:", err);
