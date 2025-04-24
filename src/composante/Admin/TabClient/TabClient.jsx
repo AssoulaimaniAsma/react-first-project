@@ -135,6 +135,7 @@ function TabClient(){
 
     return(
         <div className="DivTableClient">
+            <h1 className="Clients">Clients</h1>
             <input 
                 type="text" 
                 placeholder="Search For Client" 
@@ -142,7 +143,6 @@ function TabClient(){
                 onChange={handleSearch} 
                 className="searchBar"
             />
-            <h1 className="Clients">Clients</h1>
             <table className="TableClient">
                 <thead>
                     <tr className="trTableClient">

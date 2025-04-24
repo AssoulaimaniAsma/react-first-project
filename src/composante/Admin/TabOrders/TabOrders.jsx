@@ -1,21 +1,10 @@
 import React , {useState, useEffect} from "react";
-import {Link} from "react-router-dom"
-import axios from "axios";
+import {Link} from "react-router-dom";
 import "./TabOrders.css";
 
 function TabOrders(){
     const [orders, setOrders]= useState([]);
-    useEffect(() => {
-        // Récupérer les données depuis le serveur
-        axios
-        .get("http://localhost:3007/orders")
-        .then((response) => {
-            setOrders(response.data); // Met à jour l'état avec les données reçues
-        })
-        .catch((error) => {
-            console.error("Erreur lors de la récupération des produits:", error);
-        });
-    }, []);
+    
     //return(
         // <div className="divContentOrder">
         // <h1 className="CustomerOrder">Customer Order</h1>

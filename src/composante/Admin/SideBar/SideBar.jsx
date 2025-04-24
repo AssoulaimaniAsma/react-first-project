@@ -8,19 +8,14 @@ import {
   FaUserCircle,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../../image/favicon.png";
 import "./SideBar.css";
 import { RiRestaurant2Line } from "react-icons/ri";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef();
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -53,18 +48,11 @@ const Sidebar = () => {
 
   return (
     <div>
-      {/* Burger icon */}
-      <FaBars
-        className={`SIDE ${isOpen ? "white" : ""}`}
-        onClick={toggleSidebar}
-      />
-
-      {/* Sidebar content */}
-      <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        <div className="flex items-center py-20 space-x-2 font-bold">
-          <img src={logo} className="w-12 h-12" alt="Logo" />
-          <Link to="/restaurant" className="text-black text-3xl">
-            <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
+      <div className="sidebar">
+        <div className="flex items-center py-20 font-bold">
+          <img src="/image/SmallWhiteLogoNoBg.png" className="logo" alt="Logo" />
+          <Link to="/restaurant" className="text-black text-4xl">
+            <span className="text-[#FD4C2A] font-extrabold">Savory</span><span className="text-[#FFFFFF]">Bites</span>
           </Link>
         </div>
 
@@ -81,8 +69,8 @@ const Sidebar = () => {
           <Link to="/admin/TabRestaurant" className="sidebar-line">
             <FaUtensils className="icon" /> Restaurant
           </Link>
-          <Link to="/admin/TabRestaurantDetails" className="sidebar-line">
-            <RiRestaurant2Line className="icon" /> Restaurant Details
+          <Link to="/admin/Food" className="sidebar-line">
+            <RiRestaurant2Line className="icon" /> Food
           </Link>
         </div>
 
@@ -99,12 +87,6 @@ const Sidebar = () => {
               <div
                 className="dropdown-menu"
               >
-                <button
-                  className="profile-button"
-                  onClick={() => navigate("/profile")}
-                >
-                  Profile
-                </button>
                 <button
                   className="LogoutButton"
                   onClick={logout}
