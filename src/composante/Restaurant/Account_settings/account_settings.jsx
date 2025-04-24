@@ -23,6 +23,8 @@ const AccountSettings = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [profileBanner, setProfileBanner] = useState(null);
+const [profileBannerUrl, setProfileBannerUrl] = useState("");
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [isEditable, setIsEditable] = useState(false);
@@ -139,6 +141,8 @@ const AccountSettings = () => {
         });
 
         setProfileImageUrl(user.profileImg || "");
+setProfileBannerUrl(user.profileBanner || "");
+
       } catch (err) {
         console.error("Erreur récupération compte:", err);
       }
@@ -205,7 +209,9 @@ const AccountSettings = () => {
     if (profileImageUrl) {
       formDataToSend.profileImg = profileImageUrl;
     }
-
+    if (profileBannerUrl) {
+      formDataToSend.profileBanner = profileBannerUrl;
+    }
     try {
       const res = await fetch("http://localhost:8080/restaurant/updateAccountDetails", {
         method: "POST",
@@ -379,27 +385,63 @@ const AccountSettings = () => {
         </div>
       )}
 
-      <div className="flex items-center space-x-4">
-        {profileImageUrl ? (
-          <img
-            src={profileImageUrl}
-            alt="Profile"
-            className="w-16 h-16 rounded-full object-cover"
-          />
-        ) : (
-          <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
-            <span className="text-lg font-bold text-gray-600">
-              {userInitials}
-            </span>
-          </div>
-        )}
-        <div>
-          <h3 className="text-lg font-semibold">{formData.title}</h3>
-          <p className="text-gray-500">{formData.email}</p>
+<div className="relative w-full h-60 mb-28">
+  {/* Image de couverture */}
+  <img
+  src={profileBannerUrl || "/image/signinRes.jpg"}
+  alt="cover"
+  className="absolute top-0 left-0 w-full h-60 object-cover z-0 rounded-lg"
+/>
+
+
+
+  {/* Container pour centrage */}
+  <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative">
+    {/* Bloc profil, positionné en bas de l'image de couverture */}
+    <div className="absolute -bottom-80 left-1/2 transform -translate-x-1/2 sm:left-8 sm:translate-x-0 flex items-center space-x-4 z-10">
+      {profileImageUrl ? (
+        <img
+          src={profileImageUrl}
+          alt="Profile"
+          className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-lg"
+        />
+      ) : (
+        <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold border-4 border-white shadow-lg">
+          {userInitials}
         </div>
+      )}
+
+      {/* Nom + email */}
+      <div>
+        <h3 className="mt-20 text-3xl font-semibold text-[#FD4C2A]">{formData.title}</h3>
+        <p className="text-gray-500">{formData.email}</p>
       </div>
+    </div>
+  </div>
+</div>
+
+
 
       <div className="EditDiv mt-4 flex justify-between items-center">
+      {isEditable && (
+  <label className="EditProfile cursor-pointer">
+    Change Banner Picture
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={(e) => {
+        const file = e.target.files[0];
+        setProfileBanner(file);
+        if (file) {
+          const bannerPath = `/image/${file.name}`;
+          setProfileBannerUrl(bannerPath);
+        }
+      }}
+    />
+  </label>
+)}
+
         {isEditable && (
           <label className="EditProfile cursor-pointer">
             Change Profile Picture

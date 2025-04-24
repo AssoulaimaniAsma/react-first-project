@@ -93,6 +93,8 @@ const Navbar = () => {
   };
 
   return (
+    /*********<nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-8 py-4 flex justify-between items-center">
+ */
     <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
       {/* Alert */}
       {showAlert && (

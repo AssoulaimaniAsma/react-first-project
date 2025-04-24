@@ -16,12 +16,13 @@ import ButtonWithLogo from "../ButtonWithLogo/ButtonWithLogo";
 import { FiChevronDown } from "react-icons/fi";
 import Mcdo from "../../../image/mcdo.png";
 import logo from "../../../image/favicon.png";
-import { Link } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { CartContext } from "../CartContext/CartContext";
 import axios from "axios";
 import picsData from "../backend/pics.json";
 import { FaPlus } from "react-icons/fa";
- 
+import { ShoppingCart } from "lucide-react";
+
 const DropdownBox = ({ title, content }) => {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -53,7 +54,9 @@ const DropdownBox = ({ title, content }) => {
 };
 function Home() {
   const [categories, setCategories] = useState([]);
-
+  const navigate = useNavigate(); // déjà importé
+  const [showModal, setShowModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   useEffect(() => {
     axios.get("http://localhost:8080/public/categories")
     .then((res) => {
@@ -62,7 +65,10 @@ function Home() {
     })
       .catch((err) => console.error("Error loading categories:", err));
   }, []);
- 
+  const askAddToCart = (item) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
   const [popular, setPopular] = useState([]);
 
   useEffect(() => {
@@ -100,6 +106,55 @@ function Home() {
     AddToCart(item);
     // The setShowAlert logic is already in the CartContext, so no need to do it here again
   };
+  const handleAddToCartBackend = async (item) => {
+    const token = localStorage.getItem("authToken"); // Assure-toi que le token est bien stocké sous cette clé
+  
+    if (!token) {
+      alert("Vous devez être connecté pour ajouter un article au panier.");
+      return;
+    }
+  
+    const confirm = window.confirm(`Voulez-vous ajouter "${item.title}" au panier ?`);
+    if (!confirm) return;
+  
+    try {
+      await axios.post(
+        `http://localhost:8080/user/cart/addItem?foodID=${item.id}`,
+        {}, // Pas besoin de corps si foodID est dans l'URL
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Anaaa sift lih")
+      // Optionnel : action locale après succès
+      AddToCart(item); // Met à jour le panier local/context si tu veux garder ça
+    } catch (error) {
+      console.error("Erreur lors de l'ajout au panier :", error);
+      alert("Erreur lors de l'ajout au panier.");
+    }
+  };
+  const confirmAddToCart = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token || !selectedItem) return;
+  
+    try {
+      await axios.post(
+        `http://localhost:8080/user/cart/addItem?foodID=${selectedItem.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      AddToCart(selectedItem); // Optionnel : met à jour ton contexte/panier local
+      setShowModal(false);
+    } catch (err) {
+      alert("Erreur lors de l'ajout au panier !");
+      console.error(err);
+    }
+  };
+  
   return (
     <div className="HomeDiv">
       {showAlert && (
@@ -119,14 +174,15 @@ function Home() {
             </svg>
             <span className="sr-only">Info</span>
             <div>
-              <span className="font-medium">
-                {currentItemName} ajouté au panier!
-              </span>
+            <div className="flex items-center">
+  <ShoppingCart className="mr-2" size={16} />
+  <span className="font-medium">{currentItemName} added to cart successfully!</span>
+</div>
             </div>
           </div>
         </div>
       )}
-      <div className="divcontent">
+      <div  className="divcontent">
         {/* Titre */}
         <h1 className="h1SavoryBites">
           <span className="Savory">Savory</span>Bites - Your Favorite Meals,
@@ -181,9 +237,9 @@ function Home() {
         <div id="imageContent">
           {section1.map((item) => (
             
-            <div id="imageItem" key={item.id}>
+            <div id="imageItem" key={item.id} >
               <span id="discountBadge">{Number(item.discount)}%</span>
-              <img src={item.image} />
+              <img src={item.image} onClick={() => navigate(`/client/ItemCard/${item.id}`)}/>
               <div id="nameImg">{item.title}</div>
               <div id="PriceContainer">
                 
@@ -192,7 +248,7 @@ function Home() {
                 </div>
               </div>
               <div id="AddToCart">
-                <button onClick={() => AddToCart(item)} id="Add">
+                <button onClick={() => askAddToCart(item)} id="Add">
                   +
                 </button>
               </div>
@@ -211,7 +267,7 @@ function Home() {
         <h2 id="h2content3">View Our Range Of Categories</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] p-8">
           {/* Burgers & Fast Food */}
-          <div className="relative pl-[11%]">
+          <div className="relative pl-[11%]" onClick={() => navigate(`/client/Our_Menu`)}>
             <img
               className="w-full h-[100%] object-cover rounded-lg"
               src={categories[0].categoryImage}
@@ -223,7 +279,7 @@ function Home() {
           </div>
 
           {/* Pizzas et Pasta */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2" onClick={() => navigate(`/client/Our_Menu`)}>
             <div className="relative">
               <img
                 className="w-full h-[265px] object-cover rounded-lg"
@@ -247,7 +303,7 @@ function Home() {
           </div>
 
           {/* Tacos */}
-          <div className="relative pr-11">
+          <div className="relative pr-11"onClick={() => navigate(`/client/Our_Menu`)}>
             <img
               className="w-full h-[100%] object-cover rounded-lg"
               src={categories[3].categoryImage}
@@ -268,9 +324,9 @@ function Home() {
         <div id="imageContent">
           {section2.map((item) => (
             
-            <div id="imageItem" key={item.id}>
+            <div id="imageItem" key={item.id} >
               <span id="discountBadge">{Number(item.discount)}%</span>
-              <img src={item.image} />
+              <img src={item.image} onClick={() => navigate(`/client/ItemCard/${item.id}`)}/>
               <div id="nameImg">{item.title}</div>
               <div id="PriceContainer">
                 
@@ -279,7 +335,7 @@ function Home() {
                 </div>
               </div>
               <div id="AddToCart">
-                <button onClick={() => AddToCart(item)} id="Add">
+                <button onClick={() => askAddToCart(item)} id="Add">
                   +
                 </button>
               </div>
@@ -291,7 +347,7 @@ function Home() {
       <img className="backgroundimg4" src={back4} alt="French fries" />
       <img className="backgroundimg5" src={back5} alt="Sauce" />
 
-      <div className="Section5">
+      <div  className="Section5">
         <h2 id="h2content2">Most Popular Restaurants</h2>
         <ButtonWithLogo />
       </div>
@@ -469,7 +525,35 @@ function Home() {
           </p>
         </div>
       </footer>
+      {showModal && selectedItem && (
+  <div
+    id="popup-modal"
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  >
+    <div className="bg-white rounded-lg shadow p-6 max-w-md w-full">
+  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+    Add "{selectedItem.title}" to cart?
+  </h3>
+  <div className="flex justify-end gap-3">
+    <button
+      onClick={confirmAddToCart}
+      className="bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg px-4 py-2"
+    >
+      Yes, add
+    </button>
+    <button
+      onClick={() => setShowModal(false)}
+      className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+  </div>
+)}
+
     </div>
+
   );
 }
 

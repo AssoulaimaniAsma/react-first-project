@@ -7,6 +7,7 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { CartContext } from "../CartContext/CartContext";
 import { useNavigate, Link, useSearchParams } from "react-router-dom"; // Importez useNavigate, Link et useSearchParams
+import { ShoppingCart } from "lucide-react";
 
 
 const moreFilters = ["American", "Asian", "Bakery & Pastry", "Shawarma"];
@@ -21,7 +22,11 @@ export default function ItemCard() {
   const { cart, AddToCart, showAlert, UpdateQuantity, currentItemName } = useContext(CartContext);
   const [searchParams] = useSearchParams(); // Récupérez les paramètres de l'URL
   const [popularFilters, setPopularFilters] = useState([]);
-
+  const navigate = useNavigate(); // déjà importé
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
   useEffect(() => {
     fetch("http://localhost:8080/public/allCategories")
       .then((res) => res.json())
@@ -37,13 +42,59 @@ export default function ItemCard() {
       })
       .catch((err) => console.error("Erreur de récupération :", err));
   }, []);
+  const confirmAddToCart = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token || !selectedItem) return;
+  
+    try {
+      await axios.post(
+        `http://localhost:8080/user/cart/addItem?foodID=${selectedItem.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      AddToCart(selectedItem); // Optionnel : met à jour ton contexte/panier local
+      setShowModal(false);
+    } catch (err) {
+      alert("Erreur lors de l'ajout au panier !");
+      console.error(err);
+    }
+  };
+  const askAddToCart = (item) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
   useEffect(() => {
     axios
-      .get("http://localhost:5009/api/products")
+      .get("http://localhost:8080/public/menu")
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erreur :", error));
   }, []);
+  useEffect(() => {
+    if (products.length > 0) {
+      console.log("Selected category changed to:", selectedCategory);
+      console.log("First product categories:", products[0].categoryTitles);
+      console.log("All products:", products); // Optionnel: voir toutes les données
+    }
+  }, [selectedCategory, products]); // Ajoutez products comme dépendance
 
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+  
+    return inputLength === 0 
+      ? [] 
+      : products
+          .filter(item => item.title.toLowerCase().includes(inputValue))
+          .map(item => item.title);
+  };
+  useEffect(() => {
+    console.log("Products loaded:", products.length > 0);
+    if (products.length > 0) {
+      console.log("First product data:", products[0]);
+    }
+  }, [products]);
   // Vérifiez si une catégorie est passée en paramètre et mettez à jour l'état
   useEffect(() => {
     const categoryParam = searchParams.get('category');
@@ -61,30 +112,56 @@ export default function ItemCard() {
       }
     }
   }, [searchParams]);
-
-  const filteredProducts = products.filter(
-    (product) =>
-      (selectedCategory === "All" ||
-        product.category === selectedCategory) &&
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  console.log(products);
+  const filteredProducts = products.filter((product) => {
+    // Filtre par catégorie
+    const categoryMatch = selectedCategory === "All" 
+      ? true 
+      : Array.isArray(product.categoryTitles) 
+        ? product.categoryTitles.some(cat => 
+            cat && cat.toString().trim().toLowerCase() === selectedCategory.trim().toLowerCase())
+        : product.categoryTitles && product.categoryTitles.toString().trim().toLowerCase() === selectedCategory.trim().toLowerCase();
+    
+    // Filtre par terme de recherche
+    const searchMatch = searchTerm === "" 
+      ? true 
+      : product.title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return categoryMatch && searchMatch;
+  });
   const totalItems = filteredProducts.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
   const currentItems = filteredProducts.slice(startIndex, endIndex);
-
+  const onSuggestionSelected = (value) => {
+    setSearchTerm(value);
+    setShowSuggestions(false);
+    // Optionnel: filtrer directement les produits
+    // setFilteredProducts(products.filter(p => p.title.includes(value)));
+  };
   return (
     <div className="mx-auto p-5">
       {showAlert && (
         <div className="fixed-alert">
-          <div className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400" role="alert">
-            <svg className="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <div
+            className="flex items-center p-4 text-sm text-black rounded-lg bg-[#f0b9ae] dark:bg-gray-800 dark:text-blue-400"
+            role="alert"
+          >
+            <svg
+              className="shrink-0 inline w-4 h-4 me-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
             <span className="sr-only">Info</span>
             <div>
-              <span className="font-medium">{currentItemName} ajouté au panier!</span>
+            <div className="flex items-center">
+  <ShoppingCart className="mr-2" size={16} />
+  <span className="font-medium">{currentItemName} added to cart successfully!</span>
+</div>
             </div>
           </div>
         </div>
@@ -93,7 +170,7 @@ export default function ItemCard() {
         {/* Categories Section */}
         <div className="md:w-2/3">
           <div className="ml-10 mt-20 border border-gray-200 rounded-lg p-4 w-full max-w-xs">
-            <h2 className="text-xl font-bold mb-3">
+            <h2 className="text-xl text-[#FD4C2A] font-bold mb-3">
               <span className="text-[#FD4C2A] font-extrabold">|</span> Categories
             </h2>
             <ul className="space-y-2" style={{ left: "-50px", maxHeight: "500px", overflowY: "auto" }}>
@@ -144,24 +221,45 @@ export default function ItemCard() {
 
         {/* Menu Section */}
         <div className="md:pl-2">
-          <h2 className="mt-16 text-xl md:text-4xl font-bold mb-7">Our Menu</h2>
+          <h2 className="mt-16 text-xl  text-[#FD4C2A] md:text-4xl font-bold mb-7">Our Menu</h2>
 
           {/* Search Bar */}
-          <div className="relative mb-6 w-full">
-            <input
-              type="text"
-              placeholder="Search An Item"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full border border-gray-500 focus:border-orange-500 rounded-full py-2 pl-4 pr-12 outline-none"
-            />
-            <button className="absolute right-0 top-0 h-full px-3 hover:text-orange-600">
-              <FiSearch className="text-xl" />
-            </button>
-          </div>
+{/* Search Bar */}
+<div className="relative mb-6 w-full">
+  <div className="relative">
+    <input
+      type="text"
+      placeholder="Search An Item"
+      value={searchTerm}
+      onChange={(e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setCurrentPage(1);
+        setSuggestions(getSuggestions(value));
+        setShowSuggestions(value.length > 0);
+      }}
+      onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+      className="w-full border border-gray-500 focus:border-orange-500 rounded-full py-2 pl-4 pr-12 outline-none font-bold "
+    />
+    <button className="absolute right-0 top-0 h-full px-3 hover:text-orange-600">
+      <FiSearch className="text-xl" />
+    </button>
+  </div>
+  
+  {showSuggestions && suggestions.length > 0 && (
+    <ul className="absolute z-100 mt-1 w-full bg-white border border-gray-300 rounded-lg font-bold shadow-lg max-h-40 overflow-auto">
+      {suggestions.map((suggestion, index) => (
+        <li 
+          key={index}
+          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => onSuggestionSelected(suggestion)}
+        >
+          {suggestion}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
           <p className="font-bold text-gray-600 mb-4">
             Showing {startIndex + 1}–{endIndex} of {totalItems} item(s)
@@ -180,35 +278,48 @@ export default function ItemCard() {
                 className="bg-white rounded-3xl p-4 relative flex flex-col items-start h-[450px] justify-between"
               >
                 {/* Badge réduction */}
-                {item.discount && (
-                  <div className="absolute top-4 right-4 bg-[#FD4C2A] text-black text-sm px-1 py-1 rounded-md z-10">
-                    -{item.discount}%
-                  </div>
-                )}
+                
+                {Number(item.discount) > 0 && (
+  <div className="absolute top-4 right-4 bg-[#FD4C2A] text-black text-sm px-1 py-1 rounded-md z-10">
+    -{Number(item.discount)}%
+  </div>
+)}
+
+                
 
                 {/* Image - verticale */}
-                <div className="w-full h-80 bg-gray-200 rounded-2xl overflow-hidden mb-4">
+                <div className="w-full h-80 bg-gray-200 rounded-2xl overflow-hidden mb-4"   onClick={() => navigate(`/client/ItemCard/${item.id}`)}
+                >
                   <img
-                    src={`http://localhost:5009${item.image}`}
-                    alt={item.name}
+                    src={item.image}
+                    alt={item.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
 
                 {/* Nom & prix */}
-                <h3 className="text-sm font-medium text-gray-800">{item.name}</h3>
+                <h3 className="text-sm font-medium text-gray-800">{item.title}</h3>
                 <div className="flex items-center gap-2 text-sm mt-1">
-                  <span className="text-gray-400 line-through">
-                    {item.oldPrice.toFixed(2)}DH
-                  </span>
-                  <span className="text-black font-bold">
-                    {item.newPrice.toFixed(2)}DH
-                  </span>
-                </div>
+  {Number(item.discount) > 0 ? (
+    <>
+      <span className="text-gray-400 line-through">
+        {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)}DH
+      </span>
+      <span className="text-black font-bold">
+        {Number(item.discountedPrice).toFixed(2)}DH
+      </span>
+    </>
+  ) : (
+    <span className="text-black font-bold">
+      {Number(item.discountedPrice).toFixed(2)}DH
+    </span>
+  )}
+</div>
+
 
                 {/* Bouton Ajouter */}
                 <div className="mt-4 self-end">
-                  <button className=" bg-white text-[#FD4C2A] border border-[#FD4C2A] rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }} onClick={() => AddToCart(item)}>
+                  <button className=" bg-white text-[#FD4C2A] border border-[#FD4C2A] rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-[#FD4C2A] hover:text-white transition" style={{ borderRadius: '50%' }} onClick={() => askAddToCart(item)} >
                     <FaPlus className="text-sm" />
                   </button>
                 </div>
@@ -233,6 +344,32 @@ export default function ItemCard() {
           </div>
         </div>
       </div>
+      {showModal && selectedItem && (
+  <div
+    id="popup-modal"
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  >
+    <div className="bg-white rounded-lg shadow p-6 max-w-md w-full">
+  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+    Add "{selectedItem.title}" to cart?
+  </h3>
+  <div className="flex justify-end gap-3">
+    <button
+      onClick={confirmAddToCart}
+      className="bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg px-4 py-2"
+    >
+      Yes, add
+    </button>
+    <button
+      onClick={() => setShowModal(false)}
+      className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+  </div>
+)}
     </div>
   );
 }

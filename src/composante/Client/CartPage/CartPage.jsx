@@ -267,15 +267,15 @@ function CartPage() {
           <tbody className="bodyTable2">
             <tr>
               <td>Subtotal</td>
-              <td>{orderDetails.subTotal.toFixed(2)} MAD</td>
+              <td>{Number(orderDetails.subTotal).toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Shipping</td>
-              <td>{orderDetails.shipping.toFixed(2)} MAD</td>
+              <td>{Number(orderDetails.shipping).toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Total</td>
-              <td>{orderDetails.total.toFixed(2)} MAD</td>
+              <td>{Number(orderDetails.total).toFixed(2)} MAD</td>
             </tr>
           </tbody>
         </table>

@@ -152,11 +152,12 @@ function UserAddresses() {
         </div>
 
         {addresses.map((addr, index) => (
-            <Link to={`../client/Address/show/${addr.id}`}>
+            
           <div
             key={addr.id}
             className="border rounded-lg p-4 mb-4 shadow-sm relative flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white"
           >
+            <Link to={`../client/Address/show/${addr.id}`}>
             <div>
 
               <p className="text-lg font-semibold text-[#FD4C2A]">{addr.title}</p>
@@ -166,6 +167,7 @@ function UserAddresses() {
               </p>
               <p className="text-gray-600 text-sm">{addr.region.regionName}</p>
             </div>
+            </Link>
             <div className="flex gap-3 mt-3 md:mt-0">
               <Link to={`/client/Address/edit/${addr.id}`}>
                 <button className="text-blue-500 hover:text-blue-700 flex items-center gap-1 text-sm">
@@ -187,7 +189,7 @@ function UserAddresses() {
               </div>
             )}
           </div>
-          </Link>
+          
         ))}
         <Link to={`/client/account`}>
         <button

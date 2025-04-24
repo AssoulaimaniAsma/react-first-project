@@ -36,6 +36,7 @@ function SigninRestaurant() {
         console.log("Token reçu:", data.jwt);
         // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
         localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
+        
         navigate("/restaurant"); // Redirige vers la page d'accueil après la connexion
       } else {
         const errorData = await response.json();

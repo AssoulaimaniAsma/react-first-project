@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef  } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 export default function VerifyAccountRestaurant() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState("loading");
   const navigate = useNavigate();
-
+const hasFetched = useRef(false);
   useEffect(() => {
     const token = searchParams.get("token");
     let isMounted = true; // Add a flag to track component mount status
+    if (!token || hasFetched.current) {
+      setStatus("error");
+      return;
+    }
 
     if (token) {
       const url = `http://localhost:8080/auth/verifyAccount?token=${token}`;
       console.log("URL de vérification du restaurant :", url);
-
+      hasFetched.current = true;
       fetch(url, {
         method: "POST",
       })

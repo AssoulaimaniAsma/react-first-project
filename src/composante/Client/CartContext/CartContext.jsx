@@ -25,7 +25,7 @@ export const CartProvider = ({ children }) => {
 
     if (existingItem) {
       UpdateQuantity(item.id, 1);
-      setCurrentItemName(item.name); // Mettez à jour le nom de l'item
+      setCurrentItemName(item.title); // Mettez à jour le nom de l'item
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000);
     } else {
