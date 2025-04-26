@@ -641,7 +641,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
             const rowClassName = isDelivered
               ? "bg-green-100"
               : order.status === "REJECTED"
-              ? "bg-[#FBEAE7]"
+              ? "text-[#FF2C2C] font-bold bg-[#FBEAE7]"
               : "hover:bg-gray-50";
 
             return (
@@ -679,7 +679,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                 </td>
                 <td className="p-4">
                   {isDelivered ? (
-                    <span>{formatStatusText(order.status)}</span>
+                    <span className=" text-[#008000] font-bold ">{formatStatusText(order.status)}</span>
                   ) : !isReadOnly ? (
                     loadingStatus[order.id] ? (
                       <div className="flex items-center">
@@ -699,7 +699,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     <option value="ACCEPTED" disabled>
       {formatStatusText("ACCEPTED")}
     </option>
-  )}
+  )}  
   {statusOptionsFromBackend.map((status) => (
     <option key={status} value={status}>
       {formatStatusText(status)}
