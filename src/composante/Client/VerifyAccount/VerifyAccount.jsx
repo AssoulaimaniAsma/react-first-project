@@ -18,13 +18,16 @@ export default function VerifyAccount() {
     hasFetched.current = true; // <- prevent future fetches
 
     const url = `http://localhost:8080/auth/verifyAccount?token=${token}`;
-    console.log("Verification URL:", url);
+    console.log("Hasfetched :", hasFetched);
 
     fetch(url, {
       method: "POST",
     })
       .then((res) => {
+        console.log("Resulta :", res);
+
         if (res.status === 200 || res.status === 409) {
+
           setStatus("success");
           setTimeout(() => navigate("/signin"), 5000);
         } else {
