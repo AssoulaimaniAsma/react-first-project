@@ -23,6 +23,7 @@ import Orders from "../composante/Restaurant/Order/Order";
 import IncomingNotifications from "../composante/Restaurant/Order/IncomingOrder";
 import "./App.css";
 import Notification from "../composante/Restaurant/Order/Notification";
+import Dashboard from "../composante/Restaurant/Dashboard/dashbord";
 // Layout avec Navbar fixe
 const RestaurantLayout = ({ children }) => {
   return (
@@ -146,6 +147,12 @@ function AnimatedRoutes() {
                   <IncomingNotifications />
                 </RestaurantLayout>
               }
+            />
+            <Route
+              path="/restaurant/dashboard"
+              element={
+                <RestaurantLayout> <Dashboard />  </RestaurantLayout>
+             }
             />
           </Routes>
         </div>
