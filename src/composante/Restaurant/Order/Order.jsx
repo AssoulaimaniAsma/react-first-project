@@ -423,7 +423,7 @@ export default function Orders() {
   const [alertMessage, setAlertMessage] = useState("");
   const [loadingStatus, setLoadingStatus] = useState({});
   const [statusOptionsFromBackend, setStatusOptionsFromBackend] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!token) {
@@ -688,24 +688,25 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                       </div>
                     ) : (
                       <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        disabled={!hasCourier}
-                        className={`border border-gray-300 rounded px-3 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#FD4C2A] ${!hasCourier ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
-                      >
-                        {/* Afficher "ACCEPTED" en premier si c'est le statut initial au chargement */}
-                        {order.status === "ACCEPTED" && (
-                          <option value="ACCEPTED" disabled>
-                            {formatStatusText("ACCEPTED")}
-                          </option>
-                        )}
-                        {statusOptionsFromBackend
-                          .map((status) => (
-                            <option key={status} value={status}>
-                              {formatStatusText(status)}
-                            </option>
-                          ))}
-                      </select>
+  value={order.status}
+  onChange={(e) => handleStatusChange(order.id, e.target.value)}
+  disabled={!hasCourier}
+  className={`appearance-none border border-gray-300 rounded-md px-4 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#FD4C2A] focus:border-[#FD4C2A] hover:text-[#FD4C2A] focus:text-[#FD4C2A] shadow-sm ${
+    !hasCourier ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''
+  }`}
+>
+  {order.status === "ACCEPTED" && (
+    <option value="ACCEPTED" disabled>
+      {formatStatusText("ACCEPTED")}
+    </option>
+  )}
+  {statusOptionsFromBackend.map((status) => (
+    <option key={status} value={status}>
+      {formatStatusText(status)}
+    </option>
+  ))}
+</select>
+
                     )
                   ) : (
                     <span>{formatStatusText(order.status)}</span>
