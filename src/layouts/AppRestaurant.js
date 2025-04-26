@@ -22,8 +22,7 @@ import Delivery from "../composante/Restaurant/Delivery/Delivery";
 import Orders from "../composante/Restaurant/Order/Order";
 import IncomingNotifications from "../composante/Restaurant/Order/IncomingOrder";
 import "./App.css";
-import { IoMagnet } from "react-icons/io5";
-
+import Notification from "../composante/Restaurant/Order/Notification";
 // Layout avec Navbar fixe
 const RestaurantLayout = ({ children }) => {
   return (
@@ -155,15 +154,12 @@ function AnimatedRoutes() {
   );
 }
 
-// Main
-function Main() {
-  return <AnimatedRoutes />;
-}
 
 // App parent
 function AppRestaurant() {
   return (
     <CartProvider>
+      <Notification />  
       <AnimatedRoutes />
     </CartProvider>
   );
