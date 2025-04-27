@@ -38,7 +38,7 @@ const Dashboard = () => {
   // Données pour le Line Chart (Order Status)
   const orderStatusData = orderStatistics.weeklyOrderStats.map(week => ({
     weekLabel: week.weekLabel,
-    COMPLETED: week.completedOrdersCount || 0,
+    CANCELED: week.completedOrdersCount || 0,
     DELIVERED: week.deliveredOrdersCount || 0,
     REJECTED: (week.cancelledOrdersCount || 0) + (week.declinedOrdersCount || 0)
   }));
@@ -131,7 +131,7 @@ const Dashboard = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="COMPLETED" stroke="#82ca9d" strokeWidth={2} />
+            <Line type="monotone" dataKey="CANCELED" stroke="#82ca9d" strokeWidth={2} />
             <Line type="monotone" dataKey="DELIVERED" stroke="#8884d8" strokeWidth={2} />
             <Line type="monotone" dataKey="REJECTED" stroke="#ff6666" strokeWidth={2} />
           </LineChart>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { FaRegMoneyBill1 } from "react-icons/fa6";
-
 import axios from "axios";
 
 export default function IncomingNotifications() {
@@ -10,6 +9,10 @@ export default function IncomingNotifications() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [loadingStatus, setLoadingStatus] = useState({});
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 4;
 
   const fetchIncomingOrders = async () => {
     try {
@@ -29,7 +32,7 @@ export default function IncomingNotifications() {
   };
 
   const handleAction = async (orderId, actionType) => {
-    setLoadingStatus(prev => ({ ...prev, [orderId]: true })); // <-- Montre le loader
+    setLoadingStatus(prev => ({ ...prev, [orderId]: true }));
 
     try {
       const token = localStorage.getItem("authToken");
@@ -41,11 +44,9 @@ export default function IncomingNotifications() {
         },
       });
 
-      // Afficher l'alerte
       setAlertMessage(`Order ${actionType === "accept" ? "accepted" : "rejected"} successfully!`);
       setShowAlert(true);
 
-      // Masquer l'alerte et rafraîchir après 2 secondes
       setTimeout(() => {
         setShowAlert(false);
         fetchIncomingOrders();
@@ -53,8 +54,8 @@ export default function IncomingNotifications() {
 
     } catch (error) {
       console.error(`Failed to ${actionType} order:`, error);
-    }finally {
-      setLoadingStatus(prev => ({ ...prev, [orderId]: false })); // <-- Enlève le loader
+    } finally {
+      setLoadingStatus(prev => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -65,6 +66,18 @@ export default function IncomingNotifications() {
   useEffect(() => {
     fetchIncomingOrders();
   }, []);
+
+  // Pagination logic
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const pageNumbers = [];
+
+  for (let i = 1; i <= Math.ceil(orders.length / ordersPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
     return <div className="text-center mt-10 text-gray-500">Loading...</div>;
@@ -87,63 +100,84 @@ export default function IncomingNotifications() {
       {orders.length === 0 ? (
         <div className="text-gray-500 text-sm text-center mt-20">No new notifications.</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-2xl overflow-hidden border border-[#FD4C2A]">
-            <thead className="bg-[#FD4C2A] text-white text-left">
-              <tr>
-                <th className="p-4">Order Number</th>
-                <th className="p-4">Items</th>
-                <th className="p-4">Total Price</th>
-                <th className="p-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order.id} className="border-t">
-                  <td className="p-4 flex font-bold items-center gap-2">
-                    <FaBell className="text-[#FD4C2A]" />
-                    {order.id}
-                  </td>
-                  <td className="p-4">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="font-bold text-sm">
-                        {item.food.title} x{item.quantity}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="p-4 font-bold flex items-center gap-2">
-                    <FaRegMoneyBill1  className="text-[#FD4C2A]" />
-                    {order.totalPrice}
-                  </td>
-                  <td className="p-4  text-center">
-                    {loadingStatus[order.id] ? (
-  <div className="flex items-center justify-center">
-    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#FD4C2A]"></div>
-    <span className="ml-2 text-gray-500 text-xs">Processing...</span>
-  </div>
-) : (
-  <div className="flex justify-center gap-3">
-    <button
-      onClick={() => handleAction(order.id, "accept")}
-      className="px-3 py-1 text-sm text-white bg-green-500 hover:bg-green-600 rounded-full"
-    >
-      Approve
-    </button>
-    <button
-      onClick={() => handleAction(order.id, "reject")}
-      className="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded-full"
-    >
-      Reject
-    </button>
-  </div>
-)}
-
-                  </td>
+        <>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-2xl overflow-hidden border border-[#FD4C2A]">
+              <thead className="bg-[#FD4C2A] text-white text-left">
+                <tr>
+                  <th className="p-4">Order Number</th>
+                  <th className="p-4">Items</th>
+                  <th className="p-4">Total Price</th>
+                  <th className="p-4 text-center">Actions</th>
                 </tr>
+              </thead>
+              <tbody>
+                {currentOrders.map((order) => (
+                  <tr key={order.id} className="border-t">
+                    <td className="p-4 flex font-bold items-center gap-2">
+                      <FaBell className="text-[#FD4C2A]" />
+                      {order.id}
+                    </td>
+                    <td className="p-4">
+                      {order.items.map((item, index) => (
+                        <div key={index} className="font-bold text-sm">
+                          {item.food.title} x{item.quantity}
+                        </div>
+                      ))}
+                    </td>
+                    <td className="p-4 font-bold flex items-center gap-2">
+                      <FaRegMoneyBill1 className="text-[#FD4C2A]" />
+                      {order.totalPrice}
+                    </td>
+                    <td className="p-4 text-center">
+                      {loadingStatus[order.id] ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#FD4C2A]"></div>
+                          <span className="ml-2 text-gray-500 text-xs">Processing...</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => handleAction(order.id, "accept")}
+                            className="px-3 py-1 text-sm text-white bg-green-500 hover:bg-green-600 rounded-full"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleAction(order.id, "reject")}
+                            className="px-3 py-1 text-sm text-white bg-red-500 hover:bg-red-600 rounded-full"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-5">
+            <ul className="flex gap-3">
+              {pageNumbers.map((number) => (
+                <li key={number}>
+                  <button
+                    onClick={() => paginate(number)}
+                    className={`px-3 py-1 rounded-lg ${
+                      currentPage === number
+                        ? 'bg-[#FD4C2A] text-white'
+                        : 'bg-gray-200 text-gray-700'
+                    } hover:bg-[#FD4C2A] hover:text-white`}
+                  >
+                    {number}
+                  </button>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </ul>
+          </div>
+        </>
       )}
     </div>
   );
