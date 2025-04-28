@@ -24,6 +24,9 @@ import IncomingNotifications from "../composante/Restaurant/Order/IncomingOrder"
 import "./App.css";
 import Notification from "../composante/Restaurant/Order/Notification";
 import Dashboard from "../composante/Restaurant/Dashboard/dashbord";
+import Setup from "../composante/Restaurant/SigninRestaurant/setupnotcomplet";
+import Success from "../composante/Restaurant/SigninRestaurant/succes";
+import Failed from "../composante/Restaurant/SigninRestaurant/failed";
 // Layout avec Navbar fixe
 const RestaurantLayout = ({ children }) => {
   return (
@@ -154,7 +157,22 @@ function AnimatedRoutes() {
                 <RestaurantLayout> <Dashboard />  </RestaurantLayout>
              }
             />
+            <Route
+              path="/restaurant/SetupStripe"
+              element={
+                 <Setup /> 
+             }
+            />
+             <Route
+              path="/restaurant/stripe/success"
+              element={<Success/>}
+            />
+            <Route
+              path="/restaurant/stripe/failed"
+              element={<Failed/>}
+            />
           </Routes>
+          
         </div>
       </CSSTransition>
     </TransitionGroup>

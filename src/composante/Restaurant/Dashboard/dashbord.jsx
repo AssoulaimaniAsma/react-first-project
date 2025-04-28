@@ -81,30 +81,63 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Nouveau Pie Chart pour Flagged/Unflagged Foods */}
       <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Food Status</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={foodStatusData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-            >
-              {foodStatusData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+  
+  {/* Container Flex pour deux graphiques côte à côte */}
+  <div className="flex gap-6">
+    {/* Premier Donut Chart */}
+    <div className="w-1/2">
+    <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Food Status</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={foodStatusData}
+            cx="50%"
+            cy="50%"
+            innerRadius={50} // Ajout pour le creux (donut)
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+            labelLine={false}
+            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+          >
+            {foodStatusData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+
+    {/* Deuxième Donut Chart */}
+    <div className="w-1/2">
+    <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Order Status</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={foodStatusData} // <== tu dois définir ce nouveau dataset
+            cx="50%"
+            cy="50%"
+            labelLine={false} 
+            outerRadius={80}
+            fill="#82ca9d"
+            dataKey="value"
+            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+          >
+            {foodStatusData.map((entry, index) => (
+              <Cell key={`second-cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>
+
 
       {/* Revenue Bar Chart (modifié) */}
       <div className="bg-white p-6 rounded-2xl shadow-md">
