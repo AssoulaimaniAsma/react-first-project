@@ -173,6 +173,7 @@ const Navbar = () => {
                 {isAuthenticated ? (
                   <>
                     <Link to="client/account" className="block px-4 py-2 text-black hover:text-[#FD4C2A]" onClick={() => setUserMenuOpen(false)}>Profile</Link>
+                    <Link to="/client/OrderHistory" className="block px-4 py-2 text-black hover:text-[#FD4C2A]" onClick={() => setUserMenuOpen(false)}>Order History</Link>
                     <button onClick={handleLogout} className="block w-full text-black text-left px-4 py-2 hover:text-[#FD4C2A]">Logout</button>
                   </>
                 ) : (

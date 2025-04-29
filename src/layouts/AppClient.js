@@ -23,6 +23,10 @@ import ShowAddress from "../composante/Client/Address/ShowAddress";
 import FoodByRestaurant from "../composante/Client/FoodByRestaurant/FoodByRestaurant";
 import "./App.css";
 import ScrollToTop from "./ScrollToTop";
+import PaymentMethods from "../composante/Client/Payment/payment";
+import OrderHistory from "../composante/Client/OrderHistory/orderhistory";
+import ClientOrderNotifications from "../composante/Client/OrderHistory/NotificationClient";
+import OrderTracking from "../composante/Client/OrderTracking/ordertracking";
 function AnimatedRoutes() {
   const location = useLocation();
   const signinRef = useRef(null);
@@ -43,6 +47,10 @@ function AnimatedRoutes() {
   const editaddressRef= useRef(null);
   const showaddressRef= useRef(null);
   const foodbyrestRef = useRef(null);
+  const paymentRef= useRef(null);
+  const orderhistoryRef= useRef(null);
+  const clientOrderRef= useRef(null);
+  const ordertrackingRef= useRef(null);
     return (
     <TransitionGroup>
       <CSSTransition 
@@ -68,7 +76,10 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
-
+          location.pathname==="/client/ManagePayment" ? paymentRef:
+          location.pathname==="/client/OrderHistory" ? orderhistoryRef:
+         // location.pathname==="/client/OrderHistory/NotificationClient" ? clientOrderRef:
+         location.pathname==="/client/order/track/:orderID" ? ordertrackingRef:
           homeRef
           
         }
@@ -92,7 +103,10 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
-
+          location.pathname==="/client/ManagePayment" ? paymentRef:
+          location.pathname==="/client/OrderHistory" ? orderhistoryRef:
+          location.pathname==="/client/order/track/:orderID" ? ordertrackingRef:
+          //location.pathname==="/client/OrderHistory/NotificationClient" ? clientOrderRef:
           homeRef
         }>
           <Routes location={location}>
@@ -111,9 +125,12 @@ function AnimatedRoutes() {
           <Route path="/auth/ForgotPasswordForm" element={<ForgotPasswordForm />}/>
           <Route path="/client/Address/:isEditable" element={<AddressForm />}/>
           <Route path="/client/allAddress" element={<UserAddresses />}/>
+          <Route path="/client/ManagePayment" element={<PaymentMethods/>}/>
           <Route path="/client/Address/edit/:id" element={<EditAddress />}/>
           <Route path="/client/Address/show/:id" element={<ShowAddress />}/>
           <Route path="/client/restaurants/:id" element={<FoodByRestaurant />}/>
+          <Route path="/client/OrderHistory" element={<OrderHistory />}/>
+          <Route path="/client/order/track/:orderID" element={<OrderTracking />} />
           </Routes>
         </div>
       </CSSTransition>
@@ -143,6 +160,7 @@ function Main() {
 function AppClient() {
   return (
       <CartProvider>
+        <ClientOrderNotifications/>
           <Main />
       </CartProvider>
   );

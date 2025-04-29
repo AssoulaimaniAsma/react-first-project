@@ -24,7 +24,7 @@ const AccountSettings = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/client/signin");
 
     const fetchAccountDetails = async () => {
       try {
@@ -107,7 +107,7 @@ const AccountSettings = () => {
     if (!validateForm()) return;
 
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/client/signin");
 
     const formDataToSend = {
       firstName: formData.firstName,
@@ -288,7 +288,7 @@ const AccountSettings = () => {
       </div>
       <div className="Payment">
         <span>Payment</span>
-        <Link to="/Payment-form" className="PaymentLink">
+        <Link to="/client/ManagePayment" className="PaymentLink">
           Manage Payment Methods
         </Link>
       </div>
