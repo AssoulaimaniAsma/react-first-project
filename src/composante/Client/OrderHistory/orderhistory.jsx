@@ -191,7 +191,7 @@ const [loadingCancel, setLoadingCancel] = useState(false);
 
                     </>
                   )}
-                  {order.status === 'COMPLETED' && (
+                  {(order.status === 'COMPLETED' || order.status === 'ACCEPTED')&& (
                     <button
   onClick={() => setCancelAlert(order)}
   className="text-red-500 text-sm font-semibold hover:underline flex items-center gap-1"

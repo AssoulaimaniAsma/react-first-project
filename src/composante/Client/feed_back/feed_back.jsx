@@ -15,7 +15,7 @@ const ContactForm = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('authToken'); // Assure-toi que ton token est stocké ici
-        const response = await axios.get('http://localhost:8080/auth/user/me', {
+        const response = await axios.get('http://localhost:8080/user/accountDetails', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
