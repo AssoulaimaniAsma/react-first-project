@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./TabRestaurantDetails.css";
 
 function TabRestaurantDetails() {
     const { id } = useParams();  // Get the restaurant ID from the URL
@@ -52,34 +51,23 @@ function TabRestaurantDetails() {
                             <tr className="trRestaurantDetails">
                                 <th>Restaurant ID</th>
                                 <th>Profile Image</th>
-                                <th>Profile Banner</th>
                                 <th>Restaurant Name</th>
-                                <th>Paypal Email</th>
                                 <th>Shipping Fees</th>
-                                <th>Street</th>
-                                <th>Region</th>
-                                <th>Province</th>
-                                <th>Commune</th>
-                                <th>Latitude</th>
-                                <th>Longitude</th>
-                                <th>Coordination Enabled</th>
+                                <th>Address</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td className="tdRestaurantDetails">{restaurantDetails.id}</td>
                                 <td className="tdRestaurantDetails">{restaurantDetails.profileImg}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.profileBanner}</td>
                                 <td className="tdRestaurantDetails">{restaurantDetails.title}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.paypalEmail}</td>
                                 <td className="tdRestaurantDetails">{restaurantDetails.shippingFees}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.street}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.regionID}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.provinceID}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.communeID}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.latitude}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.longitude}</td>
-                                <td className="tdRestaurantDetails">{restaurantDetails.coordinationEnabled ? "Yes" : "No"}</td>
+                                <td className="tdRestaurantDetails">
+                                    {restaurantDetails.addressShortDTO?.title} /
+                                    {restaurantDetails.addressShortDTO?.commune} /
+                                    {restaurantDetails.addressShortDTO?.province} /
+                                    {restaurantDetails.addressShortDTO?.region}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

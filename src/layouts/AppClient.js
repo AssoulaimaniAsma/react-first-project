@@ -21,8 +21,15 @@ import UserAddresses from "../composante/Client/Address/UserAddresses";
 import EditAddress from "../composante/Client/Address/EditAddress";
 import ShowAddress from "../composante/Client/Address/ShowAddress";
 import FoodByRestaurant from "../composante/Client/FoodByRestaurant/FoodByRestaurant";
+import PersOrderDetails from "../composante/Client/PersOrderDetails/PersOrderDetails";
+import PersonalDetails from "../composante/Client/PersonalDetails/PersonalDetails";
+import AddressFormCheck from "../composante/Client/PersonalDetails/AddressFormCheck";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import "./App.css";
 import ScrollToTop from "./ScrollToTop";
+  const stripePromise = loadStripe('pk_test_51RHm1SFWUQXfDIlGmKVLISKhH3LpY6Sf9Pp4RC62PoaUcovgWn35VVnAQ5we4xhyd2oMfqz6xjixvonrppTmTFxW000z9mc5cG');
+
 function AnimatedRoutes() {
   const location = useLocation();
   const signinRef = useRef(null);
@@ -43,6 +50,9 @@ function AnimatedRoutes() {
   const editaddressRef= useRef(null);
   const showaddressRef= useRef(null);
   const foodbyrestRef = useRef(null);
+  const persOrderDetailsRef=useRef(null);
+  const personalDetailsRef=useRef(null);
+  const addressFormCheckRef=useRef(null);
     return (
     <TransitionGroup>
       <CSSTransition 
@@ -58,7 +68,7 @@ function AnimatedRoutes() {
           location.pathname ==="/Our_Menu"  ? ourmenuRef:
           location.pathname === "/History" ? historyRef : 
           location.pathname ==="/SideBar"  ? ourmenuRef:
-          location.pathname ==="/Checkout"  ? checkoutRef:
+          location.pathname ==="/checkout/:orderID"  ? checkoutRef:
           location.pathname ==="/ItemCard/:id"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="/auth/ForgotPasswordForm" ? forgetRef:
@@ -68,6 +78,9 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
+          location.pathname==="/client/PersOrderDetails/:orderID" ? persOrderDetailsRef:
+          location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
+          location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
 
           homeRef
           
@@ -82,7 +95,7 @@ function AnimatedRoutes() {
           location.pathname ==="/Our_Menu"  ? ourmenuRef:
           location.pathname === "/History" ? historyRef :
           location.pathname ==="/SideBar"  ? ourmenuRef:
-          location.pathname ==="/Checkout"  ? checkoutRef:
+          location.pathname ==="/Checkout/:orderID"  ? checkoutRef:
           location.pathname ==="/ItemCard/:id"  ? itemCardRef:
           location.pathname==="/VerifyAccount" ? verifyRef:
           location.pathname==="auth/ForgotPasswordForm" ? forgetRef:
@@ -92,6 +105,10 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
+          location.pathname==="/client/PersOrderDetails/:orderID" ? persOrderDetailsRef:
+          location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
+          location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
+
 
           homeRef
         }>
@@ -105,7 +122,7 @@ function AnimatedRoutes() {
           <Route path="/client/Our_Menu" element={<Our_Menu />} />
           <Route path="/client/ItemCard/:id" element={<ItemCard />} />
           <Route path="/client/history/:userId" element={<History />} />
-          <Route path="/client/Checkout" element={<Checkout />}/>
+          <Route path="/client/Checkout/:orderID" element={<Checkout />}/>
           <Route path="/client/verifyAccount" element={<VerifyAccount />}/>
           <Route path="/auth/resetPassword" element={<ResetPasswordForm />}/>
           <Route path="/auth/ForgotPasswordForm" element={<ForgotPasswordForm />}/>
@@ -114,6 +131,10 @@ function AnimatedRoutes() {
           <Route path="/client/Address/edit/:id" element={<EditAddress />}/>
           <Route path="/client/Address/show/:id" element={<ShowAddress />}/>
           <Route path="/client/restaurants/:id" element={<FoodByRestaurant />}/>
+          <Route path="/client/PersOrderDetails/:orderID" element={<PersOrderDetails />} />
+          <Route path="/client/PersonalDetails/:orderID" element={<PersonalDetails />} />
+          <Route path="/client/AddressFormCheck" element={<AddressFormCheck />} />
+
           </Routes>
         </div>
       </CSSTransition>
@@ -142,9 +163,11 @@ function Main() {
 
 function AppClient() {
   return (
+    <Elements stripe={stripePromise}>
       <CartProvider>
           <Main />
       </CartProvider>
+    </Elements>
   );
 }
 

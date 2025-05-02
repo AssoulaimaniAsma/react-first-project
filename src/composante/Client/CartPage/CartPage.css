@@ -8,24 +8,24 @@
 
 .cart-page .Product,
 .cart-page .TotalPrice {
-    border-collapse: collapse;
-    display: table;
-    flex-grow: 1;
-}
-
-.cart-page .Product {
-    width: 45%; /* Adjust these as needed */
-}
-
-.cart-page .TotalPrice {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden; 
+  }
+  
+  .cart-page .Product {
+    width: 45%; 
+  }
+  
+  .cart-page .TotalPrice {
+  border-radius: 25px;
     width: 25%;
 }
   
-  /* =========================
-   Product Table
-   ========================= */
+  
    .cart-page .tables-container table {
-    width: 100%;  /* Ensures tables are responsive */
+    width: 100%; 
 }
 .cart-page .Product {
     margin-right: 10px;
@@ -34,17 +34,19 @@
     width: auto;
     min-width: 40%;
     flex:none;
+    border-radius: 25px;
   }
   
   .cart-page .Product th,
   .cart-page .Product td {
-    padding: 0.75rem; /* Padding for better readability */
+    padding: 0.75rem; 
     text-align: center;
   }
   
   .cart-page .Product th {
     background-color: #FD4C2A;
     font-size: 1.1rem; /* Medium font size for table headers */
+    
   }
   
   .cart-page .Product td {
@@ -65,14 +67,12 @@
     border-radius: 4px;
   }
   
-  /* =========================
-     Total Price Table
-     ========================= */
   .cart-page .TotalPrice {
     display: table;  /* Ensures it's treated as a table */
     border-collapse: collapse;
     width: 20% !important;
     flex: none;
+    
 }
   
   .cart-page .TotalPrice th {
@@ -81,8 +81,8 @@
   }
   
   .cart-page .TotalPrice td {
-    padding: 0.75rem; /* Padding for better readability */
-    font-size: 1rem; /* Medium font size for table content */
+    padding: 0.75rem;
+    font-size: 1rem;
   }
   
   .cart-page .TotalPrice .footTable2 {
@@ -90,9 +90,7 @@
     color: white;
   }
   
-  /* =========================
-     General Table Adjustments
-     ========================= */
+
   .cart-page .Product td,
   .cart-page .TotalPrice td {
     text-align: center;
@@ -105,10 +103,8 @@
   }
   
   
-/* =========================
-     SECOND PART – Recommendations
-     ========================= */
   .cart-page #SecondPart {
+    height:500px;
     margin-top: 2rem;
     padding: 2rem;
     background-color: #fdf4f4;
@@ -207,9 +203,7 @@
     color: white;
   }
   
-  /* =========================
-     EMPTY CART STATE
-     ========================= */
+  
   .emptyCartContainer {
     text-align: center;
     padding: 50px 20px;
@@ -318,4 +312,44 @@
   .emptyCartContainer .Add2:hover {
     background-color: #1565c0;
   }
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  }
+  
+  .popup-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .popup-content button {
+    padding: 8px 18px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .popup-content button:hover {
+    background-color: #0056b3;
+  }
+  
   

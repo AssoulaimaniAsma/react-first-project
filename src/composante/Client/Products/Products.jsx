@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { CartContext } from "../CartContext/CartContext";
 
-export default function Products({ products, updateQuantity, removeItem }) {
+export default function Products({ products,incrementItem,decrementItem, removeItem }) {
   const {addToCart} = useContext(CartContext);
   return (
     <table className="Product">
@@ -29,14 +29,14 @@ export default function Products({ products, updateQuantity, removeItem }) {
             <td className="quantityContent">
               <button
                 className="DecQuantity"
-                onClick={() => updateQuantity(item.itemID, -1)}
+                onClick={() => decrementItem(item.itemID, -1)}
               >
                 -
               </button>
               <span>{item.quantity}</span>
               <button
                 className="IncQuantity"
-                onClick={() => updateQuantity(item.itemID, 1)}
+                onClick={() => incrementItem(item.itemID, 1)}
               >
                 +
               </button>

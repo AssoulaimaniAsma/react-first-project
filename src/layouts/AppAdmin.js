@@ -6,6 +6,8 @@ import TabRestaurant from "../composante/Admin/TabRestaurant/TabRestaurant";
 import TabRestaurantDetails from "../composante/Admin/TabRestaurant/TabRestaurantDetails";
 import SideBar from "../composante/Admin/SideBar/SideBar";
 import Signin from "../composante/Admin/Signin/Signin";
+import Food from "../composante/Admin/Food/Food";
+import Dashboard from "../composante/Admin/Dashboard/Dashboard";
 
 function AppAdmin() {
   const location = useLocation();
@@ -26,6 +28,8 @@ function AppAdmin() {
           <Route path="/admin/Tabclient" element={<TabClient />} />
           <Route path="/admin/TabRestaurant" element={<TabRestaurant />} />
           <Route path="/admin/TabRestaurantDetails/:id" element={<TabRestaurantDetails />} />
+          <Route path="/admin/Food" element={<Food />} />
+          <Route path="/admin/Dashboard" element={<Dashboard />} />
         </Routes>
       </div>
     </div>

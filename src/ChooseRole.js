@@ -14,7 +14,7 @@ function ChooseRole() {
           <span className="text-[#FD4C2A] font-extrabold">Savory</span>Bites
         </Link>
 
-        <Link to="/admin" className="text-black text-3xl">
+        <Link to="/admin/signin" className="text-black text-3xl">
         <MdAdminPanelSettings />
 
         </Link>

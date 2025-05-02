@@ -107,20 +107,31 @@ function TabClient(){
                 if (!confirmBan) return;
 
                 try{
-                    const res = await fetch(`http://localhost:8080/admin/users/${userId}/ban`,{
+                    const res = await fetch(`http://localhost:8080/admin/users/${userId}/toggleBan`,{
                         method: "PUT",
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
                     if(res.ok){
+                        setClient((prevClients) =>
+                            prevClients.map((client) =>
+                                client.id === userId
+                                    ? {
+                                        ...client,
+                                        status: client.status === "BANNED" ? "ACTIVE" : "BANNED",
+                                    }
+                                    : client
+                            )
+                        );
                         const updatedClient = clients.find(client => client.id === userId);
                     if (updatedClient?.status === "BANNED") {
-                        setPopupMessage("User is already banned.");
+                        setPopupMessage("The user has been unbanned successfully.");
                         setShowPopup(true);
                     } else {
                         setClient((prev) => prev.filter((client) => client.id !== userId));
                         setPopupMessage("User has been banned successfully.");
+                        setShowPopup(true);
                     }
                     }else{
                         const errorText =  await res.text();
@@ -160,13 +171,13 @@ function TabClient(){
                 </thead>
                 <tbody>
                 {filteredClients.map((client) => (
-                        <tr key={client.id}>
+                        <tr className="trTableClient2" key={client.id}>
                             <td className="tdTableClient">{client.id}</td>
                             <td className="tdTableClient">
                                 <img
                                     src={client.profileImg}
                                     alt="Profile"
-                                    style={{ width: "40px", borderRadius: "50%" }}
+                                    style={{ width: "50px",height:"50px", borderRadius: "25%",objectFit: "cover", marginLeft:"49px" }}
                                 />
                             </td>
                             <td className="tdTableClient">{client.username}</td>

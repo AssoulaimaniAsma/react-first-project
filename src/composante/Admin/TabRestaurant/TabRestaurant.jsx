@@ -2,13 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./TabRestaurant.css";
 import {FaTrash, FaBan, FaCheck, FaTimes} from "react-icons/fa";
 import {Link,useNavigate} from "react-router-dom";
+import Modal from "react-modal";
+import { AiOutlineClose } from "react-icons/ai";
 
 function TabRestaurant() {
   const [restaurants, setRestaurant] = useState([]);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery]=useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [restaurantDetails, setRestaurantDetails] = useState(null);
   const [popupMessage, setPopupMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   useEffect(() => {
           const fetchRestaurants = async () => {
@@ -91,6 +96,31 @@ function TabRestaurant() {
             console.error("Error deleting restaurant:", error);
         }
     };
+    const fetchRestaurantDetails = async (restaurantID) => {
+      const token = localStorage.getItem("authToken");
+      if (!token) return navigate("/admin/login");
+    
+      try {
+        const res = await fetch(`http://localhost:8080/admin/restaurants/${restaurantID}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (res.ok) {
+          const data = await res.json();
+          setRestaurantDetails(data);
+        } else {
+          const errorData = await res.json();
+          console.error("Server Error:", errorData);
+        }
+      } catch (error) {
+        console.error("Network or Parsing Error", error);
+      }
+    };
+    
     const handleBan = async (restaurantID) => {
       const token = localStorage.getItem("authToken");
       if (!token) return navigate("/admin/login");
@@ -113,7 +143,7 @@ function TabRestaurant() {
         if(res.ok){
           const updatedRestaurant = restaurants.find(restaurant => restaurant.id === restaurantID);
       if (updatedRestaurant?.status === "BANNED") {
-          setPopupMessage("User is already banned.");
+          setPopupMessage("User is unbanned.");
           setShowPopup(true);
       } else {
           setRestaurant((prev) => prev.filter((restaurant) => restaurant.id !== restaurantID));
@@ -197,6 +227,23 @@ function TabRestaurant() {
           }
         };
         
+        useEffect(() => {
+                Modal.setAppElement('#root'); // Set the app element for accessibility
+              }, []);
+
+        const openModal = async (restaurant) => {
+          console.log("Opening modal for restaurant:", restaurant); // Check if this is logged when clicking
+          setSelectedRestaurant(restaurant);
+          await fetchRestaurantDetails(restaurant.id);
+          setIsModalOpen(true);
+        };
+        
+        const closeModal = () => {
+          console.log("Closing modal");
+          setIsModalOpen(false);
+          setSelectedRestaurant(null);
+        };
+        
       
   return (
     <div className="DivTableRestaurant">
@@ -253,11 +300,84 @@ function TabRestaurant() {
 
               <td><Link className="DeleteRestaurant" onClick={()=> handleDelete(restaurant.id)}><FaTrash/>Delete</Link></td> 
               <td><Link className="BanRestaurant" onClick={()=> handleBan(restaurant.id)}><FaBan/>Ban</Link></td> 
-              <td><Link to={`/admin/TabRestaurantDetails/${restaurant.id}`} className="DetailsRestaurant">Click For More Details</Link></td>
+              <td><button onClick={() => openModal(restaurant)} className="DetailsRestaurant"> More Details</button></td>
             </tr>
           ))}
         </tbody>
       </table>
+      {selectedRestaurant && (
+                <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                ariaHideApp={false}
+              contentLabel="restaurant Details"
+              style={{
+                  content: {
+                    border: '1px solid #ccc',          // thinner, subtle border
+                    padding: '2rem',
+                    borderRadius: '10px',
+                    marginLeft:'10%',
+                    background: '#fff',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    width: '70%',  
+                    height: 'auto',                    // adjust based on content
+                    top: '50%',
+                    left: '50%',
+                    right: 'auto',
+                    bottom: 'auto',
+                    transform: 'translate(-50%, -50%)', // perfect centering
+                  },
+                  overlay: {
+                    backgroundColor: 'rgba(228, 228, 228, 0.5)'
+                  }
+              }}
+                
+            >
+              <div className="RestaurantDetails">
+              <button className="Close" onClick={closeModal}><AiOutlineClose/></button>
+              <br/><br/>
+                <h2 className="RestaurantDetailsh2" >Restaurant Details</h2>
+                <table className="TableRestaurantDetails">
+                        <thead>
+                            <tr className="trRestaurantDetails">
+                                <th>Restaurant ID</th>
+                                <th>Profile Image</th>
+                                <th>Restaurant Name</th>
+                                <th>Shipping Fees</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+          {restaurantDetails ? (
+            <tr>
+              <td className="tdRestaurantDetails">{restaurantDetails.id}</td>
+              <td className="tdRestaurantDetails">
+                <img 
+                  src={restaurantDetails.profileImg} 
+                  alt="Restaurant Profile" 
+                  className="restaurant-profile-img" 
+                />
+              </td>
+              <td className="tdRestaurantDetails">{restaurantDetails.title}</td>
+              <td className="tdRestaurantDetails">{restaurantDetails.shippingFees}</td>
+              <td className="tdRestaurantDetails">
+                {restaurantDetails.addressShortDTO?.title} /
+                {restaurantDetails.addressShortDTO?.commune} /
+                {restaurantDetails.addressShortDTO?.province} /
+                {restaurantDetails.addressShortDTO?.region}
+              </td>
+            </tr>
+          ) : (
+            <tr>
+              <td colSpan="5">No details available</td>
+            </tr>
+          )}
+        </tbody>
+                </table>
+                
+            </div>
+              </Modal>
+            )}
       {showPopup && (
             <div className="popup-overlay">
                 <div className="popup-content">

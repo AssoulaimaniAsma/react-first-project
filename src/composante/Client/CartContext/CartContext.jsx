@@ -7,6 +7,7 @@ export const CartProvider = ({ children }) => {
   const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [orderDetails, setOrderDetails] = useState({ total: 0 });
 
   // Fetch cart details and order total from the backend
@@ -20,7 +21,8 @@ export const CartProvider = ({ children }) => {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const total = await totalResponse.json();
+      const totalText = await totalResponse.text();
+      const total = Number(totalText);
       setOrderDetails({ total });
 
       // Fetch cart items
@@ -39,7 +41,7 @@ export const CartProvider = ({ children }) => {
   const AddToCart = async (item) => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
-    console.log("Trying to add item with id:", item.id);
+    
     const existingItem = cart.find((i) => i.id === item.id);
 
 
@@ -62,14 +64,17 @@ export const CartProvider = ({ children }) => {
         if (!res.ok) {
           const errorMsg = await res.text();
           throw new Error(`Failed to add item to cart: ${errorMsg}`);
-        }
+        }else{
+          console.log("item added:", item.id);
+        }}
         
 
         // Re-fetch cart details after adding
-        fetchCartDetails();
-      }
+        await fetchCartDetails();
     } catch (error) {
       console.error("Failed to add item to cart:", error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -173,8 +178,12 @@ const decrementItem = async (itemId) => {
     fetchCartDetails();
   }, []);
 
+  const clearCart =() => {
+    setCart([]);
+  };
+
   return (
-    <CartContext.Provider value={{ cart, orderDetails, AddToCart, updateQuantity, removeItem,incrementItem, decrementItem }}>
+    <CartContext.Provider value={{ cart,  AddToCart,loading, decrementItem, removeItem,incrementItem ,clearCart ,orderDetails }}>
       {children}
     </CartContext.Provider>
   );

@@ -10,6 +10,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import "./SideBar.css";
 import { RiRestaurant2Line } from "react-icons/ri";
+import { MdDashboard } from "react-icons/md"; 
 
 const Sidebar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,9 +61,6 @@ const Sidebar = () => {
           <Link to="/admin/TabOrders" className="sidebar-line">
             <FaClipboardList className="icon" /> Orders
           </Link>
-          <Link to="/admin/TabOrdersDetails" className="sidebar-line">
-            <FaFileAlt className="icon" /> Orders Details
-          </Link>
           <Link to="/admin/Tabclient" className="sidebar-line">
             <FaUserFriends className="icon" /> Client
           </Link>
@@ -71,6 +69,9 @@ const Sidebar = () => {
           </Link>
           <Link to="/admin/Food" className="sidebar-line">
             <RiRestaurant2Line className="icon" /> Food
+          </Link>
+          <Link to="/admin/Dashboard" className="sidebar-line">
+            <MdDashboard className="icon" /> Dashboard
           </Link>
         </div>
 

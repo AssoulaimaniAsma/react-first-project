@@ -7,16 +7,18 @@ import "./CartPage.css";
 function CartPage() {
   const navigate = useNavigate();
   const [foods, setFoods] = useState([]);
+  const [recommendation, setRecommandation] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
-  const { cart, AddToCart, orderDetails, updateQuantity, removeItem } = useContext(CartContext);
+  const { cart, AddToCart, orderDetails,incrementItem,decrementItem ,updateQuantity, removeItem, clearCart } = useContext(CartContext);
   const isLoggedIn = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       const token = localStorage.getItem("authToken");
-      if (!token) return navigate("/client/login");
+      if (!token) return navigate("/client/signin");
 
       try {
         const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
@@ -26,13 +28,14 @@ function CartPage() {
           },
         });
         const data = await res.json();
-        setFoods(data);
+        setRecommandation(data);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch data");
         setLoading(false);
       }
     };
+
 
     fetchRecommendations();
   }, [navigate]);
@@ -41,7 +44,7 @@ function CartPage() {
   // Fetch cart when the component mounts
   const fetchCart = async () => {
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/client/login");
+    if (!token) return navigate("/client/signin");
 
     try {
       const res = await fetch("http://localhost:8080/user/cart/", {
@@ -64,13 +67,42 @@ function CartPage() {
   }, []);
 
 
+
+
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+  
+      const token = localStorage.getItem("authToken");
+      if (!token) return navigate("/client/signin");
+  
+      try {
+        const res1 = await fetch("http://localhost:8080/user/orders/placeOrders", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (res1.ok) {
+          const text = await res1.text();
+          console.log("order is placed");
+          
+        }
+      } catch (err) {
+        console.error("Error in handlePlaceOrder:", err);
+      }
+  };
+  
+  
+    
   // If cart is empty, show a message
   if (cart.length === 0) {
     return (
       <div className="emptyCartContainer">
         <h2>Your cart is empty</h2>
         <p>Looks like you haven’t added anything yet.</p>
-        <button className="startShoppingBtn" onClick={() => navigate("/products")}>
+        <button className="startShoppingBtn" onClick={() => navigate("/client/Our_Menu")}>
           Start Shopping
         </button>
 
@@ -81,7 +113,7 @@ function CartPage() {
           ) : error ? (
             <div>{error}</div>
           ) : (
-            foods.map((item) => (
+            recommendation.map((item) => (
               <div className="imageItem2" key={item.id}>
                 <span className="discountBadge2">{Number(item.discount)}%</span>
                 <img src={item.image} alt={item.title} />
@@ -123,15 +155,15 @@ function CartPage() {
         <div className="Product">
           <Products
             products={cart}
-            UpdateQuantity={updateQuantity}
+            incrementItem={incrementItem}
+            decrementItem={decrementItem}
             removeItem={removeItem}
           />
         </div>
         <table className="TotalPrice">
           <thead>
             <tr className="headTable2">
-              <th>Cart Total</th>
-              <th></th>
+              <th colSpan={2}>Cart Total</th>
             </tr>
           </thead>
           <tbody className="bodyTable2">
@@ -150,10 +182,12 @@ function CartPage() {
           </tbody>
           <tfoot>
             <tr>
-              <td className="footTable2" colSpan="2">Place Order</td>
+              <td className="footTable2" colSpan="2"><button onClick={handlePlaceOrder}> Place Order</button>
+              </td>
             </tr>
           </tfoot>
         </table>
+
       </div>
 
       <div id="SecondPart">
@@ -164,7 +198,8 @@ function CartPage() {
           ) : error ? (
             <div>{error}</div>
           ) : (
-            foods.map((item) => (
+            recommendation.map((item) => (
+
               <div className="imageItem2" key={item.id}>
                 <span className="discountBadge2">{Number(item.discount)}%</span>
                 <img src={item.image} alt={item.title} />
@@ -192,6 +227,7 @@ function CartPage() {
           )}
         </div>
       </div>
+      
     </div>
   );
 }
