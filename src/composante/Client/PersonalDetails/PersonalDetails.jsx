@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadStripe } from '@stripe/stripe-js';
-import { FaCheckCircle } from "react-icons/fa";
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from "axios";
 import "./PersonalDetails.css";
+import "../OrderDetails/PersOrderDetails.css";
 const stripePromise = loadStripe("pk_test_51RHm1SFWUQXfDIlGmKVLISKhH3LpY6Sf9Pp4RC62PoaUcovgWn35VVnAQ5we4xhyd2oMfqz6xjixvonrppTmTFxW000z9mc5cG");
 export default function PersonalDetails() {
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ export default function PersonalDetails() {
   const [addresses, setAddresses] = useState([]);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [payment, setPayment] = useState([]);
-  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [Foods, setFoods] = useState([]);
   const [regions, setRegions] = useState([]);
   const [provinces, setProvinces] = useState([]);
@@ -573,16 +572,12 @@ export default function PersonalDetails() {
       try {
         setLoading(true);
         setError(null);
-
+    
         const selectedPayment = payment.find(p => p.id === selectedPaymentId);
-        if(!selectedPayment){
+        if(!selectedPayment) {
           throw new Error("Selected payment method is Invalid");
         }
-
-        // Enhanced validation
-        if (!selectedPayment.brand || !selectedPayment.last4) {
-          throw new Error("Payment method is incomplete. Please select a different card.");
-        }
+    
         console.log("Checkout request payload:", {
           orderID,
           addressID: selectedAddressId,
@@ -599,48 +594,38 @@ export default function PersonalDetails() {
           }
         );
     
-         // First check if response is OK
-    if (!response.ok) {
-      // Try to get error message from response
-      let errorMessage = `Checkout failed with status ${response.status}`;
-      try {
-        const errorData = await response.text(); // First try as text
-        if (errorData) {
+        if (!response.ok) {
+          let errorMessage = `Checkout failed with status ${response.status}`;
           try {
-            const jsonData = JSON.parse(errorData); // Then try to parse as JSON
-            errorMessage = jsonData.message || errorData;
-          } catch {
-            errorMessage = errorData;
+            const errorData = await response.text();
+            errorMessage = errorData || errorMessage;
+          } catch (e) {
+            console.error("Error parsing error response:", e);
           }
+          throw new Error(errorMessage);
         }
-      } catch (e) {
-        console.error("Error parsing error response:", e);
+    
+        // Traitez explicitement les réponses vides ou non-JSON comme des succès
+        try {
+          const result = await response.json();
+          console.log("Checkout successful with JSON response", result);
+        } catch (e) {
+          console.log("Checkout successful with non-JSON response");
+
+        }
+    
+        // Dans tous les cas, marquez le checkout comme réussi
+        setShowPaymentForm(false);
+        setShowPaymentList(false);
+        navigate(`/client/checkout/${orderID}`);
+    
+      } catch (error) {
+        console.error("Checkout error:", error);
+        setError(error.message || "Payment processing failed");
+      } finally {
+        setLoading(false);
       }
-      throw new Error(errorMessage);
-    }
-
-    // Try to parse successful response
-    try {
-      const result = await response.json();
-      console.log("Checkout successful", result);
-      setCheckoutSuccess(true);
-    } catch (e) {
-      console.log("Response was successful but not JSON - treating as success");
-      setCheckoutSuccess(true);
-    }
-
-  } catch (error) {
-    console.error("Checkout error:", error);
-    setError(error.message || "Payment processing failed");
-
-    // Specific handling for Stripe errors
-    if (error.code === 'payment_intent_unexpected_state') {
-      setError("Payment processing failed - please try another payment method");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+    };
 
     const PaymentFormWrapper = ({ token, onCardSaved }) => (
       <Elements stripe={stripePromise}>
@@ -816,9 +801,11 @@ export default function PersonalDetails() {
                 </tr>
               ))}
               <tr>
-                <td colSpan={2} className="buttonsAddress">
-                  <button className="AddAddress" onClick={() => setShowAddressForm(true)} >Add New Address</button>
-                  <button className="submitButton" onClick={submitAddress}>Proceed To next Step</button>
+                <td colSpan={2} >
+                  <div className="buttonsAddress">
+                    <button className="AddAddress" onClick={() => setShowAddressForm(true)} >Add New Address</button>
+                    <button className="submitButton" onClick={submitAddress}>Proceed To next Step</button>
+                  </div>
                 </td>
               </tr>
             </>
@@ -871,22 +858,6 @@ export default function PersonalDetails() {
                 </Elements>
               </td>
             </tr>
-          ) : checkoutSuccess ? (
-              <>
-                <div className="PersonalDetails">
-                  <div className="CheckoutWrapper">
-                    <div className="CheckoutContent">
-                      <FaCheckCircle className="VerifyIcon" />
-                      <h2 className="h2content7">Thank You!</h2>
-                      <p>Your order #{orderID} has been confirmed & it is on the way. Check your email <br/>for the details</p>
-                      <div className="buttonCheckoutContent">
-                        <button onClick={() => navigate("/client/home")} className="NavigateHome">Go to Homepage</button>
-                        <button onClick={() => navigate(`/client/orders/${orderID}`)} className="NavigateOrder">Check Order Details</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
           ) : null
         }
 

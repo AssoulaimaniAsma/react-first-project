@@ -53,10 +53,16 @@ function CartPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const text = await res.text();
+      const data = text.trim() ? JSON.parse(text) : [];
+
       setFoods(data); // Update the foods state with cart data
       setLoading(false);
     } catch (err) {
+      console.error("Failed to fetch cart details:",err);
       setError("Failed to fetch data");
       setLoading(false);
     }

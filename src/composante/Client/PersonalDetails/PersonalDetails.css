@@ -48,10 +48,6 @@
     text-align: center;
     align-items: center;
 }
-.submitButton{
-    align-items: center;
-    margin-left: 70px;
-}
 .submitAccButton{
     align-items: center;
     margin-left: 82px;
@@ -73,15 +69,22 @@
     font-size: 1.15rem;
     padding:15px;
 }
-.submitButton, .AddAddress{
-    background-color: #FD4C2A;
-    color:white;
-    border-radius: 20px;
-    font-size: 1.25rem;
-    padding:15px;
+.submitButton, .AddAddress {
+  background-color: #FD4C2A;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.25rem;
+  padding: 10px 25px;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 230px; /* <-- ajuste la largeur maximale si besoin */
 }
 .submitButton:hover, .AddAddress:hover{
     background-color: black;
+}
+.AddAddress{
+  margin-left: 0;
 }
 
 .orderDetails{
@@ -145,6 +148,13 @@
 .buttonsNewAddress{
     display: flex;
     gap: 70px;
+}
+.buttonsAddress{
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  max-width: 100%; /* limite l'étalement */
+  flex-wrap: wrap; 
 }
 .buttonsNewPayment{
     display: flex;
@@ -231,7 +241,7 @@
   }
   
   .NavigateOrder {
-    background-color: #4CAF50;
+    background-color: #FD4C2A;
     color: white;
   }
   

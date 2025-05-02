@@ -21,7 +21,7 @@ import UserAddresses from "../composante/Client/Address/UserAddresses";
 import EditAddress from "../composante/Client/Address/EditAddress";
 import ShowAddress from "../composante/Client/Address/ShowAddress";
 import FoodByRestaurant from "../composante/Client/FoodByRestaurant/FoodByRestaurant";
-import PersOrderDetails from "../composante/Client/PersOrderDetails/PersOrderDetails";
+import OrderDetails from "../composante/Client/OrderDetails/OrderDetails";
 import PersonalDetails from "../composante/Client/PersonalDetails/PersonalDetails";
 import AddressFormCheck from "../composante/Client/PersonalDetails/AddressFormCheck";
 import { loadStripe } from '@stripe/stripe-js';
@@ -50,7 +50,7 @@ function AnimatedRoutes() {
   const editaddressRef= useRef(null);
   const showaddressRef= useRef(null);
   const foodbyrestRef = useRef(null);
-  const persOrderDetailsRef=useRef(null);
+  const orderDetailsRef=useRef(null);
   const personalDetailsRef=useRef(null);
   const addressFormCheckRef=useRef(null);
     return (
@@ -78,7 +78,7 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
-          location.pathname==="/client/PersOrderDetails/:orderID" ? persOrderDetailsRef:
+          location.pathname==="/client/OrderDetails/:orderID" ? orderDetailsRef:
           location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
           location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
 
@@ -105,7 +105,7 @@ function AnimatedRoutes() {
           location.pathname==="/client/Address/edit/:id" ? editaddressRef:
           location.pathname==="/client/Address/show/:id" ? showaddressRef:
           location.pathname==="/client/restaurants/:id" ? forgetRef:
-          location.pathname==="/client/PersOrderDetails/:orderID" ? persOrderDetailsRef:
+          location.pathname==="/client/OrderDetails/:orderID" ? orderDetailsRef:
           location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
           location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
 
@@ -131,7 +131,7 @@ function AnimatedRoutes() {
           <Route path="/client/Address/edit/:id" element={<EditAddress />}/>
           <Route path="/client/Address/show/:id" element={<ShowAddress />}/>
           <Route path="/client/restaurants/:id" element={<FoodByRestaurant />}/>
-          <Route path="/client/PersOrderDetails/:orderID" element={<PersOrderDetails />} />
+          <Route path="/client/OrderDetails/:orderID" element={<OrderDetails />} />
           <Route path="/client/PersonalDetails/:orderID" element={<PersonalDetails />} />
           <Route path="/client/AddressFormCheck" element={<AddressFormCheck />} />
 
