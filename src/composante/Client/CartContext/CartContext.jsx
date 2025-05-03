@@ -30,12 +30,35 @@ export const CartProvider = ({ children }) => {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const cartData = await cartResponse.json();
-      setCart(cartData);
+      
+      if (cartResponse.ok) {
+        const text = await cartResponse.text();
+        const cartData = text ? JSON.parse(text) : [];
+        setCart(cartData);
+      } else {
+        console.error("Cart response not OK:", cartResponse.status);
+      }
     } catch (error) {
       console.error("Failed to fetch cart details:", error);
     }
   };
+
+  function getRoleFromToken(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role; // or payload.roles depending on your backend
+    } catch (error) {
+      return null;
+    }
+  }
+  
+  const token = localStorage.getItem("authToken");
+  const role = getRoleFromToken(token);
+  
+  if (role === "USER") {
+    fetchCartDetails();
+  }
+  
 
   // Add item to cart
   const AddToCart = async (item) => {

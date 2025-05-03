@@ -16,6 +16,41 @@ function TabClient(){
     const [status,setStatus]=useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [clientsPerPage] = useState(5);
+      // Filter clients based on the search query, with safeguards for undefined values
+      const filteredClients = clients.filter((client) =>
+        (client.firstName ? client.firstName.toLowerCase() : "")
+        .includes(searchQuery.toLowerCase()) ||
+        (client.lastName ? client.lastName.toLowerCase() : "")
+        .includes(searchQuery.toLowerCase()) ||
+        (client.email ? client.email.toLowerCase() : "")
+        .includes(searchQuery.toLowerCase()) ||
+        (client.phone ? client.phone.toLowerCase() : "")
+        .includes(searchQuery.toLowerCase()) ||
+        (client.status ? client.status.toLowerCase() : "")
+        .includes(searchQuery.toLowerCase()) 
+    );
+    const indexOfLastClient = currentPage * clientsPerPage;
+    const indexOfFirstClient = indexOfLastClient - clientsPerPage;
+
+    // Obtenez les commandes pour la page actuelle (en combinant avec le filtre de recherche)
+    const currentClients = filteredClients.slice(indexOfFirstClient, indexOfLastClient);
+
+    // Fonction pour changer de page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const nextPage = () => {
+        if (currentPage < Math.ceil(filteredClients.length / clientsPerPage)) {
+          setCurrentPage(currentPage + 1);
+        }
+      };
+      
+      const prevPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
+
     useEffect(() => {
         const fetchClients = async () => {
             const token = localStorage.getItem("authToken");
@@ -53,21 +88,10 @@ function TabClient(){
             // Handle search input change
             const handleSearch = (e) => {
                 setSearchQuery(e.target.value);
+                setCurrentPage(1);
             };
 
-              // Filter clients based on the search query, with safeguards for undefined values
-            const filteredClients = clients.filter((client) =>
-                (client.firstName ? client.firstName.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) ||
-                (client.lastName ? client.lastName.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) ||
-                (client.email ? client.email.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) ||
-                (client.phone ? client.phone.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) ||
-                (client.status ? client.status.toLowerCase() : "")
-                .includes(searchQuery.toLowerCase()) 
-            );
+            
 
             const handleDelete = async (userId) => {
                 const token = localStorage.getItem("authToken");
@@ -170,7 +194,7 @@ function TabClient(){
                     </tr>
                 </thead>
                 <tbody>
-                {filteredClients.map((client) => (
+                {currentClients.map((client) => (
                         <tr className="trTableClient2" key={client.id}>
                             <td className="tdTableClient">{client.id}</td>
                             <td className="tdTableClient">
@@ -206,6 +230,28 @@ function TabClient(){
                     ))}
                 </tbody>
             </table>
+            <div className="pagination">
+            <button onClick={prevPage} disabled={currentPage === 1}>
+                &laquo; Précédent
+            </button>
+            
+            {Array.from({ length: Math.ceil(filteredClients.length / clientsPerPage) }).map((_, index) => (
+                <button
+                key={index}
+                onClick={() => paginate(index + 1)}
+                className={currentPage === index + 1 ? "active" : ""}
+                >
+                {index + 1}
+                </button>
+            ))}
+            
+            <button 
+                onClick={nextPage} 
+                disabled={currentPage === Math.ceil(filteredClients.length / clientsPerPage)}
+            >
+                Suivant &raquo;
+            </button>
+            </div>
             {showPopup && (
             <div className="popup-overlay">
                 <div className="popup-content">

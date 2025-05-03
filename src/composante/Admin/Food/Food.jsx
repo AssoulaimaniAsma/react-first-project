@@ -9,6 +9,41 @@ function Food() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [foodsPerPage] = useState(3);
+  
+    const filteredFoods = foods.filter((food) =>
+      (food.title ? food.title.toLowerCase() : "")
+      .includes(searchQuery.toLowerCase()) ||
+      (Array.isArray(food.categoryTitles)
+      ? food.categoryTitles.some(cat =>
+          cat.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : false) ||
+      (food.status ? food.status.toLowerCase() : "")
+      .includes(searchQuery.toLowerCase()) ||
+      (food.restaurant.title ? food.restaurant.title.toLowerCase() : "")
+      .includes(searchQuery.toLowerCase()) 
+  );
+  const indexOfLastFood = currentPage * foodsPerPage;
+    const indexOfFirstFood = indexOfLastFood - foodsPerPage;
+
+    // Obtenez les commandes pour la page actuelle (en combinant avec le filtre de recherche)
+    const currentFoods = filteredFoods.slice(indexOfFirstFood, indexOfLastFood);
+
+    // Fonction pour changer de page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const nextPage = () => {
+        if (currentPage < Math.ceil(filteredFoods.length / foodsPerPage)) {
+          setCurrentPage(currentPage + 1);
+        }
+      };
+      
+      const prevPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -42,21 +77,8 @@ function Food() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+    setCurrentPage(1);
   };
-
-  const filteredFoods = foods.filter((food) =>
-    (food.title ? food.title.toLowerCase() : "")
-    .includes(searchQuery.toLowerCase()) ||
-    (Array.isArray(food.categoryTitles)
-    ? food.categoryTitles.some(cat =>
-        cat.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : false) ||
-    (food.status ? food.status.toLowerCase() : "")
-    .includes(searchQuery.toLowerCase()) ||
-    (food.restaurant.title ? food.restaurant.title.toLowerCase() : "")
-    .includes(searchQuery.toLowerCase()) 
-);
 
   // Group by restaurant for rowspan display
   const groupedFoods = Object.entries(
@@ -169,7 +191,28 @@ function Food() {
           )}
         </tbody>
       </table>
-
+      <div className="pagination">
+        <button onClick={prevPage} disabled={currentPage === 1}>
+            &laquo; Précédent
+        </button>
+        
+        {Array.from({ length: Math.ceil(filteredFoods.length / foodsPerPage) }).map((_, index) => (
+            <button
+            key={index}
+            onClick={() => paginate(index + 1)}
+            className={currentPage === index + 1 ? "active" : ""}
+            >
+            {index + 1}
+            </button>
+        ))}
+        
+        <button 
+            onClick={nextPage} 
+            disabled={currentPage === Math.ceil(filteredFoods.length / foodsPerPage)}
+        >
+            Suivant &raquo;
+        </button>
+        </div>
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup-content">

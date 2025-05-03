@@ -13,6 +13,26 @@ function TabOrders() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [searchQuery, setSearchQuery]=useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [ordersPerPage] = useState(5);
+
+      // Filter orders based on the search query, with safeguards for undefined values
+  const filteredOrders = orders.filter((order) =>
+    (order.restaurant.title ? order.restaurant.title.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) ||
+    (order.status ? order.status.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) 
+);
+
+    // Calculez les index pour la pagination
+const indexOfLastOrder = currentPage * ordersPerPage;
+const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+
+// Obtenez les commandes pour la page actuelle (en combinant avec le filtre de recherche)
+const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+// Fonction pour changer de page
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -44,15 +64,10 @@ function TabOrders() {
       // Handle search input change
     const handleSearch = (e) => {
       setSearchQuery(e.target.value);
+      setCurrentPage(1);
   };
 
-    // Filter orders based on the search query, with safeguards for undefined values
-  const filteredOrders = orders.filter((order) =>
-      (order.restaurant.title ? order.restaurant.title.toLowerCase() : "")
-      .includes(searchQuery.toLowerCase()) ||
-      (order.status ? order.status.toLowerCase() : "")
-      .includes(searchQuery.toLowerCase()) 
-  );
+  
 
   const fetchOrders = async () => {
     const token = localStorage.getItem("authToken");
@@ -71,7 +86,7 @@ function TabOrders() {
       }
 
       const data = await res.json();
-      setOrders(data);
+      setOrders(data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)));
     } catch (err) {
       setError("Failed to fetch data");
     } finally {
@@ -91,9 +106,30 @@ const closeModal = () => {
   setSelectedOrder(null);
 };
 
+const nextPage = () => {
+  if (currentPage < Math.ceil(filteredOrders.length / ordersPerPage)) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+
+const prevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [orders]);
 
   useEffect(() => {
     fetchOrders();
+    const intercalId=setInterval(()=>{
+      console.log("auto refreching");
+      fetchOrders();
+    },30000);
+    return()=> clearInterval(intercalId);
   }, []);
 
   return (
@@ -126,7 +162,7 @@ const closeModal = () => {
           </tr>
         </thead>
         <tbody>
-        {filteredOrders.map((order) => (
+        {currentOrders.map((order) => (
   <tr className="trOrders" key={order.id}>
     <td>{order.id}</td>
     <td>{order.userId}</td>
@@ -166,6 +202,26 @@ const closeModal = () => {
 
         </tbody>
       </table>
+      <div className="pagination">
+        <button onClick={prevPage} disabled={currentPage === 1}>
+          &laquo; Précédent
+        </button>
+
+        {Array.from({ length: Math.ceil(filteredOrders.length / ordersPerPage) })
+          .slice(
+            Math.max(0, currentPage - 3),
+            Math.min(Math.ceil(filteredOrders.length / ordersPerPage), currentPage + 2)
+          )
+          .map((_, index) => (
+            <button
+              key={index}
+              onClick={() => paginate(index + 1)}
+              className={currentPage === index + 1 ? "active" : ""}
+            >
+              {index + 1}
+            </button>
+        ))}
+      </div> 
       {selectedOrder && (
           <Modal
           isOpen={isModalOpen}

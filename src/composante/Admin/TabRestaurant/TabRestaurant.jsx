@@ -14,7 +14,38 @@ function TabRestaurant() {
   const [popupMessage, setPopupMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [restaurantsPerPage] = useState(8);
+  // Filter restaurants based on the search query, with safeguards for undefined values
+  const filteredRestaurants = restaurants.filter((restaurant) =>
+    (restaurant.title ? restaurant.title.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) ||
+    (restaurant.contactEmail ? restaurant.contactEmail.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) ||
+    (restaurant.phone ? restaurant.phone.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) ||
+    (restaurant.status ? restaurant.status.toLowerCase() : "")
+    .includes(searchQuery.toLowerCase()) 
+);
+    const indexOfLastRestaurant = currentPage * restaurantsPerPage;
+    const indexOfFirstRestaurant = indexOfLastRestaurant - restaurantsPerPage;
 
+    // Obtenez les commandes pour la page actuelle (en combinant avec le filtre de recherche)
+    const currentRestaurants = filteredRestaurants.slice(indexOfFirstRestaurant, indexOfLastRestaurant);
+
+    // Fonction pour changer de page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const nextPage = () => {
+        if (currentPage < Math.ceil(filteredRestaurants.length / restaurantsPerPage)) {
+          setCurrentPage(currentPage + 1);
+        }
+      };
+      
+      const prevPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
   useEffect(() => {
           const fetchRestaurants = async () => {
               const token = localStorage.getItem("authToken");
@@ -52,19 +83,8 @@ function TabRestaurant() {
     // Handle search input change
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
+        setCurrentPage(1);
     };
-
-      // Filter restaurants based on the search query, with safeguards for undefined values
-    const filteredRestaurants = restaurants.filter((restaurant) =>
-        (restaurant.title ? restaurant.title.toLowerCase() : "")
-        .includes(searchQuery.toLowerCase()) ||
-        (restaurant.contactEmail ? restaurant.contactEmail.toLowerCase() : "")
-        .includes(searchQuery.toLowerCase()) ||
-        (restaurant.phone ? restaurant.phone.toLowerCase() : "")
-        .includes(searchQuery.toLowerCase()) ||
-        (restaurant.status ? restaurant.status.toLowerCase() : "")
-        .includes(searchQuery.toLowerCase()) 
-    );
 
     const handleDelete = async (restaurantID) => {
         const token = localStorage.getItem("authToken");
@@ -305,6 +325,28 @@ function TabRestaurant() {
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <button onClick={prevPage} disabled={currentPage === 1}>
+            &laquo; Précédent
+        </button>
+        
+        {Array.from({ length: Math.ceil(filteredRestaurants.length / restaurantsPerPage) }).map((_, index) => (
+            <button
+            key={index}
+            onClick={() => paginate(index + 1)}
+            className={currentPage === index + 1 ? "active" : ""}
+            >
+            {index + 1}
+            </button>
+        ))}
+        
+        <button 
+            onClick={nextPage} 
+            disabled={currentPage === Math.ceil(filteredRestaurants.length / restaurantsPerPage)}
+        >
+            Suivant &raquo;
+        </button>
+        </div>
       {selectedRestaurant && (
                 <Modal
                 isOpen={isModalOpen}
