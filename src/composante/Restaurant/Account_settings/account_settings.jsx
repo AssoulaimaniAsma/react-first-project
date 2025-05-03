@@ -632,7 +632,7 @@ setProfileBannerUrl(user.profileBanner || "");
             // ---------- AFFICHAGE NORMAL ----------
             <div className="flex justify-between items-center flex-wrap gap-4">
               <div className="text-gray-800">
-                <h2 className="text-xl font-medium text-red-600">{address.title}</h2>
+                <h2 className="text-xl font-medium text-[#FD4C2A]">{address.title}</h2>
                 <p className="capitalize">{address.street}</p>
                 <p>{address.commune?.communeName}, {address.province?.provinceName}</p>
                 <p>{address.region?.regionName}</p>
@@ -654,7 +654,7 @@ setProfileBannerUrl(user.profileBanner || "");
       <div className="Payment">
         <span className="text-gray-600 font-bold">Payment</span>
         <Link to="/Payment-form" className="PaymentLink">
-          Manage Payment Methods
+          Manage Stripe Connect Account 
         </Link>
       </div>
 

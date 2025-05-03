@@ -206,7 +206,16 @@ const decrementItem = async (itemId) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart,  AddToCart,loading, decrementItem, removeItem,incrementItem ,clearCart ,orderDetails }}>
+<CartContext.Provider value={{
+  cart,
+  orderDetails,
+  AddToCart,
+  removeItem,
+  incrementItem,
+  decrementItem,
+  showAlert,           // Add this
+  currentItemName      // And this
+}}>
       {children}
     </CartContext.Provider>
   );

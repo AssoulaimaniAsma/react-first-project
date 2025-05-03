@@ -24,7 +24,7 @@ const AccountSettings = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/client/signin");
 
     const fetchAccountDetails = async () => {
       try {
@@ -74,12 +74,12 @@ const AccountSettings = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!/^[A-Za-z]+$/.test(formData.firstName)) {
-      newErrors.firstName = "Le prénom ne doit pas contenir de chiffres.";
+    if (!/^[A-Za-z]+(?:\s[A-Za-z]+)*$/.test(formData.firstName)) {
+      newErrors.firstName = "Le prénom ne doit contenir que des lettres et des espaces entre les mots.";
     }
-    if (!/^[A-Za-z]+$/.test(formData.lastName)) {
-      newErrors.lastName = "Le nom ne doit pas contenir de chiffres.";
-    }
+    if (!/^[A-Za-z]+(?:\s[A-Za-z]+)*$/.test(formData.lastName)) {
+      newErrors.lastName = "Le nom ne doit contenir que des lettres et des espaces entre les mots.";
+    }    
     if (
       !/^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|protonmail|icloud|aol|zoho|mail|yandex|gmx|fastmail)\.[a-zA-Z]{2,}$/.test(
         formData.email
@@ -87,7 +87,7 @@ const AccountSettings = () => {
     ) {
       newErrors.email = "Adresse email invalide.";
     }
-    if (!/^(?:\+2126|06)\d{8}$/.test(formData.phone)) {
+    if (!/^(?:\+2126|06|07|\+2127)\d{8}$/.test(formData.phone)) {
       newErrors.phone =
         "Numéro invalide. Format : +2126xxxxxxxx ou 06xxxxxxxx";
     }
@@ -107,7 +107,7 @@ const AccountSettings = () => {
     if (!validateForm()) return;
 
     const token = localStorage.getItem("authToken");
-    if (!token) return navigate("/signin");
+    if (!token) return navigate("/client/signin");
 
     const formDataToSend = {
       firstName: formData.firstName,
@@ -288,7 +288,7 @@ const AccountSettings = () => {
       </div>
       <div className="Payment">
         <span>Payment</span>
-        <Link to="/Payment-form" className="PaymentLink">
+        <Link to="/client/ManagePayment" className="PaymentLink">
           Manage Payment Methods
         </Link>
       </div>

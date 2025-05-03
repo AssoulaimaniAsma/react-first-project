@@ -47,13 +47,6 @@ export default function ItemCard() {
     if (!token || !selectedItem) return;
   
     try {
-      await axios.post(
-        `http://localhost:8080/user/cart/addItem?foodID=${selectedItem.id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
       AddToCart(selectedItem); // Optionnel : met à jour ton contexte/panier local
       setShowModal(false);
     } catch (err) {

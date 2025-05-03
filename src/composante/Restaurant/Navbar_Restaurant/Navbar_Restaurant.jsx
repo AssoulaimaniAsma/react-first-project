@@ -6,6 +6,7 @@ import { FaUserCircle } from "react-icons/fa"; // Icône user si pas d’image
 import { MdDeliveryDining } from "react-icons/md";
 import { IoIosNotifications } from "react-icons/io";
 import { IoFastFood } from "react-icons/io5";
+import axios from "axios"; // 👈 ajouté
 
 const Navbar_Restaurant = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Navbar_Restaurant = () => {
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
   const [restaurantInfo, setRestaurantInfo] = useState({ name: "", email: "", profileImg: "" });
+  const [incomingOrdersCount, setIncomingOrdersCount] = useState(0); // 👈 ajouté
 
 useEffect(() => {
   const fetchRestaurantInfo = async () => {
@@ -40,7 +42,26 @@ useEffect(() => {
 
   fetchRestaurantInfo();
 }, []);
+  // 👉 fetch incoming orders count
+  useEffect(() => {
+    const fetchIncomingOrders = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get(
+          "http://localhost:8080/restaurant/orders/incomingOrders",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setIncomingOrdersCount(response.data.length); // 👈 set the count
+      } catch (error) {
+        console.error("Erreur récupération incoming orders:", error);
+      }
+    };
 
+    fetchIncomingOrders();
+
+    const interval = setInterval(fetchIncomingOrders, 10000); // 👈 refresh toutes les 10 secondes
+    return () => clearInterval(interval);
+  }, []);
   const handleLogout = async () => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
@@ -118,11 +139,18 @@ useEffect(() => {
               </Link>
             </li>
             <li>
-              <Link to="/restaurant/incoming-notifications" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                <IoIosNotifications className="text-xl" />
+              <Link to="/restaurant/incoming-notifications" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 relative">
+                <IoIosNotifications className="text-2xl" />
+                {incomingOrdersCount > 0 && (
+                  <span className="absolute top-0 left-4 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {incomingOrdersCount}
+                  </span>
+                )}
                 <span className="ms-3">Incoming orders</span>
               </Link>
             </li>
+
+            
             <li>
               <Link to="/restaurant/delivery" className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <MdDeliveryDining  

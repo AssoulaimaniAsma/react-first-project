@@ -6,6 +6,7 @@ function SigninRestaurant() {
   const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [reverseLayout, setReverseLayout] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -18,7 +19,8 @@ function SigninRestaurant() {
   }, []);
 
   const handleLogin = async () => {
-    setLoginError(""); // Réinitialise le message d'erreur
+    setLoginError(""); // Reset error
+  
     try {
       const response = await fetch("http://localhost:8080/auth/restaurant/login", {
         method: "POST",
@@ -26,18 +28,39 @@ function SigninRestaurant() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email, // Assure-toi que le backend attend 'email'
+          email: email,
           password: password,
         }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         console.log("Token reçu:", data.jwt);
-        // Ici, tu peux stocker le token (localStorage, sessionStorage, Context API, etc.)
-        localStorage.setItem("authToken", data.jwt); // Exemple avec localStorage
-        
-        navigate("/restaurant"); // Redirige vers la page d'accueil après la connexion
+        localStorage.setItem("authToken", data.jwt); // Stocker le token
+  
+        // Maintenant on vérifie isSetupComplete
+        const token = data.jwt; // Récupère ton token pour l'envoyer
+        const setupResponse = await fetch("http://localhost:8080/restaurant/isSetupComplete", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`, // Très important d'ajouter le Bearer Token
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (setupResponse.ok) {
+          const isSetupComplete = await setupResponse.json(); // Suppose que ça retourne directement un booléen
+          console.log("isSetupComplete:", isSetupComplete);
+  
+          if (isSetupComplete === true) {
+            navigate("/restaurant");
+          } else {
+            navigate("/restaurant/SetupStripe");
+          }
+        } else {
+          console.error("Erreur lors de la vérification de isSetupComplete");
+          navigate("/restaurant/SetupStripe"); // Par sécurité, en cas d'erreur on peut envoyer sur Setup
+        }
       } else {
         const errorData = await response.json();
         console.error("Erreur de connexion:", errorData);
@@ -48,6 +71,7 @@ function SigninRestaurant() {
       setLoginError("Une erreur s'est produite lors de la connexion. Veuillez vérifier votre connexion.");
     }
   };
+  
 
   return (
     <div>

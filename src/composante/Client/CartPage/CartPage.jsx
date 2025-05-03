@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Products from "../Products/Products";
+import { CartContext } from "../CartContext/CartContext";
 import { CartContext } from "../CartContext/CartContext";
 import "./CartPage.css";
 
@@ -17,10 +19,12 @@ function CartPage() {
 
   useEffect(() => {
     const fetchRecommendations = async () => {
+    const fetchRecommendations = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) return navigate("/client/signin");
 
       try {
+        const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
         const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
           method: "GET",
           headers: {
@@ -155,6 +159,60 @@ function CartPage() {
   const shipping = subtotal * 0.1;
   const total = subtotal + shipping;
 
+
+  // If cart is empty, show a message
+  if (cart.length === 0) {
+    return (
+      <div className="emptyCartContainer">
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven’t added anything yet.</p>
+        <button className="startShoppingBtn" onClick={() => navigate("/products")}>
+          Start Shopping
+        </button>
+
+        <h2 className="h2content5">You May Also Like</h2>
+        <div className="imageContent2">
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>{error}</div>
+          ) : (
+            foods.map((item) => (
+              <div className="imageItem2" key={item.id}>
+                <span className="discountBadge2">{Number(item.discount)}%</span>
+                <img src={item.image} alt={item.title} />
+                <div className="nameImg2">{item.title}</div>
+                <div className="PriceContainer2">
+                  <span className="oldPrice2">
+                    {(Number(item.discountedPrice) / (1 - Number(item.discount) / 100)).toFixed(2)}DH
+                  </span>
+                  <span className="newPrice2">{Number(item.discountedPrice).toFixed(2)}DH</span>
+                </div>
+                <div className="AddToCart2">
+                  <button
+                    className="Add2"
+                    onClick={() => {
+                      if (isLoggedIn) {
+                        AddToCart(item);
+                      }
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate totals from cart items
+  const subtotal = cart.reduce((acc, item) => acc + item.totalPrice, 0);
+  const shipping = subtotal * 0.1;
+  const total = subtotal + shipping;
+
   return (
     <div className="cart-page">
       <div id="firstPart" className="tables-container">
@@ -176,13 +234,16 @@ function CartPage() {
             <tr>
               <td>Subtotal</td>
               <td>{subtotal.toFixed(2)} MAD</td>
+              <td>{subtotal.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Shipping</td>
               <td>{shipping.toFixed(2)} MAD</td>
+              <td>{shipping.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Total</td>
+              <td>{total.toFixed(2)} MAD</td>
               <td>{total.toFixed(2)} MAD</td>
             </tr>
           </tbody>
