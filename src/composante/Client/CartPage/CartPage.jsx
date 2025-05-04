@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
-import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Products from "../Products/Products";
-import { CartContext } from "../CartContext/CartContext";
 import { CartContext } from "../CartContext/CartContext";
 import "./CartPage.css";
 
@@ -19,12 +17,10 @@ function CartPage() {
 
   useEffect(() => {
     const fetchRecommendations = async () => {
-    const fetchRecommendations = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) return navigate("/client/signin");
 
       try {
-        const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
         const res = await fetch("http://localhost:8080/user/cart/youMayAlsoLike", {
           method: "GET",
           headers: {
@@ -97,6 +93,7 @@ function CartPage() {
         if (res1.ok) {
           const text = await res1.text();
           console.log("order is placed");
+          navigate("/client/OrderHistory");
           
         }
       } catch (err) {
@@ -154,10 +151,6 @@ function CartPage() {
     );
   }
 
-  // Calculate totals from cart items
-  const subtotal = cart.reduce((acc, item) => acc + item.totalPrice, 0);
-  const shipping = subtotal * 0.1;
-  const total = subtotal + shipping;
 
 
   // If cart is empty, show a message
@@ -234,16 +227,13 @@ function CartPage() {
             <tr>
               <td>Subtotal</td>
               <td>{subtotal.toFixed(2)} MAD</td>
-              <td>{subtotal.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Shipping</td>
               <td>{shipping.toFixed(2)} MAD</td>
-              <td>{shipping.toFixed(2)} MAD</td>
             </tr>
             <tr>
               <td>Total</td>
-              <td>{total.toFixed(2)} MAD</td>
               <td>{total.toFixed(2)} MAD</td>
             </tr>
           </tbody>

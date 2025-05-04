@@ -1,221 +1,168 @@
 import React, { createContext, useState, useEffect } from "react";
 
-// Create the context
+// Créer le contexte
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [orderDetails, setOrderDetails] = useState({ total: 0 });
+  const [currentItemName, setCurrentItemName] = useState("test"); // Nom de l'item
+  const [isAdding, setIsAdding] = useState(false); // Nouveau state pour contrôler les ajouts
+  const [authError, setAuthError] = useState(null);
+  const getToken =()=> localStorage.getItem("authToken");
+    
+  // UseEffect pour afficher l'alerte une seule fois
+  useEffect(() => {
+    if (showAlert && currentItemName !== "test") {
+      console.log("Alerte affichée avec l'élément :", currentItemName);
+      // L'alerte peut être affichée ici, ou gérer d'autres actions
+    }
+  }, [currentItemName, showAlert]); // Dépend de currentItemName et showAlert
 
-  // Fetch cart details and order total from the backend
   const fetchCartDetails = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
-
+    const token = getToken();
+      if (!token){
+      setAuthError("Please log in to view cart");
+       return;
+    }
     try {
-      // Fetch cart total
+      // Fetch total du panier
       const totalResponse = await fetch("http://localhost:8080/user/cart/total", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const totalText = await totalResponse.text();
-      const total = Number(totalText);
-      setOrderDetails({ total });
+      if(totalResponse.status ===403){
+        setAuthError("Acces denied - invalid token");
+        return ;
+      }
+      const total = await totalResponse.json();
 
-      // Fetch cart items
+      // Fetch items du panier
       const cartResponse = await fetch("http://localhost:8080/user/cart/", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      
-      if (cartResponse.ok) {
-        const text = await cartResponse.text();
-        const cartData = text ? JSON.parse(text) : [];
-        setCart(cartData);
-      } else {
-        console.error("Cart response not OK:", cartResponse.status);
+      if(cartResponse.status ===403){
+        setAuthError("Acces denied - invalid token");
+        return ;
       }
+      const cartData = await cartResponse.json();
+      setOrderDetails({ total });
+      setCart(cartData);
+      setAuthError(null);
     } catch (error) {
       console.error("Failed to fetch cart details:", error);
+      setAuthError("Failed to load cart");
     }
   };
 
-  function getRoleFromToken(token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role; // or payload.roles depending on your backend
-    } catch (error) {
-      return null;
-    }
-  }
-  
-  const token = localStorage.getItem("authToken");
-  const role = getRoleFromToken(token);
-  
-  if (role === "USER") {
-    fetchCartDetails();
-  }
-  
-
-  // Add item to cart
+  // Fonction d'ajout au panier
   const AddToCart = async (item) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
-    
-    const existingItem = cart.find((i) => i.id === item.id);
-
-
+    if (isAdding) return;
+    setIsAdding(true);
+    const token = getToken();
+    if (!token){
+      console.log("Please log in to add items");
+      setIsAdding(false);
+       return;
+    }
     try {
-      // Check if the item already exists in the cart
-      if (existingItem) {
-        // If item exists, update quantity
-        await updateQuantity(item.id, 1);
-        setShowAlert(true);
-      } else {
-        // If item doesn't exist, add to the cart
-        const res = await fetch(`http://localhost:8080/user/cart/addItem?foodID=${item.id}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) {
-          const errorMsg = await res.text();
-          throw new Error(`Failed to add item to cart: ${errorMsg}`);
-        }else{
-          console.log("item added:", item.id);
-        }}
-        
-
-        // Re-fetch cart details after adding
-        await fetchCartDetails();
+      console.log("Adding item:", item.title);
+  
+      // Mettre à jour le nom de l'item et afficher l'alerte
+      setCurrentItemName(item.title);
+      setShowAlert(true);
+  
+      // Trouver l'élément existant dans le panier
+      const existingItem = cart.find((i) => i.food?.id === item.id);
+      console.log("Existing item in cart:", existingItem);
+        if (existingItem) {
+          // Si l'élément existe déjà, mettre à jour la quantité
+          await updateQuantity(existingItem.itemID, 1);
+        } else {
+          // Sinon, ajouter le nouvel élément
+          const res = await fetch(`http://localhost:8080/user/cart/addItem?foodID=${item.id}`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (res.status === 403) {
+            throw new Error("Access denied - invalid token");
+          }
+  
+          if (!res.ok) {
+            const errorMsg = await res.text();
+            throw new Error(`Failed to add item to cart: ${errorMsg}`);
+          }
+  
+          // Actualiser les détails du panier
+          await fetchCartDetails();
+        }
+  
+      // Cacher l'alerte après 3 secondes
+      setTimeout(() => {
+        setShowAlert(false);
+        setCurrentItemName("");
+      }, 3000);
+  
     } catch (error) {
-      console.error("Failed to add item to cart:", error);
-    }finally{
-      setLoading(false);
+      console.error("Add to cart failed ", error);
+      setAuthError(error.message);
+    } finally {
+      setIsAdding(false);
     }
   };
-
   // Update cart item quantity
-  // Update cart item quantity using increment or decrement endpoints
-const updateQuantity = async (itemId, change) => {
-  const token = localStorage.getItem("authToken");
-  if (!token) return;
-
-  try {
-    const endpoint =
-      change > 0
-        ? `http://localhost:8080/user/cart/${itemId}/increment`
-        : `http://localhost:8080/user/cart/${itemId}/decrement`;
-
-    const res = await fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to update item quantity");
-
-    // Re-fetch cart details after update
-    fetchCartDetails();
-  } catch (error) {
-    console.error("Failed to update item quantity:", error);
-  }
-};
-
-// Increment item quantity
-const incrementItem = async (itemId) => {
-  const token = localStorage.getItem("authToken");
-  if (!token) return;
-
-  try {
-    const res = await fetch(`http://localhost:8080/user/cart/${itemId}/increment`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to increment item quantity");
-
-    fetchCartDetails();
-  } catch (error) {
-    console.error("Failed to increment item quantity:", error);
-  }
-};
-
-// Decrement item quantity
-const decrementItem = async (itemId) => {
-  const token = localStorage.getItem("authToken");
-  if (!token) return;
-
-  try {
-    const res = await fetch(`http://localhost:8080/user/cart/${itemId}/decrement`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to decrement item quantity");
-
-    fetchCartDetails();
-  } catch (error) {
-    console.error("Failed to decrement item quantity:", error);
-  }
-};
-
-  // Remove item from cart
-  const removeItem = async (itemID) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
-  
-    // Show confirmation dialog before proceeding with the deletion
-    const isConfirmed = window.confirm("Are you sure you want to delete this item?");
-    if (!isConfirmed) return; // If user cancels, do nothing
-  
+  const updateQuantity = async (itemId, change) => {
+    const token = getToken();
+    if (!token){
+      setAuthError("Please log in to update cart");
+       return;
+    }
     try {
-      const res = await fetch(`http://localhost:8080/user/cart/${itemID}/delete`, {
-        method: "DELETE",
+      const endpoint =
+        change > 0
+          ? `http://localhost:8080/user/cart/${itemId}/increment`
+          : `http://localhost:8080/user/cart/${itemId}/decrement`;
+
+      const res = await fetch(endpoint, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
-      if (!res.ok) throw new Error("Failed to delete item");
-      // Re-fetch cart details after removal
-      fetchCartDetails();
+      if (res.status === 403) {
+        throw new Error("Access denied - invalid token");
+      }
+
+      if (!res.ok) throw new Error("Failed to update item quantity");
+
+      // Re-fetch cart details après la mise à jour
+      await fetchCartDetails();
     } catch (error) {
-      console.error("Failed to remove item from cart:", error);
+      console.error("Failed to update item quantity:", error);
+      setAuthError(error.message);
     }
   };
-  
-  // Fetch cart details when the component mounts
+
+  // Fetch cart details au montage du composant
   useEffect(() => {
-    fetchCartDetails();
+    if(getToken()) fetchCartDetails();
   }, []);
 
-  const clearCart =() => {
-    setCart([]);
-  };
-
   return (
-<CartContext.Provider value={{
-  cart,
-  orderDetails,
-  AddToCart,
-  removeItem,
-  incrementItem,
-  decrementItem,
-  showAlert,           // Add this
-  currentItemName      // And this
-}}>
+    <CartContext.Provider value={{
+      cart,
+      orderDetails,
+      AddToCart,
+      updateQuantity,
+      showAlert,           
+      currentItemName,
+      authError,   
+    }}>
       {children}
     </CartContext.Provider>
   );

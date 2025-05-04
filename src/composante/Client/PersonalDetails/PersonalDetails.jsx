@@ -62,9 +62,8 @@ export default function PersonalDetails() {
   });
 
   const [paymentForm, setPaymentForm] = useState({
-    cardName: "",
-    cardNumber: "",
-    validThrough: "",
+    number: "",
+    expiry: "",
     cvv: "",
     setAsDefault: false,
   });
@@ -358,15 +357,14 @@ export default function PersonalDetails() {
       });
       console.log("payload:",payload)
       if (response.status === 200) {
-        alert("✅ Address added successfully!");
         fetchAddresses();
         setShowAddressForm(false);
       } else {
-        alert("❌ Something went wrong.");
+        console.log("❌ Something went wrong.");
       }
     } catch (error) {
       console.error("❌ Error submitting address:", error);
-      alert("🚨 Failed to add address. Please check your token and try again.");
+      console.log("🚨 Failed to add address. Please check your token and try again.");
     }
     };
 
@@ -424,6 +422,10 @@ export default function PersonalDetails() {
         e.preventDefault();
         setError(null);
     
+        const {error, paymentMethod} = await stripe.createPaymentMethod({
+          type : 'card',
+          card : elements.getElement(CardElement),
+        });
         const cardElement = elements.getElement(CardElement);
         if (!stripe || !elements || !cardElement) {
           setError("Stripe is not ready or CardElement missing");
@@ -706,6 +708,13 @@ export default function PersonalDetails() {
     setPaymentForm(prev => ({ ...prev, cardNumber: value }));
   };
 
+  // Add this new function
+const formatExpiryForDisplay = (month, year) => {
+  if (!month || !year) return "N/A";
+  const paddedMonth = String(month).padStart(2, '0');
+  const shortYear = String(year).slice(-2);
+  return `${paddedMonth}/${shortYear}`;
+};
   // Format expiration date as MM/YY
   const formatExpirationDate = (e) => {
     let value = e.target.value.replace(/\D/g, '');
@@ -812,7 +821,9 @@ export default function PersonalDetails() {
           ): showPaymentList ?(
             <>
               {payment.map((paymentMethod) => (
+                console.log("Payment method", paymentMethod),
                 <tr key={paymentMethod.id}>
+                  
                   <td className="titreCheckBox">
                     <input
                       type="radio"
@@ -828,7 +839,12 @@ export default function PersonalDetails() {
                     <strong>{paymentMethod.cardName}</strong>
                     {paymentMethod.isDefault && <span className="default-tag"> Default</span>}
                   </td>
-                  <td>**** **** **** {paymentMethod.last4} - Exp{paymentMethod.expirationDate}</td>
+                  <td>
+                    **** **** **** {paymentMethod.last4 ?? "N/A"} - Exp{" "}
+                    {formatExpiryForDisplay(paymentMethod.expMonth, paymentMethod.expYear)}
+                  </td>
+
+
                 </tr>
               ))}
               <tr>
@@ -872,9 +888,9 @@ export default function PersonalDetails() {
         </thead>
         <tbody>
             <tr>
-                <td>Product</td>
-                <td>Quantity</td>
-                <td>Subtotal</td>
+                <td><strong>Product</strong></td>
+                <td><strong>Quantity</strong></td>
+                <td><strong>Subtotal</strong></td>
             </tr>
             {Foods.length === 0 ? (
                 <tr><td colSpan={3}>No items in the cart</td></tr>

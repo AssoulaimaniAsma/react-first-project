@@ -4,10 +4,12 @@ import {FaTrash, FaBan, FaCheck, FaTimes} from "react-icons/fa";
 import {Link,useNavigate} from "react-router-dom";
 import Modal from "react-modal";
 import { AiOutlineClose } from "react-icons/ai";
-
+import ConfirmPopup from './ConfirmPopup';
 function TabRestaurant() {
   const [restaurants, setRestaurant] = useState([]);
   const navigate = useNavigate();
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+const [restaurantToDelete, setRestaurantToDelete] = useState(null);
   const [searchQuery, setSearchQuery]=useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [restaurantDetails, setRestaurantDetails] = useState(null);
@@ -18,6 +20,8 @@ function TabRestaurant() {
   const [restaurantsPerPage] = useState(8);
   // Filter restaurants based on the search query, with safeguards for undefined values
   const filteredRestaurants = restaurants.filter((restaurant) =>
+    (restaurant.id.toString().includes(searchQuery.toLowerCase())) ||
+  (restaurant.phone.toString().includes(searchQuery.toLowerCase())) ||
     (restaurant.title ? restaurant.title.toLowerCase() : "")
     .includes(searchQuery.toLowerCase()) ||
     (restaurant.contactEmail ? restaurant.contactEmail.toLowerCase() : "")
@@ -46,7 +50,7 @@ function TabRestaurant() {
           setCurrentPage(currentPage - 1);
         }
       };
-  useEffect(() => {
+  
           const fetchRestaurants = async () => {
               const token = localStorage.getItem("authToken");
       
@@ -72,7 +76,7 @@ function TabRestaurant() {
                   console.error("erreur reseau ou parsing", error);
               }
           };
-      
+          useEffect(() => {
           fetchRestaurants();
       }, [navigate]);
       
@@ -86,35 +90,44 @@ function TabRestaurant() {
         setCurrentPage(1);
     };
 
-    const handleDelete = async (restaurantID) => {
-        const token = localStorage.getItem("authToken");
-
-    if (!token) return navigate("/admin/login");
-        const confirmDelete = window.confirm("Are you sure you want to delete this restaurant?");
-        if (!confirmDelete) return;
+    const handleDeleteClick = (restaurantID) => {
+      setRestaurantToDelete(restaurantID);
+      setShowDeletePopup(true);
+    };
     
-        try {
-            const res = await fetch(`http://localhost:8080/admin/restaurants/${restaurantID}`, {
-                method: "DELETE",
-                headers:{
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (res.ok) {
-                console.log("Client deleted successfully");
-                setRestaurant((prev) => {
-                    console.log(prev); // Vérifie l'état précédent
-                    return prev.filter((restaurant) => restaurant.id !== restaurantID);
-                });
-            } else {
-                console.error(`Failed to delete the restaurant. Status: ${res.status}`);
-                const errorText =  await res.text();
-                console.error("Error message:", errorText);
-            }
-        } catch (error) {
-            console.error("Error deleting restaurant:", error);
+    const handleDeleteConfirm = async () => {
+      setShowDeletePopup(false);
+      if (!restaurantToDelete) return;
+    
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
+    
+      try {
+        const res = await fetch(`http://localhost:8080/admin/restaurants/${restaurantToDelete}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (res.ok) {
+          setPopupMessage("✅ Restaurant deleted successfully");
+          setShowPopup(true);
+          setRestaurant(prev => prev.filter(r => r.id !== restaurantToDelete));
+        } else {
+          const errorText = await res.text();
+          throw new Error(errorText || "Failed to delete restaurant");
         }
+      } catch (error) {
+        console.error("Delete error:", error);
+        setPopupMessage(`❌ ${error.message || "Failed to delete restaurant"}`);
+        setShowPopup(true);
+      } finally {
+        setRestaurantToDelete(null);
+      }
     };
     const fetchRestaurantDetails = async (restaurantID) => {
       const token = localStorage.getItem("authToken");
@@ -144,10 +157,11 @@ function TabRestaurant() {
     const handleBan = async (restaurantID) => {
       const token = localStorage.getItem("authToken");
       if (!token) return navigate("/admin/login");
-      
-      const confirmBan = window.confirm("Are you sure you want to ban this restaurant?");
-      if (!confirmBan) return;
-      
+    
+      const currentRestaurant = restaurants.find(r => r.id === restaurantID);
+      const action = currentRestaurant?.status === "BANNED" ? "unban" : "ban";
+
+    
       try {
         const res = await fetch(`http://localhost:8080/admin/restaurants/${restaurantID}/ban`, {
           method: "PUT",
@@ -156,29 +170,25 @@ function TabRestaurant() {
             "Content-Type": "application/json"
           },
         });
+    
+        if (!res.ok) throw new Error(await res.text() || "Failed to update status");
+    
+        const successMessage = await res.text();
         
-        const text = await res.text(); // log even if not ok
-        console.log("Raw response from /ban:", text);
-        
-        if(res.ok){
-          const updatedRestaurant = restaurants.find(restaurant => restaurant.id === restaurantID);
-      if (updatedRestaurant?.status === "BANNED") {
-          setPopupMessage("User is unbanned.");
-          setShowPopup(true);
-      } else {
-          setRestaurant((prev) => prev.filter((restaurant) => restaurant.id !== restaurantID));
-          setPopupMessage("User has been banned successfully.");
-      }
-      }else{
-          const errorText =  await res.text();
-          console.error("Error message:", errorText);
-      }
+        setRestaurant(prev => prev.map(r => 
+          r.id === restaurantID 
+            ? { ...r, status: action === "ban" ? "BANNED" : "VERIFIED" } 
+            : r
+        ));
+    
+        setPopupMessage(`✅ ${successMessage}`);
+        setShowPopup(true);
+    
       } catch (error) {
-          console.error("Error banning restaurant:", error);
-          setPopupMessage("An error occurred.");
-          setShowPopup(true);
+        setPopupMessage(`❌ ${error.message || "Operation failed"}`);
+        setShowPopup(true);
       }
-  };
+    };
   
   
         const approveRestaurant = async (restaurantID) => {
@@ -192,25 +202,28 @@ function TabRestaurant() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if(res.ok){
-                const updatedRestaurant = restaurants.find(restarant => restarant.id === restaurantID);
-            if (updatedRestaurant?.Approve === "APPROVED") {
-                setPopupMessage("User is already approved.");
-                setShowPopup(true);
-            } else if(updatedRestaurant?.Approve === "REJECTED") {
-              setPopupMessage("User is already rejected.");
-              setShowPopup(true);
-          }
-            else {
-                setRestaurant((prev) => prev.filter((restaurant) => restaurant.id !== restaurantID));
+              if (res.ok) {
+                const updatedRes = await fetch(`http://localhost:8080/admin/restaurants/${restaurantID}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                if (updatedRes.ok) {
+                    const updatedRestaurant = await updatedRes.json();
+                    setRestaurant(prev =>
+                        prev.map(r => r.id === restaurantID ? updatedRestaurant : r)
+                    );
+                }
                 setPopupMessage("User has been approved successfully.");
-            }
-            }else{
-                const errorText =  await res.text();
-                console.error("Error message:", errorText);
+                setShowPopup(true);
+                fetchRestaurants();
+            } else {
+                console.error("Failed to fetch updated restaurant");
+                setPopupMessage("Failed to approve restaurant.");
+                setShowPopup(true);
             }
         }catch(error){
             console.error("Error approving restaurant :",error);
+            setPopupMessage("An error occured while approving");
+            setShowPopup(true);
         }
         };
 
@@ -236,6 +249,7 @@ function TabRestaurant() {
               );
               setPopupMessage("User has been declined successfully.");
               setShowPopup(true);
+              fetchRestaurants();
             } else {
               const errorText = await res.text();
               console.error("Error message:", errorText);
@@ -267,6 +281,12 @@ function TabRestaurant() {
       
   return (
     <div className="DivTableRestaurant">
+      <ConfirmPopup
+        isOpen={showDeletePopup}
+        message="Are you sure you want to delete this restaurant?"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setShowDeletePopup(false)}
+      />
       <h1 className="restaurants">Restaurants</h1>
       <input 
           type="text" 
@@ -290,7 +310,7 @@ function TabRestaurant() {
           </tr>
         </thead>
         <tbody>
-          {filteredRestaurants.map((restaurant) => (
+          {currentRestaurants.map((restaurant) => (
             <tr key={restaurant.id}>
               <td className="tdTableRestaurant">{restaurant.id}</td>
               <td className="tdTableRestaurant">{restaurant.title}</td>
@@ -318,7 +338,7 @@ function TabRestaurant() {
                 )}
               </td>
 
-              <td><Link className="DeleteRestaurant" onClick={()=> handleDelete(restaurant.id)}><FaTrash/>Delete</Link></td> 
+              <td><Link className="DeleteRestaurant" onClick={()=> handleDeleteClick(restaurant.id)}><FaTrash/>Delete</Link></td> 
               <td><Link className="BanRestaurant" onClick={()=> handleBan(restaurant.id)}><FaBan/>Ban</Link></td> 
               <td><button onClick={() => openModal(restaurant)} className="DetailsRestaurant"> More Details</button></td>
             </tr>

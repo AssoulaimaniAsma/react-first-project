@@ -170,7 +170,7 @@ const [loadingCancel, setLoadingCancel] = useState(false);
                   {(order.status === 'UNCOMPLETED') && (
                     <>
                       <button
-  onClick={() => navigate(`/client/order/checkout/${order.id}`)}
+  onClick={() => navigate(`/client/PersonalDetails/${order.id}`)}
   className="text-red-500 text-sm font-semibold hover:underline flex items-center gap-1"
 >
   Complete Order

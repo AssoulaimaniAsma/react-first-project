@@ -23,17 +23,16 @@ import ShowAddress from "../composante/Client/Address/ShowAddress";
 import FoodByRestaurant from "../composante/Client/FoodByRestaurant/FoodByRestaurant";
 import OrderDetails from "../composante/Client/OrderDetails/OrderDetails";
 import PersonalDetails from "../composante/Client/PersonalDetails/PersonalDetails";
-import AddressFormCheck from "../composante/Client/PersonalDetails/AddressFormCheck";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import "./App.css";
 import ScrollToTop from "./ScrollToTop";
-  const stripePromise = loadStripe('pk_test_51RHm1SFWUQXfDIlGmKVLISKhH3LpY6Sf9Pp4RC62PoaUcovgWn35VVnAQ5we4xhyd2oMfqz6xjixvonrppTmTFxW000z9mc5cG');
-
 import PaymentMethods from "../composante/Client/Payment/payment";
 import OrderHistory from "../composante/Client/OrderHistory/orderhistory";
 import ClientOrderNotifications from "../composante/Client/OrderHistory/NotificationClient";
 import OrderTracking from "../composante/Client/OrderTracking/ordertracking";
+  const stripePromise = loadStripe('pk_test_51RHm1SFWUQXfDIlGmKVLISKhH3LpY6Sf9Pp4RC62PoaUcovgWn35VVnAQ5we4xhyd2oMfqz6xjixvonrppTmTFxW000z9mc5cG');
+
 function AnimatedRoutes() {
   const location = useLocation();
   const signinRef = useRef(null);
@@ -56,7 +55,6 @@ function AnimatedRoutes() {
   const foodbyrestRef = useRef(null);
   const orderDetailsRef=useRef(null);
   const personalDetailsRef=useRef(null);
-  const addressFormCheckRef=useRef(null);
   const paymentRef= useRef(null);
   const orderhistoryRef= useRef(null);
   const clientOrderRef= useRef(null);
@@ -88,7 +86,6 @@ function AnimatedRoutes() {
           location.pathname==="/client/restaurants/:id" ? forgetRef:
           location.pathname==="/client/OrderDetails/:orderID" ? orderDetailsRef:
           location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
-          location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
 
           location.pathname==="/client/ManagePayment" ? paymentRef:
           location.pathname==="/client/OrderHistory" ? orderhistoryRef:
@@ -109,7 +106,7 @@ function AnimatedRoutes() {
           location.pathname ==="/SideBar"  ? ourmenuRef:
           location.pathname ==="/Checkout/:orderID"  ? checkoutRef:
           location.pathname ==="/ItemCard/:id"  ? itemCardRef:
-          location.pathname==="/VerifyAccount" ? verifyRef:
+          location.pathname==="/client/verifyAccount" ? verifyRef:
           location.pathname==="auth/ForgotPasswordForm" ? forgetRef:
           location.pathname==="/auth/resetPassword" ? resetRef:
           location.pathname==="/client/Address/:isEditable" ? addresRef:
@@ -119,7 +116,6 @@ function AnimatedRoutes() {
           location.pathname==="/client/restaurants/:id" ? forgetRef:
           location.pathname==="/client/OrderDetails/:orderID" ? orderDetailsRef:
           location.pathname==="/client/PersonalDetails/:orderID" ? personalDetailsRef:
-          location.pathname==="/client/AddressFormCheck" ? addressFormCheckRef:
 
 
           location.pathname==="/client/ManagePayment" ? paymentRef:
@@ -150,7 +146,6 @@ function AnimatedRoutes() {
           <Route path="/client/restaurants/:id" element={<FoodByRestaurant />}/>
           <Route path="/client/OrderDetails/:orderID" element={<OrderDetails />} />
           <Route path="/client/PersonalDetails/:orderID" element={<PersonalDetails />} />
-          <Route path="/client/AddressFormCheck" element={<AddressFormCheck />} />
 
           <Route path="/client/OrderHistory" element={<OrderHistory />}/>
           <Route path="/client/order/track/:orderID" element={<OrderTracking />} />
@@ -168,12 +163,12 @@ function Main() {
     <>
       {isItemCardPage && <ScrollToTop />}
 
-{location.pathname !== "/client/signin" &&
- location.pathname !== "/client/signup" &&
- location.pathname !== "/auth/resetPassword" &&
- location.pathname !== "/auth/ForgotPasswordForm" && 
- location.pathname !== "/client/verifyAccount"
- &&<Navbar />}
+      {location.pathname !== "/client/signin" &&
+      location.pathname !== "/client/signup" &&
+      location.pathname !== "/auth/resetPassword" &&
+      location.pathname !== "/auth/ForgotPasswordForm" && 
+      location.pathname !== "/client/verifyAccount"
+      &&<Navbar />}
 
 <AnimatedRoutes />
     </>
@@ -183,10 +178,10 @@ function Main() {
 function AppClient() {
   return (
     <Elements stripe={stripePromise}>
-      <CartProvider>
-        <ClientOrderNotifications/>
-          <Main />
-      </CartProvider>
+        <CartProvider>
+          <ClientOrderNotifications/>
+            <Main />
+        </CartProvider>
     </Elements>
   );
 }

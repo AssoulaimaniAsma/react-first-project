@@ -1,7 +1,5 @@
 import React, { useContext } from "react";
 import { CartContext } from "../CartContext/CartContext";
-import React, { useContext } from "react";
-import { CartContext } from "../CartContext/CartContext";
 
 export default function Products({ products,incrementItem,decrementItem, removeItem }) {
   const {addToCart} = useContext(CartContext);
@@ -16,10 +14,6 @@ export default function Products({ products,incrementItem,decrementItem, removeI
         </tr>
       </thead>
       <tbody className="bodyTab2">
-        {products.map((item) => {
-          if(!item || !item.food) return null;
-          return(
-          <tr key={item.itemID}>
         {products.map((item) => {
           if(!item || !item.food) return null;
           return(

@@ -3,6 +3,7 @@ import "./TabClient.css";
 import { FaTrash } from "react-icons/fa";
 import { FaBan } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
+import ConfirmPopup from "../TabRestaurant/ConfirmPopup";
 
 function TabClient(){
     const [clients, setClient]= useState([]);
@@ -17,6 +18,8 @@ function TabClient(){
     const [showPopup, setShowPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [userIdToDelete, setUserIdToDelete] = useState(null);
     const [clientsPerPage] = useState(5);
       // Filter clients based on the search query, with safeguards for undefined values
       const filteredClients = clients.filter((client) =>
@@ -90,18 +93,23 @@ function TabClient(){
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
             };
-
             
-
-            const handleDelete = async (userId) => {
+            const handleDeleteClick = (userId) => {
+                setUserIdToDelete(userId);
+                setShowDeletePopup(true);
+              };
+              
+              const handleDeleteConfirm = async () => {
+                setShowDeletePopup(false);
+                if (!userIdToDelete) return;
+              
                 const token = localStorage.getItem("authToken");
-    
-            if (!token) return navigate("/admin/login");
-                const confirmDelete = window.confirm("Are you sure you want to delete this client?");
-                if (!confirmDelete) return;
-            
+                if (!token) {
+                  navigate("/admin/login");
+                  return;
+                }
                 try {
-                    const res = await fetch(`http://localhost:8080/admin/users/${userId}`, {
+                    const res = await fetch(`http://localhost:8080/admin/users/${userIdToDelete}`, {
                         method: "DELETE",
                         headers:{
                             Authorization: `Bearer ${token}`,
@@ -112,7 +120,7 @@ function TabClient(){
                         console.log("User deleted successfully");
                         setClient((prev) => {
                             console.log(prev); // Vérifie l'état précédent
-                            return prev.filter((client) => client.id !== userId);
+                            return prev.filter((client) => client.id !== userIdToDelete);
                         });
                     } else {
                         console.error(`Failed to delete user. Status: ${res.status}`);
@@ -143,7 +151,7 @@ function TabClient(){
                                 client.id === userId
                                     ? {
                                         ...client,
-                                        status: client.status === "BANNED" ? "ACTIVE" : "BANNED",
+                                        status: client.status === "BANNED" ? "VERIFIED" : "BANNED",
                                     }
                                     : client
                             )
@@ -170,6 +178,12 @@ function TabClient(){
 
     return(
         <div className="DivTableClient">
+            <ConfirmPopup
+                    isOpen={showDeletePopup}
+                    message="Are you sure you want to delete this restaurant?"
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={() => setShowDeletePopup(false)}
+                  />
             <h1 className="Clients">Clients</h1>
             <input 
                 type="text" 
@@ -213,7 +227,7 @@ function TabClient(){
                             <td className="tdTableClient">
                                 <Link
                                     className="LinkDeleteClient"
-                                    onClick={() => handleDelete(client.id)}
+                                    onClick={() => handleDeleteClick(client.id)}
                                 >
                                     <FaTrash /> Delete
                                 </Link>

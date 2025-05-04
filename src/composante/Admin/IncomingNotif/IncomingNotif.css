@@ -1,0 +1,77 @@
+.notification-wrapper{
+    align-items: center;
+    justify-content: center;
+}
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    z-index: 1000;
+  }
+  
+  .notification {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin-bottom: 16px;
+    border-left: 5px solid #4CAF50;
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .notification-header h4 {
+    margin: 0;
+    color: #2E7D32;
+    font-size: 16px;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #757575;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .notification p {
+    margin: 0 0 8px 0;
+    color: #424242;
+  }
+  
+  .notification-footer {
+    font-size: 12px;
+    color: #757575;
+    text-align: right;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .notification-exit {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideOut {
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }

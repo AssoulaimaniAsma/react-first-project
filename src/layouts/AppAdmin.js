@@ -9,7 +9,6 @@ import Signin from "../composante/Admin/Signin/Signin";
 import Food from "../composante/Admin/Food/Food";
 import Dashboard from "../composante/Admin/Dashboard/Dashboard";
 import IncomingNotif from "../composante/Admin/IncomingNotif/IncomingNotif";
-import AdminNotificationListener from "../composante/Admin/IncomingNotif/AdminNotificationListener";
 
 function AppAdmin() {
   const location = useLocation();
@@ -33,7 +32,6 @@ function AppAdmin() {
           <Route path="/admin/TabRestaurantDetails/:id" element={<TabRestaurantDetails />} />
           <Route path="/admin/Food" element={<Food />} />
           <Route path="/admin/Dashboard" element={<Dashboard />} />
-          <Route path="/admin/IncomingNotif" element={<IncomingNotif />} />
         </Routes>
       </div>
     </div>

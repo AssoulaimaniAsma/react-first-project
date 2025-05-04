@@ -7,96 +7,150 @@ const IncomingNotif = () => {
   const [client, setClient] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [connectionStatus, setConnectionStatus] = useState('disconnected');
   const token = localStorage.getItem("authToken");
 
-
-  function getIDFromToken(token) {
+  function getAdminIdFromToken(token) {
     try {
       const payloadBase64 = token.split('.')[1];
       const decodedPayload = atob(payloadBase64);
       const payload = JSON.parse(decodedPayload);
       return payload.id;
     } catch (e) {
-      console.error('Erreur de décodage du token :', e);
+      console.error('Token decoding error:', e);
       return null;
     }
   }
 
   useEffect(() => {
-      if (!token) return;
-      const adminId = getIDFromToken(token);
-      const socket = new SockJS('http://localhost:8080/websocket');
-      const stompClient = new Client({
-        webSocketFactory: () => socket,
-        connectHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-        onConnect: () => {
-          console.log('Connected');
-          stompClient.subscribe(`/topic/admin`, (message) => {
-            console.log('New order:', message.body);
-            triggerNotification(`📢 ${message.body}`);
-          }, {
+    if (!token) return;
+
+    const adminId = getAdminIdFromToken(token);
+    if (!adminId) return;
+
+    const socket = new SockJS('http://localhost:8080/websocket');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+        //'heart-beat': '10000,10000'
+      },
+      debug: (str) => console.log('[STOMP]', str),
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log('Admin connected to notifications');
+        setConnectionStatus('connected');
+        console.log("teeeeest");
+        stompClient.subscribe(
+          `/topic/admin`, 
+          (message) => {
+            triggerNotification(message.body);
+        
+            try {
+              const data = JSON.parse(message.body);
+        
+              // Make sure it contains what you expect
+              if (data && data.orderId) {
+                triggerNotification(`🚚 Order #${data.orderId} marked as DELIVERED`);
+              } else {
+                console.warn("Ignored message with missing orderId:", data);
+              }
+            } catch (err) {
+              console.warn("Ignored non-JSON message:", message.body);
+            }
+          },
+          {
             Authorization: `Bearer ${token}`,
-          });
-        },
-        onStompError: (frame) => {
-          console.error('❌ Erreur STOMP :', frame.headers['message']);
-          console.error('Broker error:', frame.headers['message']);
-        },
-      });
+          }
+        );
+        
+      },
+      onStompError: (frame) => {
+        console.error('Broker error:', frame.headers['message']);
+        setConnectionStatus('error');
+      },
+      onWebSocketError: (error) => {
+        console.error('WebSocket error:', error);
+        setConnectionStatus('error');
+      },
+      onWebSocketClose: () => {
+        console.log('WebSocket connection closed');
+        setConnectionStatus('disconnected');
+      }
+    });
+
+    stompClient.activate();
+    setClient(stompClient);
+    setConnectionStatus('connecting');
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate();
+      }
+    };
+  }, [token]);
+
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      const audio = new Audio(notificationSound);
+      audio.load();
+      window._notificationAudio = audio;
+      document.removeEventListener('click', handleUserInteraction);
+    };
   
-      stompClient.activate();
-      setClient(stompClient);
+    document.addEventListener('click', handleUserInteraction);
   
-      return () => {
-        if (stompClient) {
-          stompClient.deactivate();
-        }
-      };
-    }, [token]);
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+    };
+  }, []);
 
   const triggerNotification = (message) => {
-    setAlertMessage(message);
-    setShowAlert(true);
+  setAlertMessage(message);
+  setShowAlert(true);
 
-    // Jouer le son de notification
-    const audio = new Audio(notificationSound);
-    audio.play().catch(e => console.error("Audio playback failed:", e));
+  if (window._notificationAudio) {
+    window._notificationAudio.currentTime = 0; // rewind in case it's still playing
+    window._notificationAudio.play().catch(e => console.error('Audio playback failed:', e));
+  } else {
+    console.warn("Notification audio not ready yet. User may not have interacted with the page.");
+  }
 
-    // Masquer l'alerte après 5 secondes
-    const timer = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+  setTimeout(() => {
+    setShowAlert(false);
+  }, 5000);
+};
 
-    return () => clearTimeout(timer);
-  };
 
   const formatAlertMessage = (message) => {
-    // Mise en forme spéciale pour les messages ADMIN
+    const parts = message.split('DELIVERED');
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-xl">👨‍💼</span>
-        <div>
-          <span className="font-bold text-blue-600">ADMIN ALERT: </span>
-          <span>{message.replace('📢', '').trim()}</span>
-        </div>
-      </div>
+      <>
+        <span style={{ color: '#333333' }}>{parts[0]}</span>
+        {parts.length > 1 && (
+          <>
+            <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>DELIVERED</span>
+            <span style={{ color: '#333333' }}>{parts[1]}</span>
+          </>
+        )}
+      </>
     );
   };
 
   return (
     <>
       {showAlert && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <div
-            className="flex items-center p-4 text-sm rounded-lg shadow-lg min-w-[300px]"
+            className="flex items-center p-4 text-sm rounded-lg shadow-lg"
             style={{
-              backgroundColor: '#F0F9FF',
-              border: '2px solid #BEE3F8',
+              backgroundColor: '#F0FFF4',
+              border: '2px solid #C6F6D5',
             }}
           >
-            {formatAlertMessage(alertMessage)}
+            <span className="font-medium">
+              {formatAlertMessage(alertMessage)}
+            </span>
           </div>
         </div>
       )}
