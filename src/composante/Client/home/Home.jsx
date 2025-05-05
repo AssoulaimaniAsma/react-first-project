@@ -383,17 +383,10 @@ function Home() {
         </div>
       </div>
 
-      <footer className="fotterPage ">
+      <footer className="fotterPage bg-gray-900">
         <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-8 py-10 ">
-          <div className="col-span-full mb-10 2xl:col-span-2 lg:mb-0 flex items-center flex-col 2xl:items-start">
-            <img
-              className="mcdoLogo w-20 h-15 mb-4"
-              src={logo}
-              alt="McDonald's Logo"
-            />
-            <Link to="/" className="text-2xl font-bold">
-              <span className="text-[#FD4C2A]">Savory</span>Bites
-            </Link>
+          <div className="col-span-full mb-10 2xl:col-span-2 lg:mb-0 flex items-center flex-col 2xl:items-start w-123 h-auto ">
+          <img src="/FullWhiteLogoNoBg_1@2x.png" className="logo  w-50 h-auto" alt="Logo" />
             <div className="flex items-center justify-between w-full max-w-xl mx-auto flex-col  2xl:flex-col 2xl:items-start">
               <p className="py-8 text-sm text-gray-500 lg:max-w-xs text-center lg:text-left">
                 Trusted by food lovers across the globe. Need help? We're here
