@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { FaUtensils, FaShoppingCart, FaMoneyBillWave, FaExclamationTriangle } from 'react-icons/fa';
-
+import { BarChart, Bar, LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
+//import { FaUtensils, FaShoppingCart, FaMoneyBillWave, FaExclamationTriangle } from 'react-icons/fa';
 const Dashboard = () => {
   const [data, setData] = useState(null);
 
@@ -33,20 +34,21 @@ const Dashboard = () => {
     { name: 'Unflagged', value: foodStatistics.totalUnflaggedFood }
   ];
 
-  const COLORS = ['#FF6384', '#36A2EB'];
+  // Données pour le Pie Chart des statuts des commandes
+  const orderStatusData = [
+    { name: 'Uncompleted', value: orderStatistics.uncompletedOrderCount },
+    { name: 'Accepted', value: orderStatistics.acceptedOrderCount },
+    { name: 'Delivered', value: orderStatistics.deliveredOrderCount },
+    { name: 'Cancelled', value: orderStatistics.cancelledOrderCount },
+    { name: 'Payment Failed', value: orderStatistics.paymentFailedOrderCount },
+    { name: 'Rejected', value: orderStatistics.rejectedOrderCount }
+  ];
 
-  // Données pour le Line Chart (Order Status)
-  const orderStatusData = orderStatistics.weeklyOrderStats.map(week => ({
-    weekLabel: week.weekLabel,
-    CANCELED: week.completedOrdersCount || 0,
-    DELIVERED: week.deliveredOrdersCount || 0,
-    REJECTED: (week.cancelledOrdersCount || 0) + (week.declinedOrdersCount || 0)
-  }));
+  const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
   return (
     <div className="p-6 space-y-8">
-
-      {/* Cards - Inchangé */}
+      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="p-4 bg-white rounded-2xl shadow-md flex flex-col items-center">
           <div className="flex items-center gap-2 mb-2">
@@ -82,65 +84,64 @@ const Dashboard = () => {
       </div>
 
       <div className="bg-white p-6 rounded-2xl shadow-md">
-  
-  {/* Container Flex pour deux graphiques côte à côte */}
-  <div className="flex gap-6">
-    {/* Premier Donut Chart */}
-    <div className="w-1/2">
-    <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Food Status</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie
-            data={foodStatusData}
-            cx="50%"
-            cy="50%"
-            innerRadius={50} // Ajout pour le creux (donut)
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-            labelLine={false}
-            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-          >
-            {foodStatusData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+        {/* Container Flex pour deux graphiques côte à côte */}
+        <div className="flex gap-6">
+          {/* Premier Donut Chart */}
+          <div className="w-1/2">
+            <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Food Status</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={foodStatusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50} // Donut
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {foodStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
-    {/* Deuxième Donut Chart */}
-    <div className="w-1/2">
-    <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Order Status</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie
-            data={foodStatusData} // <== tu dois définir ce nouveau dataset
-            cx="50%"
-            cy="50%"
-            labelLine={false} 
-            outerRadius={80}
-            fill="#82ca9d"
-            dataKey="value"
-            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-          >
-            {foodStatusData.map((entry, index) => (
-              <Cell key={`second-cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
-</div>
+          {/* Deuxième Donut Chart modifié pour les statuts des commandes */}
+          <div className="w-1/2">
+            <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Order Status</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={orderStatusData} // Utilisation des données de statuts de commande
+                  cx="50%"
+                  cy="50%"
+                  //innerRadius={50} // Donut
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  dataKey="value"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {orderStatusData.map((entry, index) => (
+                    <Cell key={`second-cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
 
-
-      {/* Revenue Bar Chart (modifié) */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
+{/* Revenue Bar Chart (modifié) */}
+<div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Revenue per Month</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={revenueStatistics.monthlyRevenue}>
@@ -164,7 +165,7 @@ const Dashboard = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="CANCELED" stroke="#82ca9d" strokeWidth={2} />
+            <Line type="monotone" dataKey="CANCELLED" stroke="#82ca9d" strokeWidth={2} />
             <Line type="monotone" dataKey="DELIVERED" stroke="#8884d8" strokeWidth={2} />
             <Line type="monotone" dataKey="REJECTED" stroke="#ff6666" strokeWidth={2} />
           </LineChart>
@@ -175,15 +176,27 @@ const Dashboard = () => {
       <div className="bg-white p-6 rounded-2xl shadow-md">
         <h2 className="text-xl font-bold mb-4 text-[#FD4C2A]">Top Selling Foods</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {foodStatistics.topSellingFoods.map((food) => (
-            <div key={food.id} className="p-4 border rounded-lg">
-              <img src={food.image} alt={food.title} className="w-full h-32 object-cover rounded-md mb-2" />
-              <h3 className="text-lg font-semibold">{food.title}</h3>
-              <p className="text-sm text-gray-600">{food.categoryTitles.join(", ")}</p>
-              <p className="text-sm">{food.discountedPrice.toFixed(2)} DH</p>
-            </div>
-          ))}
-        </div>
+  {foodStatistics.topSellingFoods.map((food) => (
+    <div key={food.id} className="p-4 border rounded-lg">
+      <img
+        src={food.image}
+        alt={food.title}
+        className="w-full h-32 object-cover rounded-md mb-2"
+      />
+      <h3 className="text-lg font-semibold">{food.title}</h3>
+      <p className="text-sm text-gray-600">{food.categoryTitles.join(", ")}</p>
+      <p className="text-sm">{food.discountedPrice.toFixed(2)} DH</p>
+      
+      {/* Number of times sold */}
+      <p className="text-sm font-semibold mt-2">
+        <span style={{ color: '#FD4C2A' }}>
+          {food.sold} times sold
+        </span>
+      </p>
+    </div>
+  ))}
+</div>
+
       </div>
 
       {/* Top Big Orders (inchangé) */}
@@ -215,5 +228,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;
