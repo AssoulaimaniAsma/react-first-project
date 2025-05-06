@@ -8,35 +8,37 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [orderDetails, setOrderDetails] = useState({ total: 0 });
-  const [currentItemName, setCurrentItemName] = useState("test"); // Nom de l'item
-  const [isAdding, setIsAdding] = useState(false); // Nouveau state pour contrôler les ajouts
+  const [currentItemName, setCurrentItemName] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
   const [authError, setAuthError] = useState(null);
-  const getToken =()=> localStorage.getItem("authToken");
+  
+  const getToken = () => localStorage.getItem("authToken");
     
-  // UseEffect pour afficher l'alerte une seule fois
   useEffect(() => {
-    if (showAlert && currentItemName !== "test") {
+    if (showAlert && currentItemName) {
       console.log("Alerte affichée avec l'élément :", currentItemName);
-      // L'alerte peut être affichée ici, ou gérer d'autres actions
     }
-  }, [currentItemName, showAlert]); // Dépend de currentItemName et showAlert
+  }, [currentItemName, showAlert]);
 
   const fetchCartDetails = async () => {
     const token = getToken();
-      if (!token){
+    if (!token) {
       setAuthError("Please log in to view cart");
-       return;
+      return;
     }
+    
     try {
       // Fetch total du panier
       const totalResponse = await fetch("http://localhost:8080/user/cart/total", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if(totalResponse.status ===403){
-        setAuthError("Acces denied - invalid token");
-        return ;
+      
+      if(totalResponse.status === 403) {
+        setAuthError("Access denied - invalid token");
+        return;
       }
+      
       const total = await totalResponse.json();
 
       // Fetch items du panier
@@ -44,10 +46,12 @@ export const CartProvider = ({ children }) => {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if(cartResponse.status ===403){
-        setAuthError("Acces denied - invalid token");
-        return ;
+      
+      if(cartResponse.status === 403) {
+        setAuthError("Access denied - invalid token");
+        return;
       }
+      
       const cartData = await cartResponse.json();
       setOrderDetails({ total });
       setCart(cartData);
@@ -58,76 +62,73 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Fonction d'ajout au panier
   const AddToCart = async (item) => {
     if (isAdding) return;
     setIsAdding(true);
+    
     const token = getToken();
-    if (!token){
-      console.log("Please log in to add items");
+    if (!token) {
+      setCurrentItemName("Please log in to add items");
+      setShowAlert(true);
       setIsAdding(false);
-       return;
+      setTimeout(() => setShowAlert(false), 3000);
+      return;
     }
+    
     try {
       console.log("Adding item:", item.title);
-  
-      // Mettre à jour le nom de l'item et afficher l'alerte
       setCurrentItemName(item.title);
       setShowAlert(true);
-  
-      // Trouver l'élément existant dans le panier
+
       const existingItem = cart.find((i) => i.food?.id === item.id);
-      console.log("Existing item in cart:", existingItem);
-        if (existingItem) {
-          // Si l'élément existe déjà, mettre à jour la quantité
-          await updateQuantity(existingItem.itemID, 1);
-        } else {
-          // Sinon, ajouter le nouvel élément
-          const res = await fetch(`http://localhost:8080/user/cart/addItem?foodID=${item.id}`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          if (res.status === 403) {
-            throw new Error("Access denied - invalid token");
-          }
-  
-          if (!res.ok) {
-            const errorMsg = await res.text();
-            throw new Error(`Failed to add item to cart: ${errorMsg}`);
-          }
-  
-          // Actualiser les détails du panier
-          await fetchCartDetails();
+      
+      if (existingItem) {
+        await updateQuantity(existingItem.itemID, 1);
+      } else {
+        const res = await fetch(`http://localhost:8080/user/cart/addItem?foodID=${item.id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (res.status === 403) {
+          throw new Error("Access denied - invalid token");
         }
-  
-      // Cacher l'alerte après 3 secondes
+
+        if (!res.ok) {
+          const errorMsg = await res.text();
+          throw new Error(`Failed to add item to cart: ${errorMsg}`);
+        }
+
+        await fetchCartDetails();
+      }
+
       setTimeout(() => {
         setShowAlert(false);
         setCurrentItemName("");
       }, 3000);
-  
     } catch (error) {
       console.error("Add to cart failed ", error);
       setAuthError(error.message);
+      setShowAlert(false);
     } finally {
       setIsAdding(false);
     }
   };
-  // Update cart item quantity
+
   const updateQuantity = async (itemId, change) => {
     const token = getToken();
-    if (!token){
+    if (!token) {
       setAuthError("Please log in to update cart");
-       return;
+      return;
     }
+    
     try {
-      const endpoint =
-        change > 0
-          ? `http://localhost:8080/user/cart/${itemId}/increment`
-          : `http://localhost:8080/user/cart/${itemId}/decrement`;
+      const endpoint = change > 0
+        ? `http://localhost:8080/user/cart/${itemId}/increment`
+        : `http://localhost:8080/user/cart/${itemId}/decrement`;
 
       const res = await fetch(endpoint, {
         method: "PUT",
@@ -135,13 +136,13 @@ export const CartProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      
       if (res.status === 403) {
         throw new Error("Access denied - invalid token");
       }
 
       if (!res.ok) throw new Error("Failed to update item quantity");
 
-      // Re-fetch cart details après la mise à jour
       await fetchCartDetails();
     } catch (error) {
       console.error("Failed to update item quantity:", error);
@@ -150,8 +151,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeItem = async (itemId) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
+    const token = getToken();
+    if (!token) {
+      setAuthError("Please log in to remove items");
+      return;
+    }
   
     try {
       const removeResponse = await fetch(`http://localhost:8080/user/cart/${itemId}/delete`, {
@@ -163,20 +167,18 @@ export const CartProvider = ({ children }) => {
       });
   
       if (!removeResponse.ok) {
-        // Await the text to get the actual error message
         const res = await removeResponse.text();
         console.log("Failed to delete item from cart", res);
+        throw new Error("Failed to delete item");
       } else {
-        // Handle the successful deletion
-        console.log("Item deleted successfully");
-        fetchCartDetails();
+        await fetchCartDetails();
       }
     } catch (error) {
       console.log("Delete from cart failed", error);
+      setAuthError(error.message);
     }
   };
   
-  // Fetch cart details au montage du composant
   useEffect(() => {
     if(getToken()) fetchCartDetails();
   }, []);
