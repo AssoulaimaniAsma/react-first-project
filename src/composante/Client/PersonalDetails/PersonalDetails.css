@@ -18,7 +18,7 @@
     border-radius: 25px;
     height:120px;
     padding: 5px;
-    width:40%;
+    width:50%;
     border-radius: 20px;
     overflow: hidden;
     margin-left: 254px;
@@ -60,7 +60,7 @@
     color:white;
     border-radius: 20px;
     font-size: 1.15rem;
-    padding:15px;
+    padding:5px;
 }
 .submitButtonPayment{
     background-color: #FD4C2A;
@@ -80,8 +80,10 @@
   white-space: nowrap;
   max-width: 230px; /* <-- ajuste la largeur maximale si besoin */
 }
-.submitButton:hover, .AddAddress:hover{
-    background-color: black;
+.submitButton:hover, .AddAddress:hover, .AddAddressPayment:hover, .submitButtonPayment:hover{
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+    transform: translateY(1px);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 .AddAddress{
   margin-left: 0;
@@ -158,7 +160,7 @@
 }
 .buttonsNewPayment{
     display: flex;
-    gap: 70px;
+    gap:20px;
 }
 .submitNewPayment{
     width:40%;
