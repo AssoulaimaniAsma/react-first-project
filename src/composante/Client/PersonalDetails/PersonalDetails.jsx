@@ -79,7 +79,6 @@ export default function PersonalDetails() {
 
   // Fetch cart when the component mounts
   const fetchCart = async () => {
-
     try {
       const res = await fetch(`http://localhost:8080/user/orders/placedOrders/${orderID}/orderItems`, {
         method: "GET",
@@ -87,14 +86,23 @@ export default function PersonalDetails() {
           Authorization: `Bearer ${token}`,
         },
       });
+  
+      if (!res.ok) {
+        throw new Error("Failed to fetch data: " + res.statusText);
+      }
+  
       const data = await res.json();
-      setFoods(data); // Update the foods state with cart data
+      console.log("Data received:", data);  // Vérifiez la structure des données
+      setFoods(data);  // Update the foods state with cart data
+      console.log("Foods:", data); // Afficher toute la structure des données
       setLoading(false);
     } catch (err) {
+      console.error(err);
       setError("Failed to fetch data");
       setLoading(false);
     }
   };
+  
   
   useEffect(() => {
     axios.get("http://localhost:8080/public/addressDetails/Regions")
@@ -881,51 +889,59 @@ const formatExpiryForDisplay = (month, year) => {
       </table>
 
       <table className="orderDetails">
-        <thead>
-            <tr>
-                <th colSpan={3}>Order Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Product</strong></td>
-                <td><strong>Quantity</strong></td>
-                <td><strong>Subtotal</strong></td>
-            </tr>
-            {Foods.length === 0 ? (
-                <tr><td colSpan={3}>No items in the cart</td></tr>
-            ) : (
-                Foods.map((item) => {
-                const food = item.food;
-                
-                if (!food || !food.title || !item.quantity || !food.price) return null;
-                
-                const subtotal = food.discountedPrice ? food.discountedPrice * item.quantity : food.price * item.quantity;
+  <thead>
+    <tr>
+      <th colSpan={3}>Order Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Product</strong></td>
+      <td><strong>Quantity</strong></td>
+      <td><strong>Subtotal</strong></td>
+    </tr>
+    {Foods.length === 0 ? (
+      <tr><td colSpan={3}>No items in the cart</td></tr>
+    ) : (
+      Foods.map((item) => {
+        const food = item.food;
+        if (!food || !food.title || !item.quantity || !item.priceAtOrderTime) return null;
 
-                return (
-                    <tr key={item.itemID}>
-                    <td className="tdOrderDetails">{food.title}</td>
-                    <td className="tdOrderDetails">{item.quantity}</td>
-                    <td className="tdOrderDetails">{subtotal}</td>
-                    </tr>
-                );
-                })
-            )}
-              <tr>
-              <td>Subtotal</td>
-              <td className="tdOrderDetails1" colSpan={2}>{subtotal.toFixed(2)} MAD</td>
-            </tr>
-            <tr>
-              <td>Shipping</td>
-              <td className="tdOrderDetails1" colSpan={2}>{shipping.toFixed(2)} MAD</td>
-            </tr>
-            <tr>
-              <td>Total</td>
-              <td className="tdOrderDetails1" colSpan={2}>{total.toFixed(2)} MAD</td>
-            </tr>
-        </tbody>
+        const subtotal = item.priceAtOrderTime * item.quantity;
 
-      </table>
+        return (
+          <tr key={item.id}>
+            <td className="tdOrderDetails">{food.title}</td>
+            <td className="tdOrderDetails">{item.quantity}</td>
+            <td className="tdOrderDetails">{subtotal.toFixed(2)} MAD</td>
+          </tr>
+        );
+      })
+    )}
+
+    {/* Total summary */}
+    <tr>
+      <td>Subtotal</td>
+      <td className="tdOrderDetails1" colSpan={2}>
+        {Foods.reduce((sum, item) => sum + item.priceAtOrderTime * item.quantity, 0).toFixed(2)} MAD
+      </td>
+    </tr>
+    <tr>
+      <td>Shipping</td>
+      <td className="tdOrderDetails1" colSpan={2}>
+        {(Foods?.[0]?.food?.restaurant?.shippingFees ?? 0).toFixed(2)} MAD
+      </td>
+    </tr>
+    <tr>
+      <td>Total</td>
+      <td className="tdOrderDetails1" colSpan={2}>
+        {(Foods.reduce((sum, item) => sum + item.priceAtOrderTime * item.quantity, 0) + (Foods?.[0]?.food?.restaurant?.shippingFees ?? 0)).toFixed(2)} MAD
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
         </div>
   );
 }

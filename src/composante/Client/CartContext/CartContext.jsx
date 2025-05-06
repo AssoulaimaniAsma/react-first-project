@@ -4,6 +4,7 @@ import React, { createContext, useState, useEffect } from "react";
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [orderDetails, setOrderDetails] = useState({ total: 0 });
@@ -148,6 +149,33 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const removeItem = async (itemId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+  
+    try {
+      const removeResponse = await fetch(`http://localhost:8080/user/cart/${itemId}/delete`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "application/json",
+        },
+      });
+  
+      if (!removeResponse.ok) {
+        // Await the text to get the actual error message
+        const res = await removeResponse.text();
+        console.log("Failed to delete item from cart", res);
+      } else {
+        // Handle the successful deletion
+        console.log("Item deleted successfully");
+        fetchCartDetails();
+      }
+    } catch (error) {
+      console.log("Delete from cart failed", error);
+    }
+  };
+  
   // Fetch cart details au montage du composant
   useEffect(() => {
     if(getToken()) fetchCartDetails();
@@ -159,6 +187,7 @@ export const CartProvider = ({ children }) => {
       orderDetails,
       AddToCart,
       updateQuantity,
+      removeItem,
       showAlert,           
       currentItemName,
       authError,   

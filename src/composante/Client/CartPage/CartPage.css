@@ -70,7 +70,7 @@
   .cart-page .TotalPrice {
     display: table;  /* Ensures it's treated as a table */
     border-collapse: collapse;
-    width: 20% !important;
+    width: 25% !important;
     flex: none;
     
 }

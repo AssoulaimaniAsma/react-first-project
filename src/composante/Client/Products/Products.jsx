@@ -19,9 +19,7 @@ export default function Products({ products,incrementItem,decrementItem, removeI
           return(
           <tr key={item.itemID}>
             <td className="picProd">
-            {removeItem && (
                 <button onClick={() => removeItem(item.itemID)} className="removeBtn">X</button>
-            )}
               <img src={item.food.image} alt={item.food.title} width="50" height="50" />
               <span>{item.food.title}</span>
             </td>

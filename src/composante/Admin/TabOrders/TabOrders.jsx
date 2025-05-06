@@ -18,6 +18,8 @@ function TabOrders() {
 
       // Filter orders based on the search query, with safeguards for undefined values
   const filteredOrders = orders.filter((order) =>
+    (order.id.toString().includes(searchQuery.toLowerCase())) ||
+  (order.userId.toString().includes(searchQuery.toLowerCase())) ||
     (order.restaurant.title ? order.restaurant.title.toLowerCase() : "")
     .includes(searchQuery.toLowerCase()) ||
     (order.status ? order.status.toLowerCase() : "")
@@ -137,7 +139,7 @@ useEffect(() => {
       <h1 className="CustomerOrder">Customer Orders</h1>
       <input 
           type="text" 
-          placeholder="Search For Client" 
+          placeholder="Search For Food" 
           value={searchQuery}
           onChange={handleSearch} 
           className="searchBar"

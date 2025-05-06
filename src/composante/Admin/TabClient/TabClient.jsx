@@ -19,7 +19,9 @@ function TabClient(){
     const [popupMessage, setPopupMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [showBanPopup, setShowBanPopup] = useState(false);
     const [userIdToDelete, setUserIdToDelete] = useState(null);
+    const [userIdToBan, setUserIdToBan] = useState(null);
     const [clientsPerPage] = useState(5);
       // Filter clients based on the search query, with safeguards for undefined values
       const filteredClients = clients.filter((client) =>
@@ -131,49 +133,66 @@ function TabClient(){
                     console.error("Error deleting user:", error);
                 }
             };
-            const handleBan = async (userId) => {
+            const handleBanClick = (userId) => {
+                setUserIdToBan(userId); // Store user ID to ban/unban
+                setShowBanPopup(true);   // Show popup for confirmation
+              };
+              
+              const handleBanConfirm = async () => {
+                setShowBanPopup(false);  // Hide the popup
+                if (!userIdToBan) return;  // If no user to ban/unban, return
+              
                 const token = localStorage.getItem("authToken");
-                if(!token) return navigate("/admin/login");
-
-                const confirmBan = window.confirm("Are you sure you want to ban this client?");
-                if (!confirmBan) return;
-
-                try{
-                    const res = await fetch(`http://localhost:8080/admin/users/${userId}/toggleBan`,{
-                        method: "PUT",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    if(res.ok){
-                        setClient((prevClients) =>
-                            prevClients.map((client) =>
-                                client.id === userId
-                                    ? {
-                                        ...client,
-                                        status: client.status === "BANNED" ? "VERIFIED" : "BANNED",
-                                    }
-                                    : client
-                            )
-                        );
-                        const updatedClient = clients.find(client => client.id === userId);
-                    if (updatedClient?.status === "BANNED") {
-                        setPopupMessage("The user has been unbanned successfully.");
-                        setShowPopup(true);
-                    } else {
-                        setClient((prev) => prev.filter((client) => client.id !== userId));
-                        setPopupMessage("User has been banned successfully.");
-                        setShowPopup(true);
-                    }
-                    }else{
-                        const errorText =  await res.text();
-                        console.error("Error message:", errorText);
-                    }
-                }catch(error){
-                    console.error("Error Banning user :",error);
+                if (!token) {
+                  navigate("/admin/login");
+                  return;
                 }
-                };
-            
+              
+                try {
+                  // API request to toggle ban (ban or unban)
+                  const res = await fetch(`http://localhost:8080/admin/users/${userIdToBan}/toggleBan`, {
+                    method: "PUT",
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  });
+              
+                  if (res.ok) {
+                    console.log("User banned/unbanned successfully");
+              
+                    // Update client state after ban/unban operation
+                    setClient((prevClients) =>
+                      prevClients.map((client) =>
+                        client.id === userIdToBan
+                          ? {
+                              ...client,
+                              status: client.status === "BANNED" ? "VERIFIED" : "BANNED", // Toggle status
+                            }
+                          : client
+                      )
+                    );
+              
+                    // Show appropriate popup message after ban/unban
+                    const updatedClient = clients.find((client) => client.id === userIdToBan);
+                    if (updatedClient?.status === "BANNED") {
+                      setPopupMessage("The user has been unbanned successfully.");
+                      setShowPopup(true);
+                    } else {
+                      setPopupMessage("User has been banned successfully.");
+                      setShowPopup(true);
+                    }
+                  } else {
+                    const errorText = await res.text();
+                    console.error("Error message:", errorText);
+                  }
+                } catch (error) {
+                  console.error("Error banning/unbanning user:", error);
+                }
+              };
+              
+              const banMessage = clients.find(client => client.id === userIdToBan)?.status === "BANNED"
+              ? "Are you sure you want to unban this restaurant?"
+              : "Are you sure you want to ban this restaurant?";
 
 
     return(
@@ -183,6 +202,12 @@ function TabClient(){
                     message="Are you sure you want to delete this restaurant?"
                     onConfirm={handleDeleteConfirm}
                     onCancel={() => setShowDeletePopup(false)}
+                  />
+            <ConfirmPopup
+                    isOpen={showBanPopup}
+                    message={banMessage}
+                    onConfirm={handleBanConfirm}
+                    onCancel={() => setShowBanPopup(false)}
                   />
             <h1 className="Clients">Clients</h1>
             <input 
@@ -235,7 +260,7 @@ function TabClient(){
                             <td className="tdTableClient">
                                 <Link
                                     className="LinkDeleteClient"
-                                    onClick={() => handleBan(client.id)}
+                                    onClick={() => handleBanClick(client.id)}
                                 >
                                     <FaBan/> Ban
                                 </Link>

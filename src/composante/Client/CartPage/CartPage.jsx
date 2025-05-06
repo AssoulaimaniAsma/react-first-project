@@ -12,7 +12,7 @@ function CartPage() {
   const [error, setError] = useState(null);
   
 
-  const { cart, AddToCart, orderDetails,incrementItem,decrementItem ,updateQuantity, removeItem, clearCart } = useContext(CartContext);
+  const { cart, AddToCart, orderDetails,updateQuantity , removeItem, clearCart } = useContext(CartContext);
   const isLoggedIn = localStorage.getItem("authToken");
 
   useEffect(() => {
@@ -212,8 +212,8 @@ function CartPage() {
         <div className="Product">
           <Products
             products={cart}
-            incrementItem={incrementItem}
-            decrementItem={decrementItem}
+            incrementItem={updateQuantity}
+            decrementItem={updateQuantity}
             removeItem={removeItem}
           />
         </div>
@@ -224,18 +224,49 @@ function CartPage() {
             </tr>
           </thead>
           <tbody className="bodyTable2">
-            <tr>
-              <td>Subtotal</td>
-              <td>{subtotal.toFixed(2)} MAD</td>
-            </tr>
-            <tr>
-              <td>Shipping</td>
-              <td>{shipping.toFixed(2)} MAD</td>
-            </tr>
-            <tr>
-              <td>Total</td>
-              <td>{total.toFixed(2)} MAD</td>
-            </tr>
+          <tr>
+      <td>Subtotal</td>
+      <td className="tdOrderDetails1" colSpan={2}>
+        {foods.reduce((sum, item) => sum + item.food.discountedPrice * item.quantity, 0).toFixed(2)} MAD
+      </td>
+    </tr>
+    <tr>
+    <td>Shipping</td>
+<td className="tdOrderDetails1" colSpan={2}>
+  {foods.reduce((sum, item) => {
+    // Check if the restaurant is not already in the set and add its shipping fee if not.
+    if (item.food && item.food.restaurant) {
+      const restaurantId = item.food.restaurant.id;
+      // Use the restaurantId to track which restaurant's shipping fees have been added
+      if (!sum.restaurants[restaurantId]) {
+        sum.restaurants[restaurantId] = item.food.restaurant.shippingFees;
+        sum.total += item.food.restaurant.shippingFees; // Add shipping fee to total
+      }
+    }
+    return sum;
+  }, { restaurants: {}, total: 0 }).total.toFixed(2)} MAD
+</td>
+
+    </tr>
+    <tr>
+  <td>Total</td>
+  <td className="tdOrderDetails1" colSpan={2}>
+    {(
+      foods.reduce((sum, item) => sum + item.totalPrice, 0) + 
+      foods.reduce((sum, item) => {
+        if (item.food && item.food.restaurant) {
+          const restaurantId = item.food.restaurant.id;
+          if (!sum.restaurants[restaurantId]) {
+            sum.restaurants[restaurantId] = item.food.restaurant.shippingFees;
+            sum.total += item.food.restaurant.shippingFees; // Add shipping fee to total
+          }
+        }
+        return sum;
+      }, { restaurants: {}, total: 0 }).total
+    ).toFixed(2)} MAD
+  </td>
+</tr>
+
           </tbody>
           <tfoot>
             <tr>

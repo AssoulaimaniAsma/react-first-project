@@ -290,7 +290,7 @@ const [restaurantToDelete, setRestaurantToDelete] = useState(null);
       <h1 className="restaurants">Restaurants</h1>
       <input 
           type="text" 
-          placeholder="Search For Client" 
+          placeholder="Search For Restaurant" 
           value={searchQuery}
           onChange={handleSearch} 
           className="searchBar"
